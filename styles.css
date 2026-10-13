@@ -99,6 +99,7 @@ a { color: inherit; }
 h1 { font-weight: 700; font-size: clamp(44px, 7vw, 72px); line-height: 1.11; color: var(--navy); max-width: 600px; }
 .lead { font-size: 18px; line-height: 28px; max-width: 560px; }
 .ctas { display: flex; flex-wrap: wrap; gap: 20px; }
+@media (max-width: 599px) { .ctas { align-self: stretch; justify-content: center; } }
 
 .screen {
   position: relative;
