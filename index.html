@@ -1,0 +1,192 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>GamificaPampa | Gamificação e IA para professores</title>
+  <meta name="description" content="O GamificaPampa reúne projetos da UNIPAMPA que ensinam gamificação e inteligência artificial para professores da Educação Básica.">
+  <meta property="og:title" content="GamificaPampa">
+  <meta property="og:description" content="Gamificação e IA para professores.">
+  <meta property="og:image" content="https://gamificapampa.github.io/assets/gamificapampa-github-avatar.png">
+  <meta property="og:type" content="website">
+  <meta name="theme-color" content="#013968">
+  <link rel="icon" type="image/svg+xml" href="assets/gamificapampa-icone.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+<style>/* tipografia automatica (viuvas, orfas e forcas) */
+p, li, blockquote {
+  orphans: 2;
+  widows: 2;
+  hyphens: manual;
+  text-wrap: pretty;
+}
+</style>
+</head>
+<body>
+  <header class="nav">
+    <div class="container nav__inner">
+      <a href="#inicio" class="nav__logo" aria-label="GamificaPampa, início">
+        <img src="assets/gamificapampa-horizontal.svg" alt="GamificaPampa" width="273" height="60">
+      </a>
+      <nav class="nav__links" aria-label="Seções">
+        <a href="#inicio">Início</a>
+        <a href="#como-funciona">Como funciona</a>
+        <a href="#projetos">Projetos</a>
+        <a href="#missoes">Missões</a>
+      </nav>
+      <a class="btn btn--secondary nav__cta" href="https://github.com/GamificaPampa">Ver no GitHub</a>
+    </div>
+    <div class="scrollxp" aria-hidden="true"><span id="scrollxp"></span></div>
+  </header>
+
+  <main>
+    <section class="hero" id="inicio">
+      <div class="sparkles" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i></div>
+      <div class="container hero__inner">
+        <div class="hero__text">
+          <span class="pill"><svg class="px" width="16" height="16" aria-hidden="true"><use href="assets/icons.svg#coin"/></svg>APERTE START</span>
+          <h1>Sua aula no <span class="accent">modo jogo</span>.</h1>
+          <p class="lead">O GamificaPampa reúne projetos da UNIPAMPA que ensinam gamificação e inteligência artificial para professores da Educação Básica. Menos teoria solta, mais desafios, recompensas e alunos engajados.</p>
+          <div class="ctas">
+            <a class="btn btn--primary" href="#projetos">Conheça os projetos</a>
+            <a class="btn btn--secondary" href="https://github.com/GamificaPampa">Ver no GitHub</a>
+          </div>
+        </div>
+
+        <div class="screen" id="game">
+          <div class="screen__crt" aria-hidden="true"></div>
+          <div class="hud" aria-hidden="true">
+            <span class="hud__level">NÍVEL <b id="level">1</b></span>
+            <span class="xpbar"><span class="xpbar__fill" id="xp"></span></span>
+            <span class="hud__xp"><b id="xp-count">0</b> XP</span>
+            <span class="lives">
+              <svg class="px heart" width="22" height="20"><use href="assets/icons.svg#heart"/></svg>
+              <svg class="px heart" width="22" height="20"><use href="assets/icons.svg#heart"/></svg>
+              <svg class="px heart" width="22" height="20"><use href="assets/icons.svg#heart"/></svg>
+            </span>
+          </div>
+          <button class="trophy" id="trophy" type="button" aria-label="Clique no troféu para ganhar XP">
+            <img src="assets/gamificapampa-icone-invertido.svg" alt="" width="220" height="220">
+          </button>
+          <p class="screen__caption" id="caption" aria-live="polite">Missão desbloqueada: criar sua primeira aula gamificada</p>
+          <p class="screen__hint" aria-hidden="true">Clique no troféu e nas moedas</p>
+          <svg class="px float float--1" width="53" height="48" aria-hidden="true"><use href="assets/icons.svg#star"/></svg>
+          <svg class="px float float--2 coin" width="32" height="32" aria-hidden="true"><use href="assets/icons.svg#coin"/></svg>
+          <svg class="px float float--3 coin" width="26" height="26" aria-hidden="true"><use href="assets/icons.svg#coin"/></svg>
+          <svg class="px float float--4" width="35" height="32" aria-hidden="true"><use href="assets/icons.svg#star"/></svg>
+          <div class="fx" id="fx" aria-hidden="true"></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="como-funciona">
+      <div class="container">
+        <header class="section__head reveal">
+          <span class="eyebrow">COMO FUNCIONA</span>
+          <h2>Sua jornada em três níveis</h2>
+          <p>Cada nível junta teoria e prática, do primeiro contato com a gamificação até a aula pronta para a turma.</p>
+        </header>
+        <div class="grid grid--3">
+          <article class="card level reveal" data-progress="1">
+            <div class="level__top"><svg class="px" width="44" height="40" aria-hidden="true"><use href="assets/icons.svg#star"/></svg><span class="tag">NÍVEL 1</span></div>
+            <h3>Descobrir</h3>
+            <p>Conceitos de gamificação e metodologias ativas, com exemplos da sala de aula.</p>
+            <div class="blocks" aria-label="Progresso 1 de 3"><span></span><span></span><span></span></div>
+          </article>
+          <article class="card level reveal" data-progress="2">
+            <div class="level__top"><svg class="px" width="32" height="32" aria-hidden="true"><use href="assets/icons.svg#coin"/></svg><span class="tag">NÍVEL 2</span></div>
+            <h3>Criar</h3>
+            <p>Ferramentas digitais e IA para montar desafios, recompensas e feedback.</p>
+            <div class="blocks" aria-label="Progresso 2 de 3"><span></span><span></span><span></span></div>
+          </article>
+          <article class="card level reveal" data-progress="3">
+            <div class="level__top"><svg class="px" width="36" height="32" aria-hidden="true"><use href="assets/icons.svg#heart"/></svg><span class="tag">NÍVEL 3</span></div>
+            <h3>Aplicar</h3>
+            <p>Atividades gamificadas na sua turma, com a estrutura que a escola já tem.</p>
+            <div class="blocks" aria-label="Progresso 3 de 3"><span></span><span></span><span></span></div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section section--surface" id="projetos">
+      <div class="container">
+        <header class="section__head reveal">
+          <span class="eyebrow">PROJETOS DO HUB</span>
+          <h2>Escolha sua fase</h2>
+          <p>O GamificaPampa é um hub. Cada projeto é uma fase nova, e todas levam IA e gamificação para quem ensina.</p>
+        </header>
+        <div class="projects">
+          <article class="card project reveal">
+            <div class="project__tags"><span class="tag tag--brand">FASE 1</span><span class="tag"><i class="dot"></i>Em andamento</span></div>
+            <h3 class="project__title">GamificaEdu</h3>
+            <p class="project__subtitle">Formação Continuada em Gamificação para Professores da Educação Básica</p>
+            <p>Oficinas em escolas públicas para professores usarem gamificação nas aulas, com a infraestrutura da escola e recursos de baixo custo.</p>
+            <ul class="meta">
+              <li>UNIPAMPA, Campus Alegrete</li>
+              <li>Novembro de 2025 a outubro de 2027</li>
+            </ul>
+            <a class="btn btn--primary" href="https://github.com/GamificaPampa">Ver projeto</a>
+          </article>
+          <article class="project project--locked reveal">
+            <svg class="px lock" width="64" height="64" aria-hidden="true"><use href="assets/icons.svg#lock"/></svg>
+            <span class="tag tag--surface">FASE 2</span>
+            <h3>Próxima fase em breve</h3>
+            <p>Novos projetos de IA e gamificação para professores vão entrar no hub.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="missoes">
+      <div class="container">
+        <header class="section__head reveal">
+          <span class="eyebrow">MISSÕES DO GAMIFICAEDU</span>
+          <h2>Três missões para cumprir</h2>
+        </header>
+        <div class="grid grid--3">
+          <article class="mission reveal">
+            <span class="badge"><svg class="px" width="32" height="32" aria-hidden="true"><use href="assets/icons.svg#coin"/></svg></span>
+            <div><h3>Mapear</h3><p>Ferramentas e técnicas de gamificação que funcionam na Educação Básica.</p></div>
+          </article>
+          <article class="mission reveal">
+            <span class="badge"><svg class="px" width="44" height="40" aria-hidden="true"><use href="assets/icons.svg#star"/></svg></span>
+            <div><h3>Formar</h3><p>Oficinas de formação continuada para professores das escolas públicas.</p></div>
+          </article>
+          <article class="mission reveal">
+            <span class="badge"><svg class="px" width="36" height="32" aria-hidden="true"><use href="assets/icons.svg#heart"/></svg></span>
+            <div><h3>Avaliar</h3><p>O impacto nas práticas dos professores e no engajamento dos alunos.</p></div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="cta">
+      <div class="container cta__inner reveal">
+        <div class="cta__icons" aria-hidden="true">
+          <svg class="px spin" width="32" height="32"><use href="assets/icons.svg#coin"/></svg>
+          <svg class="px" width="44" height="40"><use href="assets/icons.svg#star"/></svg>
+          <svg class="px spin" width="32" height="32"><use href="assets/icons.svg#coin"/></svg>
+        </div>
+        <h2>Pronto para o próximo nível?</h2>
+        <p>Acompanhe os projetos e os materiais abertos<br>do GamificaPampa no GitHub.</p>
+        <a class="btn btn--primary" href="https://github.com/GamificaPampa">Ver no GitHub</a>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="container footer__inner">
+      <img src="assets/gamificapampa-horizontal.svg" alt="GamificaPampa" width="234" height="52">
+      <div class="footer__info">
+        <strong>Gamificação e IA para professores.</strong>
+        <span>Iniciativa de extensão da UNIPAMPA, Campus Alegrete</span>
+      </div>
+    </div>
+  </footer>
+
+  <script src="script.js" defer></script>
+</body>
+</html>
