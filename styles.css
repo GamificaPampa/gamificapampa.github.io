@@ -479,7 +479,7 @@ body:has(dialog[open]) { overflow: hidden; }
 .mailer__to { margin-top: 16px; color: var(--soft); font-size: 15px; text-align: center; overflow-wrap: anywhere; }
 .mailer__to.is-error { color: var(--pink); font-weight: 700; }
 .mailer.is-sent > :not(.mailer__done) { display: none; }
-.mailer__done { display: grid; justify-items: center; gap: 12px; padding: 12px 0; text-align: center; animation: pop .5s var(--bounce); }
+.mailer__done:not([hidden]) { display: grid; justify-items: center; gap: 12px; padding: 12px 0; text-align: center; animation: pop .5s var(--bounce); }
 .mailer__done svg { animation: bump 1s var(--bounce) .3s; }
 .mailer__done h3 { font-size: clamp(32px, 6vw, 48px); }
 .mailer__done p { font-size: 18px; font-weight: 600; }
