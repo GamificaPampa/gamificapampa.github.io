@@ -164,7 +164,7 @@ document.querySelectorAll('dialog.ficha').forEach((sheet) => {
 // Building the e-mail to both coordinators from the form, so the visitor only needs to press send.
 const mailer = document.forms.mailer;
 const recipients = 'silvioquincozes@unipampa.edu.br,paulosilas@unipampa.edu.br';
-const projectNames = { ambos: 'o Educador 5.0 e o GamificaEdu', educador: 'o Educador 5.0', gamificaedu: 'o GamificaEdu' };
+const projects = 'o Educador 5.0 e o GamificaEdu';
 const roles = {
   professor: (school) => `sou professor(a) na escola ${school}`,
   gestao: (school) => `faço parte da equipe gestora da escola ${school}`,
@@ -173,7 +173,6 @@ const roles = {
 const composeMail = () => {
   const name = mailer.elements.nome.value.trim() || '[seu nome]';
   const school = mailer.elements.escola.value.trim() || '[nome da escola]';
-  const projects = projectNames[mailer.elements.projeto.value];
   const extra = mailer.elements.mensagem.value.trim();
   const subject = `Interesse em levar ${projects} para a escola ${school}`;
   const body = [
@@ -211,11 +210,7 @@ $('#mail-copy').addEventListener('click', async (event) => {
   setTimeout(() => { label.textContent = 'Copiar mensagem'; }, 2200);
 });
 
-// Jumping from a project sheet to the e-mail form with that project already picked.
+// Closing the project sheet when the visitor jumps from it to the e-mail form.
 document.querySelectorAll('[data-contato]').forEach((link) => {
-  link.addEventListener('click', () => {
-    link.closest('dialog').close();
-    mailer.elements.projeto.value = link.dataset.contato;
-    updateMail();
-  });
+  link.addEventListener('click', () => link.closest('dialog').close());
 });
