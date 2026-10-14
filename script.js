@@ -3,6 +3,23 @@ document.documentElement.classList.add('js');
 const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
 const $ = (selector) => document.querySelector(selector);
 
+// Restarting a CSS animation class, so the same effect can play again on every hit.
+const replay = (element, className) => {
+  element.classList.remove(className);
+  void element.offsetWidth;
+  element.classList.add(className);
+};
+
+// Opening and closing the section menu on small screens, and closing it after a pick.
+const nav = $('.nav');
+const menuButton = $('#menu-button');
+const setMenu = (open) => {
+  nav.classList.toggle('is-open', open);
+  menuButton.setAttribute('aria-expanded', String(open));
+};
+menuButton.addEventListener('click', () => setMenu(!nav.classList.contains('is-open')));
+nav.querySelectorAll('.nav__links a').forEach((link) => link.addEventListener('click', () => setMenu(false)));
+
 // Revealing sections and filling the level blocks as they enter the screen.
 const revealObserver = new IntersectionObserver((entries) => {
   for (const entry of entries) {
@@ -13,19 +30,20 @@ const revealObserver = new IntersectionObserver((entries) => {
       const progress = Number(element.dataset.progress);
       element.querySelectorAll('.blocks span').forEach((block, index) => block.classList.toggle('on', index < progress));
       const plus = Object.assign(document.createElement('span'), { className: 'plus', textContent: `+${progress * 10} XP` });
-      setTimeout(() => element.append(plus), 700);
-      setTimeout(() => plus.remove(), 1800);
+      setTimeout(() => element.append(plus), 900);
+      setTimeout(() => plus.remove(), 2000);
     }
     revealObserver.unobserve(element);
   }
-}, { threshold: 0.25 });
+}, { threshold: 0.2 });
 document.querySelectorAll('.reveal').forEach((element) => revealObserver.observe(element));
 
-// Growing the striped XP bar under the nav as the visitor scrolls the page.
+// Sliding the striped XP bar under the nav as the visitor scrolls the page.
 const scrollBar = $('#scrollxp');
 const updateScrollBar = () => {
   const scrollable = document.documentElement.scrollHeight - innerHeight;
-  scrollBar.style.width = `${scrollable > 0 ? (scrollY / scrollable) * 100 : 0}%`;
+  const progress = scrollable > 0 ? (scrollY / scrollable) * 100 : 0;
+  scrollBar.style.transform = `translateX(${progress - 100}%)`;
 };
 addEventListener('scroll', updateScrollBar, { passive: true });
 updateScrollBar();
@@ -33,6 +51,7 @@ updateScrollBar();
 // Running the hero mini game, where clicks on the trophy and coins earn XP and level up.
 const game = $('#game');
 const effects = $('#fx');
+const heroBot = $('#hero-bot');
 const missions = [
   'Missão desbloqueada: criar sua primeira aula gamificada',
   'Missão desbloqueada: montar um ranking da turma',
@@ -42,12 +61,6 @@ const missions = [
 ];
 let experience = 0;
 let level = 1;
-
-const bump = (element) => {
-  element.classList.remove('bump');
-  void element.offsetWidth;
-  element.classList.add('bump');
-};
 
 // Positioning each effect relative to the game screen, at the point of the click.
 const pointIn = (event) => {
@@ -63,7 +76,7 @@ const spawn = (className, x, y, styles = {}, text = '') => {
 };
 
 // Throwing square pixels in random directions, like the debris of a retro explosion.
-const burst = (x, y, count, spread, colors = ['#F07916', '#FFFFFF', '#FCE4CC']) => {
+const burst = (x, y, count, spread, colors = ['#ffd23f', '#ff5f8f', '#4fd6a6', '#4da3ff', '#ffffff']) => {
   if (reducedMotion) return;
   for (let index = 0; index < count; index += 1) {
     const angle = Math.random() * Math.PI * 2;
@@ -81,15 +94,17 @@ const burst = (x, y, count, spread, colors = ['#F07916', '#FFFFFF', '#FCE4CC']) 
 const levelUp = () => {
   level += 1;
   $('#level').textContent = level;
-  bump($('#level'));
+  replay($('#level'), 'bump');
   $('#caption').textContent = missions[Math.min(level - 1, missions.length - 1)];
-  game.classList.remove('level-up');
-  void game.offsetWidth;
-  game.classList.add('level-up');
+  replay(game, 'level-up');
+  if (!reducedMotion) replay(heroBot, 'jump');
   const box = game.getBoundingClientRect();
   spawn('banner', box.width / 2, box.height * 0.42, {}, 'SUBIU DE NÍVEL!');
   burst(box.width / 2, box.height * 0.45, 48, 260);
 };
+
+// Letting Bit go back to its idle bobbing once the jump ends.
+heroBot.addEventListener('animationend', () => heroBot.classList.remove('jump'));
 
 const gain = (points, x, y) => {
   experience += points;
@@ -98,9 +113,9 @@ const gain = (points, x, y) => {
     experience -= 100;
     levelUp();
   }
-  $('#xp').style.width = `${experience}%`;
+  $('#xp').style.transform = `translateX(${experience - 100}%)`;
   $('#xp-count').textContent = (level - 1) * 100 + experience;
-  bump($('#xp-count'));
+  replay($('#xp-count'), 'bump');
 };
 
 $('#trophy').addEventListener('click', (event) => {
@@ -117,7 +132,7 @@ document.querySelectorAll('.coin').forEach((coin) => {
   coin.addEventListener('click', (event) => {
     const point = pointIn(event);
     coin.classList.add('collected');
-    burst(point.x, point.y, 10, 70, ['#F07916', '#FCE4CC']);
+    burst(point.x, point.y, 10, 70, ['#ffd23f', '#ffffff']);
     gain(25, point.x, point.y);
     setTimeout(() => coin.classList.remove('collected'), 3000);
   });

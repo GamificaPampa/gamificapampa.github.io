@@ -4,17 +4,17 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>GamificaPampa | Gamificação e IA para professores</title>
-  <meta name="description" content="O GamificaPampa reúne projetos da UNIPAMPA que ensinam gamificação e inteligência artificial para professores da Educação Básica.">
+  <meta name="description" content="O GamificaPampa reúne projetos de extensão da UNIPAMPA em gamificação e inteligência artificial para professores da Educação Básica.">
   <meta property="og:title" content="GamificaPampa">
-  <meta property="og:description" content="Gamificação e IA para professores.">
+  <meta property="og:description" content="Gamificação e IA para professores da Educação Básica, em projetos de extensão da UNIPAMPA.">
   <meta property="og:image" content="https://gamificapampa.github.io/assets/gamificapampa-github-avatar.png">
   <meta property="og:type" content="website">
-  <meta name="theme-color" content="#013968">
+  <meta name="theme-color" content="#5fbcff">
   <link rel="icon" type="image/svg+xml" href="assets/gamificapampa-icone.svg">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css?v=3">
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css?v=4">
 <style>/* tipografia automatica (viuvas, orfas e forcas) */
 p, li, blockquote {
   orphans: 2;
@@ -25,154 +25,368 @@ p, li, blockquote {
 </style>
 </head>
 <body>
+  <svg class="sprite" aria-hidden="true">
+    <symbol id="bot" viewBox="0 0 100 100"><line x1="50" y1="8" x2="50" y2="22" stroke="#2f2a4a" stroke-width="4"/><circle cx="50" cy="8" r="6" fill="#ff4d4d" stroke="#2f2a4a" stroke-width="2"/><rect x="18" y="22" width="64" height="48" rx="14" style="fill: var(--bot, #4da3ff)" stroke="#2f2a4a" stroke-width="4"/><circle cx="38" cy="44" r="9" fill="#fff"/><circle cx="62" cy="44" r="9" fill="#fff"/><circle cx="40" cy="45" r="4" fill="#2f2a4a"/><circle cx="64" cy="45" r="4" fill="#2f2a4a"/><circle cx="27" cy="57" r="4" fill="#ff8fb0"/><circle cx="73" cy="57" r="4" fill="#ff8fb0"/><path d="M40 60 q10 7 20 0" stroke="#2f2a4a" stroke-width="4" fill="none" stroke-linecap="round"/><rect x="30" y="72" width="40" height="20" rx="6" style="fill: var(--bot-2, #8cc4ff)" stroke="#2f2a4a" stroke-width="4"/></symbol>
+    <symbol id="cloud" viewBox="0 0 200 100"><circle cx="62" cy="62" r="32" fill="#fff"/><circle cx="104" cy="44" r="40" fill="#fff"/><circle cx="148" cy="62" r="28" fill="#fff"/><rect x="24" y="58" width="156" height="38" rx="19" fill="#fff"/></symbol>
+    <symbol id="star" viewBox="0 0 24 24"><path d="M12 0c1 7.5 4.5 11 12 12-7.5 1-11 4.5-12 12-1-7.5-4.5-11-12-12 7.5-1 11-4.5 12-12z" fill="#ffd23f"/></symbol>
+    <symbol id="coin" viewBox="0 0 44 44"><circle cx="22" cy="22" r="19" fill="#ffd23f" stroke="#2f2a4a" stroke-width="4"/><circle cx="22" cy="22" r="12.5" fill="none" stroke="#e6b400" stroke-width="2.5"/><text x="22" y="27" text-anchor="middle" font-size="13" font-weight="700" fill="#2f2a4a">XP</text></symbol>
+    <symbol id="heart" viewBox="0 0 24 22"><path d="M12 20C5 15 2 11.5 2 7.5 2 4.5 4.3 2 7.2 2c2 0 3.7 1 4.8 2.8C13.1 3 14.8 2 16.8 2 19.7 2 22 4.5 22 7.5 22 11.5 19 15 12 20z" fill="#ff5f8f" stroke="#2f2a4a" stroke-width="2.5" stroke-linejoin="round"/></symbol>
+    <symbol id="lock" viewBox="0 0 48 52"><path d="M13 22v-7a11 11 0 0 1 22 0v7" fill="none" stroke="#2f2a4a" stroke-width="6"/><rect x="4" y="21" width="40" height="28" rx="9" fill="#ffd23f" stroke="#2f2a4a" stroke-width="5"/><circle cx="24" cy="35" r="4.5" fill="#2f2a4a"/></symbol>
+    <symbol id="play" viewBox="0 0 28 28"><rect x="2" y="2" width="24" height="24" rx="7" fill="#4fd6a6" stroke="#2f2a4a" stroke-width="3"/><path d="M10.5 8.5l8 5.5-8 5.5z" fill="#fff" stroke="#2f2a4a" stroke-width="2.4" stroke-linejoin="round"/></symbol>
+    <symbol id="tri" viewBox="0 0 24 24"><path d="M6 4l14 8-14 8z" fill="#fff" stroke="#2f2a4a" stroke-width="3" stroke-linejoin="round"/></symbol>
+  </svg>
+
   <header class="nav">
     <div class="container nav__inner">
       <a href="#inicio" class="nav__logo" aria-label="GamificaPampa, início">
-        <img src="assets/gamificapampa-horizontal.svg" alt="GamificaPampa" width="273" height="60">
+        <img src="assets/gamificapampa-horizontal.svg" alt="GamificaPampa" width="650" height="144">
       </a>
-      <nav class="nav__links" aria-label="Seções">
-        <a href="#inicio">Início</a>
+      <button class="nav__toggle" id="menu-button" type="button" aria-expanded="false" aria-controls="menu"><span class="burger" aria-hidden="true"></span>Menu</button>
+      <nav class="nav__links" id="menu" aria-label="Seções">
         <a href="#como-funciona">Como funciona</a>
         <a href="#projetos">Projetos</a>
-        <a href="#missoes">Missões</a>
+        <a href="#escola">Para a escola</a>
+        <a href="#codigo-mirim">Código Mirim</a>
+        <a href="#contato">Contato</a>
+        <a class="nav__menu-gh" href="https://github.com/GamificaPampa">Ver no GitHub</a>
       </nav>
-      <a class="btn btn--secondary nav__cta" href="https://github.com/GamificaPampa">Ver no GitHub</a>
+      <a class="btn btn--yellow nav__cta" href="https://github.com/GamificaPampa">Ver no GitHub</a>
     </div>
     <div class="scrollxp" aria-hidden="true"><span id="scrollxp"></span></div>
   </header>
 
   <main>
-    <section class="hero" id="inicio">
-      <div class="sparkles" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i></div>
-      <div class="container hero__inner">
-        <div class="hero__text">
-          <span class="pill"><svg class="px" width="16" height="16" aria-hidden="true"><use href="assets/icons.svg#coin"/></svg>APERTE START</span>
-          <h1>Sua aula no <span class="accent">modo jogo</span>.</h1>
-          <p class="lead">O GamificaPampa reúne projetos da UNIPAMPA que ensinam gamificação e inteligência artificial para professores da Educação Básica. Menos teoria solta, mais desafios, recompensas e alunos engajados.</p>
-          <div class="ctas">
-            <a class="btn btn--primary" href="#projetos">Conheça os projetos</a>
-            <a class="btn btn--secondary" href="https://github.com/GamificaPampa">Ver no GitHub</a>
-          </div>
-        </div>
+    <div class="scene sky">
+      <div class="scenery" aria-hidden="true">
+        <svg class="cloud" style="--x: 4vw; --w: 190px; top: 3%; --t: 70s; --d: -12s"><use href="#cloud"/></svg>
+        <svg class="cloud" style="--x: 72vw; --w: 230px; top: 9%; --t: 95s; --d: -60s"><use href="#cloud"/></svg>
+        <svg class="cloud" style="--x: 40vw; --w: 130px; top: 30%; --t: 60s; --d: -35s"><use href="#cloud"/></svg>
+        <svg class="cloud" style="--x: 84vw; --w: 170px; top: 52%; --t: 80s; --d: -5s"><use href="#cloud"/></svg>
+        <svg class="cloud" style="--x: 10vw; --w: 150px; top: 66%; --t: 105s; --d: -70s"><use href="#cloud"/></svg>
+        <span class="glyph" style="left: 5%; top: 12%">&lt;/&gt;</span>
+        <span class="glyph" style="left: 46%; top: 5%; --d: -2s">[ ]</span>
+        <span class="glyph" style="right: 6%; top: 24%; --d: -4s">{ }</span>
+        <span class="glyph" style="left: 3%; top: 44%; --d: -1s">01</span>
+        <span class="glyph" style="right: 4%; top: 62%; --d: -3s">if</span>
+        <span class="glyph" style="left: 42%; top: 58%; --d: -5s">&#59;</span>
+        <div class="hills"></div>
+      </div>
 
-        <div class="screen" id="game">
-          <div class="screen__crt" aria-hidden="true"></div>
-          <div class="hud" aria-hidden="true">
-            <span class="hud__level">NÍVEL <b id="level">1</b></span>
-            <span class="xpbar"><span class="xpbar__fill" id="xp"></span></span>
-            <span class="hud__xp"><b id="xp-count">0</b> XP</span>
-            <span class="lives">
-              <svg class="px heart" width="22" height="20"><use href="assets/icons.svg#heart"/></svg>
-              <svg class="px heart" width="22" height="20"><use href="assets/icons.svg#heart"/></svg>
-              <svg class="px heart" width="22" height="20"><use href="assets/icons.svg#heart"/></svg>
-            </span>
+      <section class="hero" id="inicio">
+        <div class="container hero__inner">
+          <div class="hero__text">
+            <span class="pill pill--white start"><svg width="28" height="28"><use href="#play"/></svg>Aperte <b>START</b></span>
+            <h1 class="loud title-hop"><span>Sua</span> <span>aula</span> <span>no</span> <span class="yellow">modo</span> <span class="pink">jogo</span></h1>
+            <p class="tagline">Gamificação e IA para professores</p>
+            <p class="lead">O GamificaPampa reúne projetos de extensão da UNIPAMPA, Campus Alegrete, que levam gamificação e inteligência artificial a professores da Educação Básica, em parceria com escolas públicas de Alegrete/RS.</p>
+            <div class="ctas">
+              <a class="btn btn--yellow" href="#projetos">Conheça os projetos</a>
+              <a class="btn btn--white" href="https://github.com/GamificaPampa">Ver no GitHub</a>
+            </div>
+            <div class="hello">
+              <svg class="bot" id="hero-bot" width="96" height="96" aria-hidden="true"><use href="#bot"/></svg>
+              <p class="bubble">Oi! Eu sou o Bit. Clique no troféu e nas moedas para ganhar XP.</p>
+            </div>
           </div>
-          <button class="trophy" id="trophy" type="button" aria-label="Clique no troféu para ganhar XP">
-            <img src="assets/gamificapampa-icone-invertido.svg" alt="" width="220" height="220">
-          </button>
-          <p class="screen__caption" id="caption" aria-live="polite">Missão desbloqueada: criar sua primeira aula gamificada</p>
-          <p class="screen__hint" aria-hidden="true">Clique no troféu e nas moedas</p>
-          <svg class="px float float--1" width="53" height="48" aria-hidden="true"><use href="assets/icons.svg#star"/></svg>
-          <svg class="px float float--2 coin" width="32" height="32" aria-hidden="true"><use href="assets/icons.svg#coin"/></svg>
-          <svg class="px float float--3 coin" width="26" height="26" aria-hidden="true"><use href="assets/icons.svg#coin"/></svg>
-          <svg class="px float float--4" width="35" height="32" aria-hidden="true"><use href="assets/icons.svg#star"/></svg>
-          <div class="fx" id="fx" aria-hidden="true"></div>
+
+          <div class="screen" id="game">
+            <div class="screen__sky" aria-hidden="true">
+              <svg class="twinkle" style="left: 8%; top: 24%" width="18" height="18"><use href="#star"/></svg>
+              <svg class="twinkle" style="right: 12%; top: 22%; --d: -1s" width="14" height="14"><use href="#star"/></svg>
+              <svg class="twinkle" style="left: 16%; bottom: 14%; --d: -2s" width="14" height="14"><use href="#star"/></svg>
+              <svg class="twinkle" style="right: 20%; bottom: 20%; --d: -3s" width="20" height="20"><use href="#star"/></svg>
+              <span class="glyph glyph--faint" style="left: 6%; top: 52%">&lt;/&gt;</span>
+              <span class="glyph glyph--faint" style="right: 6%; top: 46%; --d: -3s">{ }</span>
+            </div>
+            <div class="hud" aria-hidden="true">
+              <span class="hud__level">NÍVEL <b id="level">1</b></span>
+              <span class="xpbar"><span class="xpbar__fill" id="xp"></span></span>
+              <span class="hud__xp"><b id="xp-count">0</b> XP</span>
+              <span class="lives">
+                <svg class="heart" width="22" height="20"><use href="#heart"/></svg>
+                <svg class="heart" width="22" height="20"><use href="#heart"/></svg>
+                <svg class="heart" width="22" height="20"><use href="#heart"/></svg>
+              </span>
+            </div>
+            <button class="trophy" id="trophy" type="button" aria-label="Clique no troféu para ganhar XP">
+              <img src="assets/gamificapampa-icone-invertido.svg" alt="" width="220" height="220">
+            </button>
+            <p class="screen__caption" id="caption" aria-live="polite">Missão desbloqueada: criar sua primeira aula gamificada</p>
+            <svg class="float float--1" width="34" height="34" aria-hidden="true"><use href="#star"/></svg>
+            <svg class="float float--2 coin" width="46" height="46" aria-hidden="true"><use href="#coin"/></svg>
+            <svg class="float float--3 coin" width="44" height="44" aria-hidden="true"><use href="#coin"/></svg>
+            <svg class="float float--4" width="26" height="26" aria-hidden="true"><use href="#star"/></svg>
+            <div class="fx" id="fx" aria-hidden="true"></div>
+          </div>
         </div>
+      </section>
+
+      <section class="section section--last" id="como-funciona">
+        <div class="container">
+          <div class="hudrow reveal">
+            <span class="pill pill--blue">COMO FUNCIONA</span>
+            <span class="xp" style="--xp: 20%"><b>XP</b><span class="xp__bar"><i></i></span></span>
+          </div>
+          <div class="journey">
+            <header class="section__head reveal">
+              <h2 class="loud">Sua jornada em <span class="yellow">três níveis</span></h2>
+              <p>Cada nível junta teoria e prática, do primeiro contato com a gamificação até a aula pronta para a turma.</p>
+            </header>
+            <div class="stairs">
+              <article class="card level level--mint reveal" data-progress="1">
+                <span class="tag">NÍVEL 1</span>
+                <h3>Descobrir</h3>
+                <p>Conceitos de gamificação e metodologias ativas, com exemplos da sala de aula.</p>
+                <div class="blocks" aria-label="Progresso 1 de 3"><span></span><span></span><span></span></div>
+              </article>
+              <article class="card level level--blue reveal" data-progress="2">
+                <span class="tag">NÍVEL 2</span>
+                <h3 class="loud">Criar</h3>
+                <p>Ferramentas digitais e IA para montar desafios, recompensas e feedback.</p>
+                <div class="blocks" aria-label="Progresso 2 de 3"><span></span><span></span><span></span></div>
+              </article>
+              <article class="card level level--orange reveal" data-progress="3">
+                <div class="stairs__bot" aria-hidden="true">
+                  <svg class="bot" width="84" height="84"><use href="#bot"/></svg>
+                  <svg class="token" width="54" height="54"><use href="#coin"/></svg>
+                </div>
+                <span class="tag">NÍVEL 3</span>
+                <h3 class="loud">Aplicar</h3>
+                <p>Atividades gamificadas na sua turma, com a estrutura que a escola já tem.</p>
+                <div class="blocks" aria-label="Progresso 3 de 3"><span></span><span></span><span></span></div>
+              </article>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <div class="scene sky">
+      <div class="scenery" aria-hidden="true">
+        <svg class="cloud" style="--x: 58vw; --w: 200px; top: 2%; --t: 85s; --d: -25s"><use href="#cloud"/></svg>
+        <svg class="cloud" style="--x: 6vw; --w: 150px; top: 22%; --t: 65s; --d: -48s"><use href="#cloud"/></svg>
+        <svg class="cloud" style="--x: 78vw; --w: 180px; top: 44%; --t: 90s; --d: -8s"><use href="#cloud"/></svg>
+        <svg class="cloud" style="--x: 30vw; --w: 140px; top: 70%; --t: 75s; --d: -55s"><use href="#cloud"/></svg>
+        <span class="glyph" style="right: 5%; top: 8%">[ ]</span>
+        <span class="glyph" style="left: 3%; top: 30%; --d: -2s">01</span>
+        <span class="glyph" style="right: 3%; top: 54%; --d: -4s">&lt;/&gt;</span>
+        <span class="glyph" style="left: 4%; top: 76%; --d: -1s">{ }</span>
+        <div class="hills"></div>
+      </div>
+
+      <section class="section" id="projetos">
+        <div class="container">
+          <div class="hudrow reveal">
+            <span class="pill pill--pink">PROJETOS DO HUB</span>
+            <span class="xp" style="--xp: 40%"><b>XP</b><span class="xp__bar"><i></i></span></span>
+          </div>
+          <header class="section__head reveal">
+            <h2 class="loud">Escolha sua <span class="pink">fase</span></h2>
+            <p>O GamificaPampa é um hub, e cada projeto entra como uma fase. A Fase 1 tem dois projetos em andamento, um de gamificação e outro de IA.</p>
+          </header>
+          <div class="projects">
+            <article class="card project reveal">
+              <div class="project__banner project__banner--mint">
+                <div class="tags"><span class="tag tag--yellow">FASE 1</span><span class="tag"><i class="dot"></i>Em andamento</span><span class="tag tag--ink">Gamificação</span></div>
+                <h3 class="loud project__title">Gamifica<span class="pink">Edu</span></h3>
+              </div>
+              <div class="project__body">
+                <p class="project__subtitle">Formação Continuada em Gamificação para Professores da Educação Básica</p>
+                <p>Oficinas em escolas públicas para professores usarem gamificação nas aulas, com a infraestrutura da escola e recursos de baixo custo.</p>
+                <ol class="missions">
+                  <li class="mission" style="--c: var(--mint)"><span class="mission__label">MISSÃO 1</span><b>Mapear</b><span>Ferramentas e técnicas de gamificação que funcionam na Educação Básica.</span></li>
+                  <li class="mission" style="--c: var(--blue)"><span class="mission__label">MISSÃO 2</span><b>Formar</b><span>Oficinas de formação continuada para professores das escolas públicas.</span></li>
+                  <li class="mission" style="--c: var(--orange)"><span class="mission__label">MISSÃO 3</span><b>Avaliar</b><span>O impacto nas práticas dos professores e no engajamento dos alunos.</span></li>
+                </ol>
+                <dl class="meta">
+                  <div><dt>Coordenação</dt><dd>Prof. Paulo Silas Severo de Souza</dd></div>
+                  <div><dt>Período</dt><dd>01/11/2025 a 31/10/2027</dd></div>
+                  <div><dt>Onde</dt><dd>UNIPAMPA, Campus Alegrete</dd></div>
+                </dl>
+                <a class="btn btn--yellow" href="https://github.com/GamificaPampa"><svg width="22" height="22" aria-hidden="true"><use href="#tri"/></svg>Ver no GitHub</a>
+              </div>
+            </article>
+
+            <article class="card project reveal">
+              <div class="project__banner project__banner--blue">
+                <div class="tags"><span class="tag tag--yellow">FASE 1</span><span class="tag"><i class="dot"></i>Em andamento</span><span class="tag tag--ink">IA</span></div>
+                <h3 class="loud project__title">Educador <span class="yellow">5.0</span></h3>
+              </div>
+              <div class="project__body">
+                <p class="project__subtitle">Capacitação de Professores para o Uso de Inteligência Artificial na Educação Básica</p>
+                <p>Formação presencial com workshops, seminários e ações práticas, para professores usarem IA em planos de aula interativos, questões automatizadas e feedbacks personalizados aos alunos.</p>
+                <ol class="missions">
+                  <li class="mission" style="--c: var(--purple)"><span class="mission__label">ETAPA 1</span><b>Preparar</b><span>Levantar as necessidades dos professores e escolher as ferramentas de IA.</span></li>
+                  <li class="mission" style="--c: var(--pink)"><span class="mission__label">ETAPA 2</span><b>Treinar</b><span>Workshops e seminários presenciais, com teoria e prática.</span></li>
+                  <li class="mission" style="--c: var(--yellow)"><span class="mission__label">ETAPA 3</span><b>Acompanhar</b><span>Feedback contínuo, análise das atividades e observação das novas ferramentas em sala de aula.</span></li>
+                </ol>
+                <dl class="meta">
+                  <div><dt>Coordenação</dt><dd>Prof. Silvio Ereno Quincozes</dd></div>
+                  <div><dt>Período</dt><dd>15/10/2025 a 31/12/2026</dd></div>
+                  <div><dt>Onde</dt><dd>UNIPAMPA, Campus Alegrete</dd></div>
+                </dl>
+                <a class="btn btn--yellow" href="https://github.com/GamificaPampa"><svg width="22" height="22" aria-hidden="true"><use href="#tri"/></svg>Ver no GitHub</a>
+              </div>
+            </article>
+
+            <article class="project project--locked reveal">
+              <svg class="lock" width="56" height="60" aria-hidden="true"><use href="#lock"/></svg>
+              <div>
+                <span class="tag">FASE 2</span>
+                <h3>Próxima fase em breve</h3>
+                <p>Novos projetos de IA e gamificação para professores vão entrar no hub.</p>
+              </div>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section class="section section--last" id="escola">
+        <div class="container">
+          <div class="hudrow reveal">
+            <span class="pill pill--purple">PARA A ESCOLA</span>
+            <span class="xp" style="--xp: 60%"><b>XP</b><span class="xp__bar"><i></i></span></span>
+          </div>
+          <header class="section__head reveal">
+            <h2 class="loud">O que a escola <span class="yellow">ganha</span></h2>
+            <p class="pill pill--white">Três jogadores na mesma escola</p>
+          </header>
+          <div class="players">
+            <article class="card player reveal" style="--c: var(--yellow)">
+              <svg class="bot" style="--bot: #ffd23f; --bot-2: #fff1a6" width="88" height="88" aria-hidden="true"><use href="#bot"/></svg>
+              <h3 class="pill">Professores</h3>
+              <ul>
+                <li>Formação continuada presencial, com oficinas, workshops e seminários.</li>
+                <li>Técnicas de gamificação e IA para planos de aula, questões e feedbacks aos alunos.</li>
+                <li>Mais repertório para aulas dinâmicas, que é o resultado esperado pelo GamificaEdu.</li>
+              </ul>
+              <span class="trail" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
+            </article>
+            <article class="card player reveal" style="--c: var(--pink)">
+              <svg class="bot" style="--bot: #ff5f8f; --bot-2: #ffc4d6; --d: -.8s" width="88" height="88" aria-hidden="true"><use href="#bot"/></svg>
+              <h3 class="pill">Gestão escolar</h3>
+              <ul>
+                <li>Diagnóstico feito com a escola, com reuniões, questionários e análise da infraestrutura tecnológica.</li>
+                <li>No GamificaEdu, oficinas pensadas para a estrutura que a escola já tem e para recursos de baixo custo.</li>
+                <li>Relatório final com indicadores qualitativos e quantitativos e propostas de continuidade.</li>
+              </ul>
+              <span class="trail" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
+            </article>
+            <article class="card player reveal" style="--c: var(--blue)">
+              <svg class="bot" style="--d: -1.6s" width="88" height="88" aria-hidden="true"><use href="#bot"/></svg>
+              <h3 class="pill">Estudantes</h3>
+              <ul>
+                <li>Aulas com desafios, recompensas e feedback constante, em que os alunos viram protagonistas.</li>
+                <li>Feedbacks personalizados e ferramentas digitais que ajudam a personalizar o ensino.</li>
+                <li>Espera-se mais motivação e melhor desempenho dos alunos, um resultado que ainda não foi medido.</li>
+              </ul>
+              <span class="trail" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
+            </article>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <section class="scene night section" id="como-entrar">
+      <div class="scenery" aria-hidden="true">
+        <svg class="twinkle" style="left: 6%; top: 8%" width="22" height="22"><use href="#star"/></svg>
+        <svg class="twinkle" style="left: 34%; top: 5%; --d: -1.2s" width="16" height="16"><use href="#star"/></svg>
+        <svg class="twinkle" style="right: 3%; top: 3%; --d: -2.4s" width="20" height="20"><use href="#star"/></svg>
+        <svg class="twinkle" style="right: 5%; top: 40%; --d: -.6s" width="16" height="16"><use href="#star"/></svg>
+        <svg class="twinkle" style="left: 3%; top: 62%; --d: -1.8s" width="18" height="18"><use href="#star"/></svg>
+        <svg class="twinkle" style="left: 52%; bottom: 6%; --d: -3s" width="22" height="22"><use href="#star"/></svg>
+        <svg class="twinkle" style="right: 8%; bottom: 10%; --d: -2s" width="14" height="14"><use href="#star"/></svg>
+        <span class="glyph glyph--faint" style="left: 4%; top: 30%">if</span>
+        <span class="glyph glyph--faint" style="right: 10%; top: 24%; --d: -3s">&lt;/&gt;</span>
+        <span class="glyph glyph--faint" style="right: 4%; bottom: 22%; --d: -5s">{ }</span>
+      </div>
+      <div class="container">
+        <div class="hudrow reveal">
+          <span class="pill pill--mint">PASSO A PASSO</span>
+          <span class="xp" style="--xp: 75%"><b>XP</b><span class="xp__bar"><i></i></span></span>
+        </div>
+        <header class="section__head reveal">
+          <h2 class="night__title">Como a escola entra</h2>
+          <p>O caminho junta as etapas previstas nos dois projetos da Fase 1.</p>
+        </header>
+        <ol class="path">
+          <li class="path__step reveal" style="--c: var(--mint)"><span class="path__node">1</span><div class="path__card"><h3>Diagnóstico</h3><p>Reuniões e questionários com a escola para conhecer as necessidades dos professores e a infraestrutura tecnológica.</p></div></li>
+          <li class="path__step reveal" style="--c: var(--blue)"><span class="path__node">2</span><div class="path__card"><h3>Oficinas</h3><p>Oficinas, workshops e seminários presenciais, em módulos com teoria e prática.</p></div></li>
+          <li class="path__step reveal" style="--c: var(--orange)"><span class="path__node">3</span><div class="path__card"><h3>Aplicação em sala</h3><p>Os professores usam as novas ferramentas com a turma, com feedback contínuo e acompanhamento da equipe.</p></div></li>
+          <li class="path__step reveal" style="--c: var(--pink)"><span class="path__node">4</span><div class="path__card"><h3>Avaliação</h3><p>Questionários, entrevistas e um relatório final com indicadores e propostas de continuidade.</p></div></li>
+        </ol>
       </div>
     </section>
 
-    <section class="section" id="como-funciona">
-      <div class="container">
-        <header class="section__head reveal">
-          <span class="eyebrow">COMO FUNCIONA</span>
-          <h2>Sua jornada em três níveis</h2>
-          <p>Cada nível junta teoria e prática, do primeiro contato com a gamificação até a aula pronta para a turma.</p>
-        </header>
-        <div class="grid grid--3">
-          <article class="card level reveal" data-progress="1">
-            <div class="level__top"><svg class="px" width="44" height="40" aria-hidden="true"><use href="assets/icons.svg#star"/></svg><span class="tag">NÍVEL 1</span></div>
-            <h3>Descobrir</h3>
-            <p>Conceitos de gamificação e metodologias ativas, com exemplos da sala de aula.</p>
-            <div class="blocks" aria-label="Progresso 1 de 3"><span></span><span></span><span></span></div>
-          </article>
-          <article class="card level reveal" data-progress="2">
-            <div class="level__top"><svg class="px" width="32" height="32" aria-hidden="true"><use href="assets/icons.svg#coin"/></svg><span class="tag">NÍVEL 2</span></div>
-            <h3>Criar</h3>
-            <p>Ferramentas digitais e IA para montar desafios, recompensas e feedback.</p>
-            <div class="blocks" aria-label="Progresso 2 de 3"><span></span><span></span><span></span></div>
-          </article>
-          <article class="card level reveal" data-progress="3">
-            <div class="level__top"><svg class="px" width="36" height="32" aria-hidden="true"><use href="assets/icons.svg#heart"/></svg><span class="tag">NÍVEL 3</span></div>
-            <h3>Aplicar</h3>
-            <p>Atividades gamificadas na sua turma, com a estrutura que a escola já tem.</p>
-            <div class="blocks" aria-label="Progresso 3 de 3"><span></span><span></span><span></span></div>
-          </article>
-        </div>
+    <div class="scene sky">
+      <div class="scenery" aria-hidden="true">
+        <svg class="cloud" style="--x: 64vw; --w: 210px; top: 4%; --t: 80s; --d: -30s"><use href="#cloud"/></svg>
+        <svg class="cloud" style="--x: 8vw; --w: 140px; top: 38%; --t: 70s; --d: -10s"><use href="#cloud"/></svg>
+        <svg class="cloud" style="--x: 86vw; --w: 160px; top: 58%; --t: 95s; --d: -66s"><use href="#cloud"/></svg>
+        <span class="glyph" style="left: 4%; top: 10%">&#59;</span>
+        <span class="glyph" style="right: 4%; top: 30%; --d: -3s">if</span>
+        <span class="glyph" style="left: 62%; top: 2%; --d: -5s">01</span>
+        <div class="hills"></div>
       </div>
-    </section>
-
-    <section class="section section--surface" id="projetos">
-      <div class="container">
-        <header class="section__head reveal">
-          <span class="eyebrow">PROJETOS DO HUB</span>
-          <h2>Escolha sua fase</h2>
-          <p>O GamificaPampa é um hub. Cada projeto é uma fase nova, e todas levam IA e gamificação para quem ensina.</p>
-        </header>
-        <div class="projects">
-          <article class="card project reveal">
-            <div class="project__tags"><span class="tag tag--brand">FASE 1</span><span class="tag"><i class="dot"></i>Em andamento</span></div>
-            <h3 class="project__title">GamificaEdu</h3>
-            <p class="project__subtitle">Formação Continuada em Gamificação para Professores da Educação Básica</p>
-            <p>Oficinas em escolas públicas para professores usarem gamificação nas aulas, com a infraestrutura da escola e recursos de baixo custo.</p>
-            <ul class="meta">
-              <li>UNIPAMPA, Campus Alegrete</li>
-              <li>Novembro de 2025 a outubro de 2027</li>
+      <section class="section section--last" id="codigo-mirim">
+        <div class="container">
+          <div class="hudrow reveal">
+            <span class="pill pill--yellow">JÁ NO AR</span>
+            <span class="xp" style="--xp: 90%"><b>XP</b><span class="xp__bar"><i></i></span></span>
+          </div>
+          <div class="mirim">
+            <header class="section__head reveal">
+              <h2 class="loud"><span class="yellow">Código</span> <span class="pink">Mirim</span></h2>
+              <p class="pill pill--white">Um resultado do hub GamificaPampa</p>
+              <p>Um site com jogos e materiais de Engenharia de Software para a escola. Os jogos são para crianças de 6 a 14 anos e funcionam no celular, no tablet ou no projetor. Para os professores, a Oficina de Prompts ensina em quatro encontros a criar atividades, histórias e jogos com o Gemini.</p>
+              <ul class="chips">
+                <li>Funciona sem internet depois da primeira visita</li>
+                <li>QR codes e links curtos para a turma</li>
+              </ul>
+              <a class="btn btn--yellow" href="https://medeiros08.github.io/Codigo-Mirim/"><svg width="22" height="22" aria-hidden="true"><use href="#tri"/></svg>Abrir o Código Mirim</a>
+              <p class="credit">Feito pelo curso de Engenharia de Software da UNIPAMPA, Campus Alegrete, e desenvolvido por Arthur Medeiros.</p>
+            </header>
+            <ul class="games">
+              <li class="card game reveal" style="--c: var(--blue)"><span class="tag">JOGO · 6+ ANOS</span><h3>Robô pega a estrela</h3><p>Com setas, a criança monta o caminho do robô até a estrela.</p></li>
+              <li class="card game reveal" style="--c: var(--pink)"><span class="tag">JOGO · 6+ ANOS</span><h3>Ninja dos Bugs</h3><p>Um deslizar de dedo corta os bugs, e o robô precisa escapar ileso.</p></li>
+              <li class="card game reveal" style="--c: var(--mint)"><span class="tag">OFICINA</span><h3>Jogo do Prompt</h3><p>Quatro peças formam um pedido, e o jogo mostra o que o Gemini faria.</p></li>
+              <li class="card game reveal" style="--c: var(--purple)"><span class="tag">OFICINA</span><h3>Construtor de prompts</h3><p>O professor responde a algumas perguntas e sai com um prompt pronto para o Gemini.</p></li>
             </ul>
-            <a class="btn btn--primary" href="https://github.com/GamificaPampa">Ver projeto</a>
-          </article>
-          <article class="project project--locked reveal">
-            <svg class="px lock" width="64" height="64" aria-hidden="true"><use href="assets/icons.svg#lock"/></svg>
-            <span class="tag tag--surface">FASE 2</span>
-            <h3>Próxima fase em breve</h3>
-            <p>Novos projetos de IA e gamificação para professores vão entrar no hub.</p>
-          </article>
+          </div>
         </div>
-      </div>
-    </section>
+      </section>
+    </div>
 
-    <section class="section" id="missoes">
+    <section class="scene night section cta" id="contato">
+      <div class="scenery" aria-hidden="true">
+        <svg class="twinkle" style="left: 7%; top: 14%" width="22" height="22"><use href="#star"/></svg>
+        <svg class="twinkle" style="left: 24%; top: 6%; --d: -1s" width="14" height="14"><use href="#star"/></svg>
+        <svg class="twinkle" style="right: 30%; top: 4%; --d: -2s" width="18" height="18"><use href="#star"/></svg>
+        <svg class="twinkle" style="right: 4%; bottom: 34%; --d: -3s" width="22" height="22"><use href="#star"/></svg>
+        <svg class="twinkle" style="left: 4%; bottom: 20%; --d: -1.5s" width="16" height="16"><use href="#star"/></svg>
+        <svg class="twinkle" style="right: 10%; bottom: 12%; --d: -2.5s" width="24" height="24"><use href="#star"/></svg>
+        <span class="glyph glyph--faint" style="left: 4%; top: 36%">if</span>
+        <span class="glyph glyph--faint" style="right: 8%; top: 44%; --d: -2s">&lt;/&gt;</span>
+        <span class="glyph glyph--faint" style="right: 14%; bottom: 26%; --d: -4s">{ }</span>
+      </div>
       <div class="container">
-        <header class="section__head reveal">
-          <span class="eyebrow">MISSÕES DO GAMIFICAEDU</span>
-          <h2>Três missões para cumprir</h2>
-        </header>
-        <div class="grid grid--3">
-          <article class="mission reveal">
-            <span class="badge"><svg class="px" width="32" height="32" aria-hidden="true"><use href="assets/icons.svg#coin"/></svg></span>
-            <div><h3>Mapear</h3><p>Ferramentas e técnicas de gamificação que funcionam na Educação Básica.</p></div>
-          </article>
-          <article class="mission reveal">
-            <span class="badge"><svg class="px" width="44" height="40" aria-hidden="true"><use href="assets/icons.svg#star"/></svg></span>
-            <div><h3>Formar</h3><p>Oficinas de formação continuada para professores das escolas públicas.</p></div>
-          </article>
-          <article class="mission reveal">
-            <span class="badge"><svg class="px" width="36" height="32" aria-hidden="true"><use href="assets/icons.svg#heart"/></svg></span>
-            <div><h3>Avaliar</h3><p>O impacto nas práticas dos professores e no engajamento dos alunos.</p></div>
-          </article>
+        <div class="hudrow reveal">
+          <span class="pill pill--purple">FIM DE JOGO</span>
+          <span class="xp" style="--xp: 100%"><b>XP</b><span class="xp__bar"><i></i></span></span>
         </div>
-      </div>
-    </section>
-
-    <section class="cta">
-      <div class="container cta__inner reveal">
-        <div class="cta__icons" aria-hidden="true">
-          <svg class="px spin" width="32" height="32"><use href="assets/icons.svg#coin"/></svg>
-          <svg class="px" width="44" height="40"><use href="assets/icons.svg#star"/></svg>
-          <svg class="px spin" width="32" height="32"><use href="assets/icons.svg#coin"/></svg>
+        <div class="cta__inner reveal">
+          <h2 class="night__title cta__title">CONTINUAR?</h2>
+          <p class="cta__sub">Pronto para o próximo nível?</p>
+          <p>Acompanhe os projetos e os materiais abertos do GamificaPampa no GitHub. Para conversar sobre os projetos, escreva para o Prof. Paulo Silas Severo de Souza.</p>
+          <div class="ctas">
+            <a class="btn btn--mint" href="https://github.com/GamificaPampa"><svg width="22" height="22" aria-hidden="true"><use href="#tri"/></svg>Ver no GitHub</a>
+            <a class="btn btn--white" href="mailto:paulosilas@unipampa.edu.br">paulosilas@unipampa.edu.br</a>
+          </div>
+          <div class="hello hello--end">
+            <svg class="bot" width="88" height="88" aria-hidden="true"><use href="#bot"/></svg>
+            <p class="bubble">Obrigado por jogar!</p>
+          </div>
         </div>
-        <h2>Pronto para o próximo nível?</h2>
-        <p>Acompanhe os projetos e os materiais abertos<br>do GamificaPampa no GitHub.</p>
-        <a class="btn btn--primary" href="https://github.com/GamificaPampa">Ver no GitHub</a>
       </div>
     </section>
   </main>
@@ -187,6 +401,6 @@ p, li, blockquote {
     </div>
   </footer>
 
-  <script src="script.js?v=2" defer></script>
+  <script src="script.js?v=3" defer></script>
 </body>
 </html>
