@@ -151,3 +151,71 @@ if (!reducedMotion && matchMedia('(pointer: fine)').matches) {
   });
   $('.hero').addEventListener('pointerleave', () => { game.style.transform = ''; });
 }
+
+// Opening each project sheet in a dialog, closing it on the X, on Esc or on a click outside.
+document.querySelectorAll('[data-ficha]').forEach((button) => {
+  const sheet = document.getElementById(button.dataset.ficha);
+  button.addEventListener('click', () => sheet.showModal());
+});
+document.querySelectorAll('dialog.ficha').forEach((sheet) => {
+  sheet.addEventListener('click', (event) => { if (event.target === sheet) sheet.close(); });
+});
+
+// Building the e-mail to both coordinators from the form, so the visitor only needs to press send.
+const mailer = document.forms.mailer;
+const recipients = 'silvioquincozes@unipampa.edu.br,paulosilas@unipampa.edu.br';
+const projectNames = { ambos: 'o Educador 5.0 e o GamificaEdu', educador: 'o Educador 5.0', gamificaedu: 'o GamificaEdu' };
+const roles = {
+  professor: (school) => `sou professor(a) na escola ${school}`,
+  gestao: (school) => `faço parte da equipe gestora da escola ${school}`,
+  outro: (school) => `trabalho na escola ${school}`,
+};
+const composeMail = () => {
+  const name = mailer.elements.nome.value.trim() || '[seu nome]';
+  const school = mailer.elements.escola.value.trim() || '[nome da escola]';
+  const projects = projectNames[mailer.elements.projeto.value];
+  const extra = mailer.elements.mensagem.value.trim();
+  const subject = `Interesse em levar ${projects} para a escola ${school}`;
+  const body = [
+    'Olá, Prof. Silvio e Prof. Paulo!',
+    '',
+    `Meu nome é ${name} e ${roles[mailer.elements.funcao.value](school)}.`,
+    `Conheci o GamificaPampa e tenho interesse em levar ${projects} para a nossa escola. Podemos conversar sobre os próximos passos?`,
+    ...(extra ? ['', extra] : []),
+    '',
+    'Obrigado(a)!',
+    name,
+  ].join('\n');
+  return { subject, body };
+};
+const updateMail = () => {
+  const { subject, body } = composeMail();
+  const encoded = { su: encodeURIComponent(subject), body: encodeURIComponent(body) };
+  $('#mail-app').href = `mailto:${recipients}?subject=${encoded.su}&body=${encoded.body}`;
+  $('#mail-gmail').href = `https://mail.google.com/mail/?view=cm&fs=1&to=${recipients}&su=${encoded.su}&body=${encoded.body}`;
+};
+mailer.addEventListener('input', updateMail);
+mailer.addEventListener('submit', (event) => event.preventDefault());
+updateMail();
+
+// Copying the addresses and the message, for people who use another webmail.
+$('#mail-copy').addEventListener('click', async (event) => {
+  const label = event.currentTarget.querySelector('span');
+  const { subject, body } = composeMail();
+  try {
+    await navigator.clipboard.writeText(`Para: ${recipients.replace(',', ', ')}\nAssunto: ${subject}\n\n${body}`);
+    label.textContent = 'Mensagem copiada!';
+  } catch {
+    label.textContent = 'Não deu para copiar';
+  }
+  setTimeout(() => { label.textContent = 'Copiar mensagem'; }, 2200);
+});
+
+// Jumping from a project sheet to the e-mail form with that project already picked.
+document.querySelectorAll('[data-contato]').forEach((link) => {
+  link.addEventListener('click', () => {
+    link.closest('dialog').close();
+    mailer.elements.projeto.value = link.dataset.contato;
+    updateMail();
+  });
+});

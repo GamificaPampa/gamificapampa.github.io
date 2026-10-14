@@ -14,7 +14,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css?v=4">
+  <link rel="stylesheet" href="styles.css?v=5">
 <style>/* tipografia automatica (viuvas, orfas e forcas) */
 p, li, blockquote {
   orphans: 2;
@@ -34,6 +34,10 @@ p, li, blockquote {
     <symbol id="lock" viewBox="0 0 48 52"><path d="M13 22v-7a11 11 0 0 1 22 0v7" fill="none" stroke="#2f2a4a" stroke-width="6"/><rect x="4" y="21" width="40" height="28" rx="9" fill="#ffd23f" stroke="#2f2a4a" stroke-width="5"/><circle cx="24" cy="35" r="4.5" fill="#2f2a4a"/></symbol>
     <symbol id="play" viewBox="0 0 28 28"><rect x="2" y="2" width="24" height="24" rx="7" fill="#4fd6a6" stroke="#2f2a4a" stroke-width="3"/><path d="M10.5 8.5l8 5.5-8 5.5z" fill="#fff" stroke="#2f2a4a" stroke-width="2.4" stroke-linejoin="round"/></symbol>
     <symbol id="tri" viewBox="0 0 24 24"><path d="M6 4l14 8-14 8z" fill="#fff" stroke="#2f2a4a" stroke-width="3" stroke-linejoin="round"/></symbol>
+    <symbol id="x" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18" stroke="#2f2a4a" stroke-width="4" stroke-linecap="round"/></symbol>
+    <symbol id="send" viewBox="0 0 24 24"><path d="M3 11.5 21 3l-6.5 18-3.2-7.3z" fill="#fff" stroke="#2f2a4a" stroke-width="2.5" stroke-linejoin="round"/></symbol>
+    <symbol id="copy" viewBox="0 0 24 24"><rect x="8" y="8" width="13" height="13" rx="3" fill="#fff" stroke="#2f2a4a" stroke-width="2.5"/><path d="M16 5V4.5A1.5 1.5 0 0 0 14.5 3h-10A1.5 1.5 0 0 0 3 4.5v10A1.5 1.5 0 0 0 4.5 16H5" fill="none" stroke="#2f2a4a" stroke-width="2.5" stroke-linecap="round"/></symbol>
+    <symbol id="doc" viewBox="0 0 24 24"><rect x="4" y="2.5" width="16" height="19" rx="3.5" fill="#fff" stroke="#2f2a4a" stroke-width="2.5"/><path d="M8 8h8M8 12h8M8 16h5" stroke="#2f2a4a" stroke-width="2.5" stroke-linecap="round"/></symbol>
   </svg>
 
   <header class="nav">
@@ -48,9 +52,9 @@ p, li, blockquote {
         <a href="#escola">Para a escola</a>
         <a href="#codigo-mirim">Código Mirim</a>
         <a href="#contato">Contato</a>
-        <a class="nav__menu-gh" href="https://github.com/GamificaPampa">Ver no GitHub</a>
+        <a class="nav__menu-cta" href="https://medeiros08.github.io/Codigo-Mirim/escola/">Jogos do Código Mirim</a>
       </nav>
-      <a class="btn btn--yellow nav__cta" href="https://github.com/GamificaPampa">Ver no GitHub</a>
+      <a class="btn btn--yellow nav__cta" href="https://medeiros08.github.io/Codigo-Mirim/escola/"><svg width="20" height="20" aria-hidden="true"><use href="#tri"/></svg>Jogos do Código Mirim</a>
     </div>
     <div class="scrollxp" aria-hidden="true"><span id="scrollxp"></span></div>
   </header>
@@ -81,7 +85,7 @@ p, li, blockquote {
             <p class="lead">O GamificaPampa reúne projetos de extensão da UNIPAMPA, Campus Alegrete, que levam gamificação e inteligência artificial a professores da Educação Básica, em parceria com escolas públicas de Alegrete/RS.</p>
             <div class="ctas">
               <a class="btn btn--yellow" href="#projetos">Conheça os projetos</a>
-              <a class="btn btn--white" href="https://github.com/GamificaPampa">Ver no GitHub</a>
+              <a class="btn btn--white" href="#contato">Fale com a equipe</a>
             </div>
             <div class="hello">
               <svg class="bot" id="hero-bot" width="96" height="96" aria-hidden="true"><use href="#bot"/></svg>
@@ -203,7 +207,7 @@ p, li, blockquote {
                   <div><dt>Período</dt><dd>15/10/2025 a 31/12/2026</dd></div>
                   <div><dt>Onde</dt><dd>UNIPAMPA, Campus Alegrete</dd></div>
                 </dl>
-                <a class="btn btn--yellow" href="https://github.com/GamificaPampa"><svg width="22" height="22" aria-hidden="true"><use href="#tri"/></svg>Ver no GitHub</a>
+                <button class="btn btn--yellow" type="button" data-ficha="ficha-educador"><svg width="22" height="22" aria-hidden="true"><use href="#doc"/></svg>Ver ficha do projeto</button>
               </div>
             </article>
 
@@ -225,7 +229,7 @@ p, li, blockquote {
                   <div><dt>Período</dt><dd>01/11/2025 a 31/10/2027</dd></div>
                   <div><dt>Onde</dt><dd>UNIPAMPA, Campus Alegrete</dd></div>
                 </dl>
-                <a class="btn btn--yellow" href="https://github.com/GamificaPampa"><svg width="22" height="22" aria-hidden="true"><use href="#tri"/></svg>Ver no GitHub</a>
+                <button class="btn btn--yellow" type="button" data-ficha="ficha-gamificaedu"><svg width="22" height="22" aria-hidden="true"><use href="#doc"/></svg>Ver ficha do projeto</button>
               </div>
             </article>
 
@@ -344,7 +348,7 @@ p, li, blockquote {
                 <li>QR codes e links curtos para a turma</li>
               </ul>
               <a class="btn btn--yellow" href="https://medeiros08.github.io/Codigo-Mirim/"><svg width="22" height="22" aria-hidden="true"><use href="#tri"/></svg>Abrir o Código Mirim</a>
-              <p class="credit">Feito pelo curso de Engenharia de Software da UNIPAMPA, Campus Alegrete, e desenvolvido por Arthur Medeiros.</p>
+              <p class="credit">Feito por <a href="https://medeiros08.github.io/">Arthur Medeiros</a> para apresentar o curso de Engenharia de Software da UNIPAMPA — Campus Alegrete</p>
             </header>
             <ul class="games">
               <li class="card game reveal" style="--c: var(--blue)"><span class="tag">JOGO · 6+ ANOS</span><h3>Robô pega a estrela</h3><p>Com setas, a criança monta o caminho do robô até a estrela.</p></li>
@@ -377,12 +381,22 @@ p, li, blockquote {
         <div class="cta__inner reveal">
           <h2 class="night__title cta__title">CONTINUAR?</h2>
           <p class="cta__sub">Pronto para o próximo nível?</p>
-          <p>Acompanhe os projetos e os materiais abertos do GamificaPampa no GitHub. Para conversar sobre os projetos, escreva para a coordenação do Educador 5.0 ou do GamificaEdu.</p>
-          <div class="ctas">
-            <a class="btn btn--mint" href="https://github.com/GamificaPampa"><svg width="22" height="22" aria-hidden="true"><use href="#tri"/></svg>Ver no GitHub</a>
-            <a class="btn btn--white" href="mailto:silvioquincozes@unipampa.edu.br">silvioquincozes@unipampa.edu.br</a>
-            <a class="btn btn--white" href="mailto:paulosilas@unipampa.edu.br">paulosilas@unipampa.edu.br</a>
-          </div>
+          <p>Professores e gestores podem falar direto com a coordenação dos dois projetos. Preencha os campos e a mensagem fica pronta para enviar.</p>
+          <form class="card mailer" name="mailer" id="mailer">
+            <div class="mailer__grid">
+              <label>Seu nome<input name="nome" autocomplete="name" placeholder="Ana Souza"></label>
+              <label>Escola<input name="escola" autocomplete="organization" placeholder="Nome da escola"></label>
+              <label>Você é<select name="funcao"><option value="professor">Professor ou professora</option><option value="gestao">Da equipe gestora</option><option value="outro">De outra função na escola</option></select></label>
+              <label>Interesse<select name="projeto"><option value="ambos">Educador 5.0 e GamificaEdu</option><option value="educador">Educador 5.0</option><option value="gamificaedu">GamificaEdu</option></select></label>
+              <label class="mailer__wide">Mensagem extra (opcional)<textarea name="mensagem" rows="3" placeholder="Conte um pouco sobre a sua escola ou a sua turma."></textarea></label>
+            </div>
+            <div class="mailer__actions">
+              <a class="btn btn--yellow" id="mail-app" href="mailto:silvioquincozes@unipampa.edu.br,paulosilas@unipampa.edu.br?subject=Interesse%20em%20levar%20o%20Educador%205.0%20e%20o%20GamificaEdu%20para%20a%20escola%20%5Bnome%20da%20escola%5D&amp;body=Ol%C3%A1%2C%20Prof.%20Silvio%20e%20Prof.%20Paulo%21%0A%0AMeu%20nome%20%C3%A9%20%5Bseu%20nome%5D%20e%20sou%20professor%28a%29%20na%20escola%20%5Bnome%20da%20escola%5D.%0AConheci%20o%20GamificaPampa%20e%20tenho%20interesse%20em%20levar%20o%20Educador%205.0%20e%20o%20GamificaEdu%20para%20a%20nossa%20escola.%20Podemos%20conversar%20sobre%20os%20pr%C3%B3ximos%20passos%3F%0A%0AObrigado%28a%29%21%0A%5Bseu%20nome%5D"><svg width="22" height="22" aria-hidden="true"><use href="#send"/></svg>Abrir e-mail pronto</a>
+              <a class="btn btn--white" id="mail-gmail" href="https://mail.google.com/mail/?view=cm&amp;fs=1&amp;to=silvioquincozes@unipampa.edu.br,paulosilas@unipampa.edu.br&amp;su=Interesse%20em%20levar%20o%20Educador%205.0%20e%20o%20GamificaEdu%20para%20a%20escola%20%5Bnome%20da%20escola%5D&amp;body=Ol%C3%A1%2C%20Prof.%20Silvio%20e%20Prof.%20Paulo%21%0A%0AMeu%20nome%20%C3%A9%20%5Bseu%20nome%5D%20e%20sou%20professor%28a%29%20na%20escola%20%5Bnome%20da%20escola%5D.%0AConheci%20o%20GamificaPampa%20e%20tenho%20interesse%20em%20levar%20o%20Educador%205.0%20e%20o%20GamificaEdu%20para%20a%20nossa%20escola.%20Podemos%20conversar%20sobre%20os%20pr%C3%B3ximos%20passos%3F%0A%0AObrigado%28a%29%21%0A%5Bseu%20nome%5D" target="_blank" rel="noopener">Abrir no Gmail</a>
+              <button class="btn btn--white" type="button" id="mail-copy"><svg width="22" height="22" aria-hidden="true"><use href="#copy"/></svg><span>Copiar mensagem</span></button>
+            </div>
+            <p class="mailer__to">Vai para silvioquincozes@unipampa.edu.br e paulosilas@unipampa.edu.br</p>
+          </form>
           <div class="hello hello--end">
             <svg class="bot" width="88" height="88" aria-hidden="true"><use href="#bot"/></svg>
             <p class="bubble">Obrigado por jogar!</p>
@@ -391,6 +405,51 @@ p, li, blockquote {
       </div>
     </section>
   </main>
+
+  <dialog class="ficha ficha--blue" id="ficha-educador" aria-labelledby="ficha-educador-titulo">
+    <div class="ficha__banner">
+      <div class="tags"><span class="tag tag--yellow">FASE 1</span><span class="tag"><i class="dot"></i>Em andamento</span><span class="tag tag--ink">IA</span></div>
+      <h2 class="loud ficha__title" id="ficha-educador-titulo">Educador <span class="yellow">5.0</span></h2>
+      <p class="ficha__sub">Capacitação de Professores para o Uso de Inteligência Artificial na Educação Básica</p>
+      <form method="dialog"><button class="ficha__close" aria-label="Fechar ficha"><svg width="22" height="22" aria-hidden="true"><use href="#x"/></svg></button></form>
+    </div>
+    <div class="ficha__body">
+      <dl class="ficha__facts"><div><dt>Registro</dt><dd>2025.EX.AL.5038</dd></div><div><dt>Coordenação</dt><dd>Prof. Silvio Ereno Quincozes</dd></div><div><dt>Período</dt><dd>15/10/2025 a 31/12/2026</dd></div><div><dt>Carga horária</dt><dd>1.260 horas</dd></div><div><dt>Público</dt><dd>30 educadores e 15 profissionais da Educação Básica</dd></div><div><dt>Onde</dt><dd>Alegrete/RS</dd></div></dl>
+      <h3>Resumo</h3>
+      <p>Formação continuada para professores da Educação Básica usarem ferramentas de Inteligência Artificial na prática pedagógica. As atividades são presenciais, com workshops, seminários e ações práticas, e mostram como a IA ajuda a criar planos de aula, questões automatizadas e feedbacks personalizados.</p>
+      <h3>Objetivos</h3>
+      <ul class="ficha__list"><li>Capacitar os professores para usar IA na criação de planos de aula, questões automatizadas e feedbacks personalizados.</li><li>Fomentar ferramentas educacionais digitais que permitam personalizar o ensino.</li><li>Promover a inclusão digital no ambiente escolar.</li><li>Estimular materiais audiovisuais e publicações sobre as experiências com IA na educação.</li><li>Fortalecer a relação entre a universidade e a sociedade.</li></ul>
+      <h3>Cronograma</h3>
+      <ol class="ficha__timeline"><li><b>out/2025 a jan/2026</b><span>Diagnóstico e planejamento</span></li><li><b>fev a ago/2026</b><span>Capacitação teórica e prática</span></li><li><b>mar a out/2026</b><span>Implementação e acompanhamento em sala de aula</span></li><li><b>nov a dez/2026</b><span>Consolidação e divulgação dos resultados</span></li></ol>
+        <h3>Ferramentas</h3>
+        <p>Plataformas como ChatGPT, Google AI e Microsoft Azure, além de outras ferramentas educacionais baseadas em IA.</p>
+      <h3>Avaliação</h3>
+      <p>Os professores dão feedback durante e depois dos workshops. Questionários, entrevistas e a observação das aulas mostram como a IA está sendo usada, e os resultados educacionais são acompanhados a médio prazo.</p>
+      <div class="ficha__actions"><a class="btn btn--yellow" href="#contato" data-contato="educador"><svg width="22" height="22" aria-hidden="true"><use href="#send"/></svg>Falar com a coordenação</a></div>
+      <p class="ficha__source">Dados do Cadastro de Projeto Institucional da UNIPAMPA.</p>
+    </div>
+  </dialog>
+  <dialog class="ficha ficha--mint" id="ficha-gamificaedu" aria-labelledby="ficha-gamificaedu-titulo">
+    <div class="ficha__banner">
+      <div class="tags"><span class="tag tag--yellow">FASE 1</span><span class="tag"><i class="dot"></i>Em andamento</span><span class="tag tag--ink">Gamificação</span></div>
+      <h2 class="loud ficha__title" id="ficha-gamificaedu-titulo">Gamifica<span class="pink">Edu</span></h2>
+      <p class="ficha__sub">Formação Continuada em Gamificação para Professores da Educação Básica</p>
+      <form method="dialog"><button class="ficha__close" aria-label="Fechar ficha"><svg width="22" height="22" aria-hidden="true"><use href="#x"/></svg></button></form>
+    </div>
+    <div class="ficha__body">
+      <dl class="ficha__facts"><div><dt>Registro</dt><dd>2025.EX.AL.5040</dd></div><div><dt>Coordenação</dt><dd>Prof. Paulo Silas Severo de Souza</dd></div><div><dt>Período</dt><dd>01/11/2025 a 31/10/2027</dd></div><div><dt>Carga horária</dt><dd>436 horas</dd></div><div><dt>Público</dt><dd>30 profissionais da Educação Básica</dd></div><div><dt>Onde</dt><dd>Alegrete/RS</dd></div></dl>
+      <h3>Resumo</h3>
+      <p>Workshops em escolas públicas da Educação Básica para capacitar professores no uso de técnicas de gamificação nas práticas pedagógicas. A formação usa a infraestrutura tecnológica que a escola já tem e recursos de baixo custo.</p>
+      <h3>Objetivos</h3>
+      <ul class="ficha__list"><li>Mapear ferramentas e técnicas de gamificação aplicáveis à Educação Básica.</li><li>Implementar workshops de formação continuada para professores, com a gamificação como ferramenta pedagógica.</li><li>Avaliar o impacto da gamificação nas práticas dos professores e no engajamento dos alunos.</li></ul>
+      <h3>Cronograma</h3>
+      <ol class="ficha__timeline"><li><b>nov a dez/2025</b><span>Reuniões com as escolas parceiras e questionários diagnósticos</span></li><li><b>jan a fev/2026</b><span>Mapeamento da infraestrutura tecnológica das escolas</span></li><li><b>fev a mar/2026</b><span>Planejamento da trilha formativa em módulos teóricos e práticos</span></li><li><b>abr/2026 a ago/2027</b><span>Oficinas teóricas e práticas nas escolas parceiras</span></li><li><b>abr/2026 a out/2027</b><span>Avaliação formativa e somativa, com relatório final</span></li></ol>
+      <h3>Avaliação</h3>
+      <p>Questionários ao final de cada módulo e uma avaliação ao término do programa captam a percepção dos professores. Entrevistas com um grupo de participantes aprofundam os desafios e os benefícios, e o relatório final traz indicadores qualitativos e quantitativos com propostas de continuidade.</p>
+      <div class="ficha__actions"><a class="btn btn--yellow" href="#contato" data-contato="gamificaedu"><svg width="22" height="22" aria-hidden="true"><use href="#send"/></svg>Falar com a coordenação</a></div>
+      <p class="ficha__source">Dados do Cadastro de Projeto Institucional da UNIPAMPA.</p>
+    </div>
+  </dialog>
 
   <footer class="footer">
     <div class="container footer__inner">
@@ -402,6 +461,6 @@ p, li, blockquote {
     </div>
   </footer>
 
-  <script src="script.js?v=3" defer></script>
+  <script src="script.js?v=4" defer></script>
 </body>
 </html>
