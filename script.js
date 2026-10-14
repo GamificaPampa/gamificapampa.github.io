@@ -161,53 +161,28 @@ document.querySelectorAll('dialog.ficha').forEach((sheet) => {
   sheet.addEventListener('click', (event) => { if (event.target === sheet) sheet.close(); });
 });
 
-// Building the e-mail to both coordinators from the form, so the visitor only needs to press send.
+// Sending the contact form to Formspree in the background, so the message arrives
+// without the visitor opening an e-mail app. Without JavaScript, the form still posts normally.
 const mailer = document.forms.mailer;
-const recipients = 'silvioquincozes@unipampa.edu.br,paulosilas@unipampa.edu.br';
-const projects = 'o Educador 5.0 e o GamificaEdu';
-const roles = {
-  professor: (school) => `sou professor(a) na escola ${school}`,
-  gestao: (school) => `faço parte da equipe gestora da escola ${school}`,
-  outro: (school) => `trabalho na escola ${school}`,
-};
-const composeMail = () => {
-  const name = mailer.elements.nome.value.trim() || '[seu nome]';
-  const school = mailer.elements.escola.value.trim() || '[nome da escola]';
-  const extra = mailer.elements.mensagem.value.trim();
-  const subject = `Interesse em levar ${projects} para a escola ${school}`;
-  const body = [
-    'Olá, Prof. Silvio e Prof. Paulo!',
-    '',
-    `Meu nome é ${name} e ${roles[mailer.elements.funcao.value](school)}.`,
-    `Conheci o GamificaPampa e tenho interesse em levar ${projects} para a nossa escola. Podemos conversar sobre os próximos passos?`,
-    ...(extra ? ['', extra] : []),
-    '',
-    'Obrigado(a)!',
-    name,
-  ].join('\n');
-  return { subject, body };
-};
-const updateMail = () => {
-  const { subject, body } = composeMail();
-  const encoded = { su: encodeURIComponent(subject), body: encodeURIComponent(body) };
-  $('#mail-app').href = `mailto:${recipients}?subject=${encoded.su}&body=${encoded.body}`;
-  $('#mail-gmail').href = `https://mail.google.com/mail/?view=cm&fs=1&to=${recipients}&su=${encoded.su}&body=${encoded.body}`;
-};
-mailer.addEventListener('input', updateMail);
-mailer.addEventListener('submit', (event) => event.preventDefault());
-updateMail();
+mailer.addEventListener('submit', async (event) => {
+  event.preventDefault();
+  const button = mailer.querySelector('button[type="submit"]');
+  const status = $('#mail-status');
+  const data = new FormData(mailer);
+  data.set('_subject', `Interesse no GamificaPampa: ${data.get('escola')}`);
+  button.disabled = true;
+  status.textContent = 'Enviando...';
 
-// Copying the addresses and the message, for people who use another webmail.
-$('#mail-copy').addEventListener('click', async (event) => {
-  const label = event.currentTarget.querySelector('span');
-  const { subject, body } = composeMail();
+  // Reporting success only when Formspree accepts the message, and offering the e-mail addresses otherwise.
   try {
-    await navigator.clipboard.writeText(`Para: ${recipients.replace(',', ', ')}\nAssunto: ${subject}\n\n${body}`);
-    label.textContent = 'Mensagem copiada!';
+    const response = await fetch(mailer.action, { method: 'POST', body: data, headers: { Accept: 'application/json' } });
+    if (!response.ok) throw new Error(response.statusText);
+    mailer.reset();
+    status.textContent = 'Mensagem enviada! A equipe vai responder no seu e-mail.';
   } catch {
-    label.textContent = 'Não deu para copiar';
+    status.innerHTML = 'Não deu para enviar agora. Escreva para <a href="mailto:silvioquincozes@unipampa.edu.br,paulosilas@unipampa.edu.br">silvioquincozes@unipampa.edu.br e paulosilas@unipampa.edu.br</a>.';
   }
-  setTimeout(() => { label.textContent = 'Copiar mensagem'; }, 2200);
+  button.disabled = false;
 });
 
 // Closing the project sheet when the visitor jumps from it to the e-mail form.

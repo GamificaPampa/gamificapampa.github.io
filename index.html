@@ -36,7 +36,6 @@ p, li, blockquote {
     <symbol id="tri" viewBox="0 0 24 24"><path d="M6 4l14 8-14 8z" fill="#fff" stroke="#2f2a4a" stroke-width="3" stroke-linejoin="round"/></symbol>
     <symbol id="x" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18" stroke="#2f2a4a" stroke-width="4" stroke-linecap="round"/></symbol>
     <symbol id="send" viewBox="0 0 24 24"><path d="M3 11.5 21 3l-6.5 18-3.2-7.3z" fill="#fff" stroke="#2f2a4a" stroke-width="2.5" stroke-linejoin="round"/></symbol>
-    <symbol id="copy" viewBox="0 0 24 24"><rect x="8" y="8" width="13" height="13" rx="3" fill="#fff" stroke="#2f2a4a" stroke-width="2.5"/><path d="M16 5V4.5A1.5 1.5 0 0 0 14.5 3h-10A1.5 1.5 0 0 0 3 4.5v10A1.5 1.5 0 0 0 4.5 16H5" fill="none" stroke="#2f2a4a" stroke-width="2.5" stroke-linecap="round"/></symbol>
     <symbol id="doc" viewBox="0 0 24 24"><rect x="4" y="2.5" width="16" height="19" rx="3.5" fill="#fff" stroke="#2f2a4a" stroke-width="2.5"/><path d="M8 8h8M8 12h8M8 16h5" stroke="#2f2a4a" stroke-width="2.5" stroke-linecap="round"/></symbol>
   </svg>
 
@@ -382,20 +381,19 @@ p, li, blockquote {
         <div class="cta__inner reveal">
           <h2 class="night__title cta__title">CONTINUAR?</h2>
           <p class="cta__sub">Pronto para o próximo nível?</p>
-          <p>Professores e gestores podem falar direto com a coordenação dos dois projetos. Preencha os campos e a mensagem fica pronta para enviar.</p>
-          <form class="card mailer" name="mailer" id="mailer">
+          <p>Professores e gestores podem falar direto com a coordenação dos dois projetos. Preencha os campos e envie a mensagem por aqui.</p>
+          <form class="card mailer" name="mailer" id="mailer" action="https://formspree.io/f/xljgodjo" method="POST">
             <div class="mailer__grid">
-              <label>Seu nome<input name="nome" autocomplete="name" placeholder="Ana Souza"></label>
-              <label>Escola<input name="escola" autocomplete="organization" placeholder="Nome da escola"></label>
-              <label class="mailer__wide">Você é<select name="funcao"><option value="professor">Professor ou professora</option><option value="gestao">Da equipe gestora</option><option value="outro">De outra função na escola</option></select></label>
-              <label class="mailer__wide">Mensagem extra (opcional)<textarea name="mensagem" rows="3" placeholder="Conte um pouco sobre a sua escola ou a sua turma."></textarea></label>
+              <label>Seu nome<input name="nome" autocomplete="name" placeholder="Ana Souza" required></label>
+              <label>Seu e-mail<input type="email" name="email" autocomplete="email" placeholder="ana@escola.rs.gov.br" required></label>
+              <label class="mailer__wide">Escola<input name="escola" autocomplete="organization" placeholder="Nome da escola" required></label>
+              <label class="mailer__wide">Você é<select name="funcao"><option>Professor ou professora</option><option>Da equipe gestora</option><option>De outra função na escola</option></select></label>
+              <label class="mailer__wide">Mensagem (opcional)<textarea name="mensagem" rows="3" placeholder="Conte um pouco sobre a sua escola ou a sua turma."></textarea></label>
             </div>
             <div class="mailer__actions">
-              <a class="btn btn--yellow" id="mail-app" href="mailto:silvioquincozes@unipampa.edu.br,paulosilas@unipampa.edu.br?subject=Interesse%20em%20levar%20o%20Educador%205.0%20e%20o%20GamificaEdu%20para%20a%20escola%20%5Bnome%20da%20escola%5D&amp;body=Ol%C3%A1%2C%20Prof.%20Silvio%20e%20Prof.%20Paulo%21%0A%0AMeu%20nome%20%C3%A9%20%5Bseu%20nome%5D%20e%20sou%20professor%28a%29%20na%20escola%20%5Bnome%20da%20escola%5D.%0AConheci%20o%20GamificaPampa%20e%20tenho%20interesse%20em%20levar%20o%20Educador%205.0%20e%20o%20GamificaEdu%20para%20a%20nossa%20escola.%20Podemos%20conversar%20sobre%20os%20pr%C3%B3ximos%20passos%3F%0A%0AObrigado%28a%29%21%0A%5Bseu%20nome%5D"><svg width="22" height="22" aria-hidden="true"><use href="#send"/></svg>Abrir e-mail pronto</a>
-              <a class="btn btn--white" id="mail-gmail" href="https://mail.google.com/mail/?view=cm&amp;fs=1&amp;to=silvioquincozes@unipampa.edu.br,paulosilas@unipampa.edu.br&amp;su=Interesse%20em%20levar%20o%20Educador%205.0%20e%20o%20GamificaEdu%20para%20a%20escola%20%5Bnome%20da%20escola%5D&amp;body=Ol%C3%A1%2C%20Prof.%20Silvio%20e%20Prof.%20Paulo%21%0A%0AMeu%20nome%20%C3%A9%20%5Bseu%20nome%5D%20e%20sou%20professor%28a%29%20na%20escola%20%5Bnome%20da%20escola%5D.%0AConheci%20o%20GamificaPampa%20e%20tenho%20interesse%20em%20levar%20o%20Educador%205.0%20e%20o%20GamificaEdu%20para%20a%20nossa%20escola.%20Podemos%20conversar%20sobre%20os%20pr%C3%B3ximos%20passos%3F%0A%0AObrigado%28a%29%21%0A%5Bseu%20nome%5D" target="_blank" rel="noopener">Abrir no Gmail</a>
-              <button class="btn btn--white" type="button" id="mail-copy"><svg width="22" height="22" aria-hidden="true"><use href="#copy"/></svg><span>Copiar mensagem</span></button>
+              <button class="btn btn--yellow" type="submit"><svg width="22" height="22" aria-hidden="true"><use href="#send"/></svg>Enviar mensagem</button>
             </div>
-            <p class="mailer__to">Vai para silvioquincozes@unipampa.edu.br e paulosilas@unipampa.edu.br</p>
+            <p class="mailer__to" id="mail-status" role="status" aria-live="polite">A mensagem vai direto para a coordenação do Educador 5.0 e do GamificaEdu.</p>
           </form>
           <div class="hello hello--end">
             <svg class="bot" width="88" height="88" aria-hidden="true"><use href="#bot"/></svg>
@@ -461,6 +459,6 @@ p, li, blockquote {
     </div>
   </footer>
 
-  <script src="script.js?v=5" defer></script>
+  <script src="script.js?v=6" defer></script>
 </body>
 </html>
