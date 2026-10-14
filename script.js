@@ -171,6 +171,7 @@ mailer.addEventListener('submit', async (event) => {
   const data = new FormData(mailer);
   data.set('_subject', `Interesse no GamificaPampa: ${data.get('escola')}`);
   button.disabled = true;
+  status.classList.remove('is-error');
   status.textContent = 'Enviando...';
 
   // Reporting success only when Formspree accepts the message, and offering the e-mail addresses otherwise.
@@ -178,11 +179,21 @@ mailer.addEventListener('submit', async (event) => {
     const response = await fetch(mailer.action, { method: 'POST', body: data, headers: { Accept: 'application/json' } });
     if (!response.ok) throw new Error(response.statusText);
     mailer.reset();
-    status.textContent = 'Mensagem enviada! A equipe vai responder no seu e-mail.';
+    mailer.classList.add('is-sent');
+    $('#mail-done').hidden = false;
+    $('#mail-done h3').focus();
   } catch {
+    status.classList.add('is-error');
     status.innerHTML = 'Não deu para enviar agora. Escreva para <a href="mailto:silvioquincozes@unipampa.edu.br,paulosilas@unipampa.edu.br">silvioquincozes@unipampa.edu.br e paulosilas@unipampa.edu.br</a>.';
   }
   button.disabled = false;
+});
+
+// Showing the empty form again when the visitor wants to send another message.
+$('#mail-again').addEventListener('click', () => {
+  mailer.classList.remove('is-sent');
+  $('#mail-done').hidden = true;
+  $('#mail-status').textContent = 'A mensagem vai direto para a coordenação do Educador 5.0 e do GamificaEdu.';
 });
 
 // Closing the project sheet when the visitor jumps from it to the e-mail form.

@@ -14,7 +14,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css?v=6">
+  <link rel="stylesheet" href="styles.css?v=7">
 <style>/* tipografia automatica (viuvas, orfas e forcas) */
 p, li, blockquote {
   orphans: 2;
@@ -394,6 +394,12 @@ p, li, blockquote {
               <button class="btn btn--yellow" type="submit"><svg width="22" height="22" aria-hidden="true"><use href="#send"/></svg>Enviar mensagem</button>
             </div>
             <p class="mailer__to" id="mail-status" role="status" aria-live="polite">A mensagem vai direto para a coordenação do Educador 5.0 e do GamificaEdu.</p>
+            <div class="mailer__done" id="mail-done" hidden>
+              <svg width="72" height="72" aria-hidden="true"><use href="#star"/></svg>
+              <h3 class="loud" tabindex="-1">Mensagem enviada!</h3>
+              <p>A coordenação recebeu sua mensagem e vai responder no seu e-mail.</p>
+              <button class="btn btn--white" type="button" id="mail-again">Enviar outra mensagem</button>
+            </div>
           </form>
           <div class="hello hello--end">
             <svg class="bot" width="88" height="88" aria-hidden="true"><use href="#bot"/></svg>
@@ -459,6 +465,6 @@ p, li, blockquote {
     </div>
   </footer>
 
-  <script src="script.js?v=6" defer></script>
+  <script src="script.js?v=7" defer></script>
 </body>
 </html>
