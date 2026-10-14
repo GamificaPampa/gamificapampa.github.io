@@ -372,7 +372,8 @@ h2 { font-size: clamp(38px, 5.6vw, 66px); }
   .path__card { align-self: stretch; }
 }
 
-/* Código Mirim */
+/* Recursos pedagógicos */
+.game h3 a { color: inherit; text-decoration-thickness: 3px; text-underline-offset: 4px; }
 .mirim { display: grid; gap: 40px; }
 @media (min-width: 1024px) { .mirim { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); align-items: start; gap: 48px; } }
 .mirim .section__head { margin-bottom: 0; }
