@@ -495,6 +495,8 @@ body:has(dialog[open]) { overflow: hidden; }
 .partilha__qr { width: min(300px, 72vw); height: auto; aspect-ratio: 1; padding: 6px; background: #fff; border: 4px solid var(--ink); border-radius: 18px; }
 .partilha__link { font-weight: 700; font-size: clamp(18px, 3vw, 24px); overflow-wrap: anywhere; }
 .partilha .ficha__actions { justify-content: center; }
+.kit-row { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 8px; margin-top: 14px; font-weight: 600; }
+.kit-row a { color: var(--ink); text-decoration-thickness: 3px; text-underline-offset: 4px; }
 
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
