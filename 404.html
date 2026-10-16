@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex">
+  <title>Página não encontrada · GamificaPampa</title>
+  <link rel="icon" href="/identidade-visual/logos/gamificapampa-icone.svg">
+  <link rel="stylesheet" href="/identidade-visual/css/fontes.css">
+  <link rel="stylesheet" href="/identidade-visual/css/cores.css">
+  <link rel="stylesheet" href="/identidade-visual/css/componentes.css">
+  <script>
+    // Links curtos: gamificapampa.github.io/ninja leva para o jogo, /prompt para o construtor e assim por diante.
+    // O GitHub Pages mostra esta página para todo endereço que não existe; ela procura o nome aqui e redireciona.
+    // Para um atalho novo, acrescente uma linha. Sem rótulo, o atalho funciona mas não aparece na lista abaixo.
+    const RP = 'https://gamificapampa.github.io/recursos-pedagogicos/';
+    const AULA = RP + 'professores/aula-engenharia-de-software/';
+    const OFICINA = RP + 'professores/oficina-prompts/';
+    const ATALHOS = {
+      robo: ['Jogos', 'Robô pega a estrela', RP + 'criancas/robo/'],
+      ninja: ['Jogos', 'Ninja dos Bugs', RP + 'criancas/ninja/'],
+      dupla: ['Jogos', 'Programação em Dupla', RP + 'criancas/dupla/'],
+      conecta: ['Jogos', 'Conecta o Sistema', RP + 'criancas/conecta/'],
+      arcade: ['Jogos', 'Arcade do Código', RP + 'criancas/arcade/'],
+      'caca-bugs': ['Jogos', 'Caça aos Bugs', RP + 'criancas/caca-bugs/'],
+      'missao-dev': ['Jogos', 'Missão Dev', RP + 'criancas/missao-dev/'],
+      mapas: ['Jogos', 'Mapas da Programação em Dupla (PDF)', RP + 'criancas/dupla/mapas.pdf'],
+      slides: ['Aula com as crianças', 'Slides da aula', AULA + 'slides.html'],
+      roteiro: ['Aula com as crianças', 'Roteiro da aula (PDF)', AULA + 'roteiro.pdf'],
+      atividades: ['Aula com as crianças', 'Folha de atividades (PDF)', AULA + 'atividades.pdf'],
+      certificado: ['Aula com as crianças', 'Certificado de Programador(a) Mirim', AULA + 'certificado.html'],
+      oficina: ['Oficina de Prompts', 'Página da oficina', OFICINA],
+      curso: ['Oficina de Prompts', 'Curso online', OFICINA + 'curso.html'],
+      'jogo-do-prompt': ['Oficina de Prompts', 'Jogo do Prompt', OFICINA + 'jogo.html'],
+      prompt: ['Oficina de Prompts', 'Construtor de prompts', OFICINA + 'construtor.html'],
+      biblioteca: ['Oficina de Prompts', 'Biblioteca de prompts', OFICINA + 'biblioteca.html'],
+      gems: ['Oficina de Prompts', 'Gems prontos', OFICINA + 'gems.html'],
+      guia: ['Oficina de Prompts', 'Guia do professor (PDF)', OFICINA + 'guia.pdf'],
+      galeria: ['Oficina de Prompts', 'Galeria de jogos', OFICINA + 'galeria.html'],
+      'passo-a-passo': ['Oficina de Prompts', 'Passo a passo no Gemini', OFICINA + 'passo-a-passo.html'],
+      avaliar: ['', '', 'https://docs.google.com/forms/d/e/1FAIpQLScvlaXOpY5i9YWz4Cez_eyWtDygauTSb0g8Tz75dgpKg-TFBg/viewform'],
+      gemini: ['', '', 'https://gemini.google.com/app'],
+    };
+
+    const nome = decodeURIComponent(location.pathname).toLowerCase().replace(/\/index\.html$/, '').replace(/^\/+|\/+$/g, '');
+    if (ATALHOS[nome]) {
+      const novo = new URL(ATALHOS[nome][2]);
+      if (location.hash && !novo.hash) novo.hash = location.hash;
+      if (location.search && !novo.search) novo.search = location.search;
+      document.documentElement.classList.add('indo');
+      location.replace(novo.href);
+    }
+  </script>
+  <style>
+    body { display: grid; place-items: center; min-height: 100vh; padding: 24px 16px; }
+    main { display: grid; gap: 24px; width: min(860px, 100%); }
+    .topo { display: flex; align-items: center; gap: 24px; }
+    .topo img { width: clamp(64px, 14vw, 92px); flex: none; }
+    .topo .bubble { min-width: 0; margin: 0; overflow-wrap: anywhere; }
+    h1 { font-size: clamp(34px, 6vw, 56px); }
+    .grupos { display: grid; gap: 22px; }
+    .grupos h2 { margin-bottom: 10px; font-size: 22px; }
+    .grupos ul { display: grid; gap: 10px; margin: 0; padding: 0; list-style: none; }
+    @media (min-width: 640px) { .grupos ul { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+    .grupos a { display: grid; gap: 2px; padding: 10px 16px; border: 4px solid var(--ink); border-radius: 18px; text-decoration: none; box-shadow: inset 10px 0 0 var(--c), 0 5px 0 var(--ink); padding-left: 26px; }
+    .grupos a:hover { transform: translateY(2px); box-shadow: inset 10px 0 0 var(--c), 0 3px 0 var(--ink); }
+    .grupos b { font-size: 17px; }
+    .grupos span { color: var(--soft); font-size: 15px; overflow-wrap: anywhere; }
+    .indo main { display: none; }
+    .indo body::after { content: "Abrindo..."; font-weight: 700; font-size: 22px; }
+  </style>
+</head>
+<body>
+  <main>
+    <h1 class="loud">Ops! <span class="yellow">Página não encontrada</span></h1>
+    <div class="topo">
+      <img src="/identidade-visual/mascote/bit.svg" alt="">
+      <p class="bubble">Não achei esse endereço. Talvez você procure um destes atalhos. Dá para digitar direto no navegador, como <b>gamificapampa.github.io/ninja</b>.</p>
+    </div>
+    <div class="card grupos" id="grupos"></div>
+    <p><a class="btn btn--yellow" href="/">Voltar ao início</a></p>
+  </main>
+  <script>
+    const cores = { 'Jogos': 'var(--blue)', 'Aula com as crianças': 'var(--yellow)', 'Oficina de Prompts': 'var(--mint)' };
+    const grupos = {};
+    for (const [atalho, [grupo, rotulo]] of Object.entries(ATALHOS)) {
+      if (rotulo) (grupos[grupo] ||= []).push([atalho, rotulo]);
+    }
+    const lugar = document.getElementById('grupos');
+    for (const [grupo, itens] of Object.entries(grupos)) {
+      const secao = document.createElement('section');
+      const titulo = document.createElement('h2');
+      titulo.textContent = grupo;
+      const lista = document.createElement('ul');
+      for (const [atalho, rotulo] of itens) {
+        const item = document.createElement('li');
+        const link = document.createElement('a');
+        link.href = '/' + atalho;
+        link.style.setProperty('--c', cores[grupo]);
+        link.innerHTML = '<b></b><span></span>';
+        link.querySelector('b').textContent = rotulo;
+        link.querySelector('span').textContent = 'gamificapampa.github.io/' + atalho;
+        item.append(link);
+        lista.append(item);
+      }
+      secao.append(titulo, lista);
+      lugar.append(secao);
+    }
+  </script>
+</body>
+</html>
