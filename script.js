@@ -207,6 +207,8 @@ const shares = {
   oficina: { title: 'Oficina de Prompts', url: 'https://gamificapampa.github.io/oficina' },
   robo: { title: 'Robô pega a estrela', url: 'https://gamificapampa.github.io/robo' },
   ninja: { title: 'Ninja dos Bugs', url: 'https://gamificapampa.github.io/ninja' },
+  arcade: { title: 'Arcade do Código', url: 'https://gamificapampa.github.io/arcade' },
+  'caca-bugs': { title: 'Caça aos Bugs!', url: 'https://gamificapampa.github.io/caca-bugs' },
   'jogo-do-prompt': { title: 'Jogo do Prompt', url: 'https://gamificapampa.github.io/jogo-do-prompt' },
   prompt: { title: 'Construtor de prompts', url: 'https://gamificapampa.github.io/prompt' },
 };
