@@ -200,3 +200,45 @@ $('#mail-again').addEventListener('click', () => {
 document.querySelectorAll('[data-contato]').forEach((link) => {
   link.addEventListener('click', () => link.closest('dialog').close());
 });
+
+// Sharing a resource: the dialog shows its QR code, to project for the class, and the link for WhatsApp, Classroom or copying.
+const shares = {
+  turma: { title: 'Jogos para a turma', url: 'https://gamificapampa.github.io/turma/' },
+  oficina: { title: 'Oficina de Prompts', url: 'https://gamificapampa.github.io/oficina' },
+  robo: { title: 'Robô pega a estrela', url: 'https://gamificapampa.github.io/robo' },
+  ninja: { title: 'Ninja dos Bugs', url: 'https://gamificapampa.github.io/ninja' },
+  'jogo-do-prompt': { title: 'Jogo do Prompt', url: 'https://gamificapampa.github.io/jogo-do-prompt' },
+  prompt: { title: 'Construtor de prompts', url: 'https://gamificapampa.github.io/prompt' },
+};
+const shareSheet = $('#partilha');
+const copyButton = $('#partilha-copiar');
+const moreButton = $('#partilha-mais');
+let shared = null;
+
+document.querySelectorAll('[data-share]').forEach((button) => {
+  button.addEventListener('click', () => {
+    shared = shares[button.dataset.share];
+    const qr = shareSheet.querySelector('.partilha__qr');
+    qr.querySelector('use').setAttribute('href', `#qr-${button.dataset.share}`);
+    qr.setAttribute('aria-label', `QR code de ${shared.title}`);
+    $('#partilha-titulo').textContent = shared.title;
+    $('#partilha-link').textContent = shared.url.replace('https://', '');
+    $('#partilha-whatsapp').href = `https://wa.me/?text=${encodeURIComponent(`${shared.title}, do GamificaPampa: ${shared.url}`)}`;
+    $('#partilha-classroom').href = `https://classroom.google.com/share?url=${encodeURIComponent(shared.url)}&title=${encodeURIComponent(shared.title)}`;
+    copyButton.textContent = 'Copiar o link';
+    moreButton.hidden = !navigator.share;
+    shareSheet.showModal();
+  });
+});
+
+copyButton.addEventListener('click', async () => {
+  try {
+    await navigator.clipboard.writeText(shared.url);
+    copyButton.textContent = 'Link copiado!';
+  } catch {
+    getSelection().selectAllChildren($('#partilha-link'));
+    copyButton.textContent = 'Link selecionado para copiar';
+  }
+});
+
+moreButton.addEventListener('click', () => navigator.share({ title: shared.title, url: shared.url }).catch(() => {}));
