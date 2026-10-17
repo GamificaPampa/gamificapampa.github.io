@@ -57,6 +57,10 @@ h2 { font-size: clamp(38px, 5.6vw, 66px); }
 
 /* Buttons and pills: ink outline, hard shadow, pressing down on hover and click */
 .btn {
+  --drop-y: 7px;
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -70,14 +74,32 @@ h2 { font-size: clamp(38px, 5.6vw, 66px); }
   font: 600 18px/1.2 var(--font);
   text-decoration: none;
   white-space: nowrap;
-  box-shadow: 0 7px 0 var(--ink);
+  box-shadow: inset 0 -6px 0 rgb(47 42 74 / .16), inset 0 4px 0 rgb(255 255 255 / .55), 0 var(--drop-y) 0 var(--ink);
+  cursor: pointer;
   transition: transform .12s ease, box-shadow .12s ease;
 }
-.btn:hover { transform: translateY(3px); box-shadow: 0 4px 0 var(--ink); }
-.btn:active { transform: translateY(7px); box-shadow: 0 0 0 var(--ink); }
+.btn::after { content: ""; position: absolute; inset: -4px; z-index: -1; background: linear-gradient(105deg, transparent 35%, rgb(255 255 255 / .65) 50%, transparent 65%); translate: -110% 0; transition: translate .6s ease; }
+.btn:hover::after { translate: 110% 0; }
+.btn:hover { --drop-y: 4px; transform: translateY(3px); }
+.btn:active { --drop-y: 0px; transform: translateY(7px); }
+.btn svg { flex: none; transition: transform .3s var(--bounce); }
+.btn:hover svg { transform: scale(1.2) rotate(-8deg); }
+.btn--big { min-height: 62px; padding: 10px 30px; font-size: 20px; }
+.btn--small { --drop-y: 5px; min-height: 48px; padding: 4px 20px; font-size: 16px; }
+.btn--small:hover { --drop-y: 2px; }
+.btn--small:active { transform: translateY(5px); }
 .btn--yellow { --c: var(--yellow); }
 .btn--white { --c: var(--white); }
 .btn--mint { --c: var(--mint); }
+
+/* One color and one icon per action, on the whole site: green plays, yellow explores,
+   pink talks to the team, purple shares and orange downloads. White is for secondary actions */
+.btn--jogar { --c: var(--mint); }
+.btn--conhecer { --c: var(--yellow); }
+.btn--falar { --c: var(--pink); }
+.btn--compartilhar { --c: var(--purple); }
+.btn--baixar { --c: var(--orange); }
+.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
 
 .pill {
   display: inline-flex;
@@ -126,8 +148,8 @@ h2 { font-size: clamp(38px, 5.6vw, 66px); }
 .nav__logo { flex: none; margin-right: auto; padding: 0 8px 0 4px; background: var(--white); border: 4px solid var(--ink); border-radius: 999px; box-shadow: 0 5px 0 var(--ink); transition: transform .12s ease, box-shadow .12s ease; }
 .nav__logo:hover { transform: translateY(2px); box-shadow: 0 3px 0 var(--ink); }
 .nav__logo img { width: 172px; height: auto; }
-.nav .btn { min-height: 46px; padding: 4px 18px; font-size: 16px; box-shadow: 0 5px 0 var(--ink); }
-.nav .btn:hover { box-shadow: 0 2px 0 var(--ink); }
+.nav .btn { --drop-y: 5px; min-height: 46px; padding: 4px 18px; font-size: 16px; }
+.nav .btn:hover { --drop-y: 2px; }
 .nav__links { display: flex; flex-wrap: wrap; gap: 10px; order: 3; width: 100%; }
 .nav__links a {
   display: inline-flex;
@@ -147,7 +169,7 @@ h2 { font-size: clamp(38px, 5.6vw, 66px); }
 }
 .nav__links a:hover { transform: translateY(2px); box-shadow: 0 2px 0 var(--ink); }
 .nav__links a:active { transform: translateY(4px); box-shadow: none; }
-.nav__links .nav__menu-cta { background: var(--yellow); }
+.nav__links .nav__menu-cta { background: var(--mint); }
 .nav__toggle { display: none; align-items: center; gap: 10px; min-height: 46px; padding: 4px 18px; background: var(--white); border: 4px solid var(--ink); border-radius: 999px; box-shadow: 0 5px 0 var(--ink); color: var(--ink); font: 600 16px var(--font); cursor: pointer; }
 .nav__toggle:active { transform: translateY(5px); box-shadow: none; }
 .burger { width: 18px; height: 3px; border-radius: 2px; background: var(--ink); box-shadow: 0 -6px 0 var(--ink), 0 6px 0 var(--ink); }
@@ -169,7 +191,7 @@ h2 { font-size: clamp(38px, 5.6vw, 66px); }
 .scrollxp span { display: block; height: 100%; background: repeating-linear-gradient(90deg, var(--yellow) 0 18px, var(--orange) 18px 22px); transform: translateX(-100%); }
 
 /* Scenes: sky with clouds, glyphs and hills, or night with stars */
-.scene { position: relative; overflow: hidden; }
+.scene { position: relative; overflow: hidden; overflow: clip; }
 .sky { background: linear-gradient(180deg, var(--sky1), var(--sky2)); }
 .night { background: var(--ink); color: var(--white); }
 .scenery { position: absolute; inset: 0; pointer-events: none; }
@@ -216,7 +238,11 @@ h2 { font-size: clamp(38px, 5.6vw, 66px); }
 .tagline { padding: 6px 20px; background: var(--ink); color: var(--white); border-radius: 999px; font-weight: 600; font-size: clamp(16px, 2vw, 22px); }
 .lead { max-width: 580px; font-weight: 600; font-size: clamp(17px, 1.6vw, 20px); }
 .ctas { display: flex; flex-wrap: wrap; gap: 18px; }
-@media (max-width: 599px) { .hero .ctas { align-self: stretch; justify-content: center; } }
+.hero__talk { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 14px; font-weight: 600; }
+@media (max-width: 599px) {
+  .hero .ctas { flex-direction: column; align-self: stretch; }
+  .hero .ctas .btn { width: 100%; }
+}
 
 /* Bit the robot and its speech bubble */
 .bot { flex: none; overflow: visible; animation: bob 2.6s ease-in-out var(--d, 0s) infinite; }
@@ -373,7 +399,6 @@ h2 { font-size: clamp(38px, 5.6vw, 66px); }
 }
 
 /* Recursos pedagógicos */
-.game h3 a { color: inherit; text-decoration-thickness: 3px; text-underline-offset: 4px; }
 .mirim { display: grid; gap: 40px; }
 @media (min-width: 1024px) { .mirim { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); align-items: start; gap: 48px; } }
 .mirim .section__head { margin-bottom: 0; }
@@ -381,8 +406,11 @@ h2 { font-size: clamp(38px, 5.6vw, 66px); }
 .chips li { padding: 4px 14px; background: rgb(255 255 255 / .8); border: 3px solid var(--ink); border-radius: 999px; font-weight: 600; font-size: 15px; }
 .games { display: grid; gap: 24px; }
 @media (min-width: 560px) { .games { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
-.game { display: flex; flex-direction: column; align-items: flex-start; gap: 10px; padding: 34px 22px 24px; box-shadow: inset 0 14px 0 var(--c), var(--drop); }
-.game:hover { box-shadow: inset 0 14px 0 var(--c), 0 6px 0 var(--ink); }
+.game { display: flex; flex-direction: column; overflow: hidden; cursor: pointer; }
+.game__art { position: relative; height: 124px; background-color: var(--c); background-image: radial-gradient(rgb(255 255 255 / .35) 2px, transparent 2.5px); background-size: 18px 18px; border-bottom: 4px solid var(--ink); }
+.game__art svg { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
+.game__body { display: flex; flex: 1; flex-direction: column; align-items: flex-start; gap: 10px; padding: 16px 20px 20px; }
+.game__actions { display: flex; align-items: center; justify-content: space-between; gap: 12px; align-self: stretch; margin-top: auto; padding-top: 6px; }
 .game:nth-child(2), .game:nth-child(3) { --delay: .12s; }
 .game:nth-child(4), .game:nth-child(5) { --delay: .24s; }
 .game:nth-child(6) { --delay: .36s; }
@@ -392,7 +420,7 @@ h2 { font-size: clamp(38px, 5.6vw, 66px); }
 
 /* Final screen */
 .cta__inner { display: flex; flex-direction: column; align-items: center; gap: 22px; text-align: center; }
-.cta__title { font-size: clamp(58px, 11vw, 140px); line-height: 1; letter-spacing: .02em; animation: pulse 2.4s ease-in-out infinite; }
+.cta__title { font-size: clamp(40px, 13vw, 140px); line-height: 1; letter-spacing: .02em; animation: pulse 2.4s ease-in-out infinite; }
 .cta__sub { font-weight: 700; font-size: clamp(22px, 3vw, 32px); }
 .cta__inner > p:not(.cta__sub) { max-width: 620px; color: rgb(255 255 255 / .85); }
 .cta .ctas { justify-content: center; }
@@ -486,9 +514,12 @@ body:has(dialog[open]) { overflow: hidden; }
 .mailer__done p { font-size: 18px; font-weight: 600; }
 
 /* Share buttons on the resource cards, and the dialog with the QR code and the link */
-.share { display: inline-flex; align-items: center; gap: 8px; min-height: 48px; margin-top: auto; padding: 4px 18px; border: 3px solid var(--ink); border-radius: 999px; background: var(--white); color: var(--ink); font: 600 16px/1.2 var(--font); box-shadow: 0 4px 0 var(--ink); cursor: pointer; transition: transform .12s ease, box-shadow .12s ease; }
-.share:hover { transform: translateY(2px); box-shadow: 0 2px 0 var(--ink); }
-.share:active { transform: translateY(4px); box-shadow: none; }
+.share { display: inline-flex; align-items: center; gap: 8px; min-height: 48px; margin-top: auto; padding: 4px 18px; border: 3px solid var(--ink); border-radius: 999px; background: var(--purple); color: var(--ink); font: 600 16px/1.2 var(--font); box-shadow: inset 0 -4px 0 rgb(47 42 74 / .16), inset 0 3px 0 rgb(255 255 255 / .45), 0 4px 0 var(--ink); cursor: pointer; transition: transform .12s ease, box-shadow .12s ease; }
+.share:hover { transform: translateY(2px); box-shadow: inset 0 -4px 0 rgb(47 42 74 / .16), inset 0 3px 0 rgb(255 255 255 / .45), 0 2px 0 var(--ink); }
+.share:active { transform: translateY(4px); box-shadow: inset 0 -4px 0 rgb(47 42 74 / .16), inset 0 3px 0 rgb(255 255 255 / .45); }
+.share svg { transition: transform .3s var(--bounce); }
+.share:hover svg { transform: scale(1.2) rotate(-10deg); }
+.share--icon { width: 48px; padding: 0; justify-content: center; }
 .share:focus-visible { outline: 4px solid var(--pink); outline-offset: 3px; }
 .share-row { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; margin-top: 20px; font-weight: 600; }
 .share-row .share { margin-top: 0; }
@@ -496,8 +527,124 @@ body:has(dialog[open]) { overflow: hidden; }
 .partilha__qr { width: min(300px, 72vw); height: auto; aspect-ratio: 1; padding: 6px; background: #fff; border: 4px solid var(--ink); border-radius: 18px; }
 .partilha__link { font-weight: 700; font-size: clamp(18px, 3vw, 24px); overflow-wrap: anywhere; }
 .partilha .ficha__actions { justify-content: center; }
-.kit-row { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 8px; margin-top: 14px; font-weight: 600; }
-.kit-row a { color: var(--ink); text-decoration-thickness: 3px; text-underline-offset: 4px; }
+.extras { display: grid; gap: 14px; margin-top: 4px; }
+.extras li { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 14px; font-weight: 600; }
+.extras li span { flex: 1 1 220px; }
+
+/* 3D code blocks floating in the sky, like toy bricks */
+.cube-wrap { position: absolute; perspective: 700px; animation: float 5s ease-in-out var(--d, 0s) infinite; }
+.cube { --h: calc(var(--s) / 2); position: relative; width: var(--s); height: var(--s); transform-style: preserve-3d; animation: cube-spin var(--t, 16s) linear infinite; }
+.cube i { position: absolute; inset: 0; display: grid; place-items: center; background: var(--c); border: 4px solid var(--ink); border-radius: 10px; color: var(--ink); font-style: normal; font-weight: 700; font-size: calc(var(--s) * .3); line-height: 1; }
+.cube i:nth-child(1) { transform: translateZ(var(--h)); }
+.cube i:nth-child(2) { transform: rotateY(90deg) translateZ(var(--h)); filter: brightness(.86); }
+.cube i:nth-child(3) { transform: rotateY(180deg) translateZ(var(--h)); }
+.cube i:nth-child(4) { transform: rotateY(-90deg) translateZ(var(--h)); filter: brightness(.86); }
+.cube i:nth-child(5) { transform: rotateX(90deg) translateZ(var(--h)); filter: brightness(1.12); }
+.cube i:nth-child(6) { transform: rotateX(-90deg) translateZ(var(--h)); filter: brightness(.72); }
+@media (max-width: 1023px) { .cube-wrap--wide { display: none; } }
+
+/* Cards tilt in 3D toward the mouse and get a glare that follows it (script.js). On touch they only lift */
+[data-tilt] { position: relative; transform: perspective(900px) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg)); transform-style: preserve-3d; transition: transform .45s var(--bounce), box-shadow .2s ease; }
+[data-tilt].is-tilting { transition: transform .08s linear, box-shadow .2s ease; }
+.card[data-tilt]:hover { transform: perspective(900px) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg)) translateY(-6px); box-shadow: 0 18px 0 var(--ink); }
+.path__card[data-tilt]:hover { transform: perspective(900px) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg)) translateY(-6px); box-shadow: 0 16px 0 var(--c); }
+[data-tilt]::before { content: ""; position: absolute; inset: 0; z-index: 3; border-radius: inherit; background: radial-gradient(circle at var(--gx, 50%) var(--gy, 0%), rgb(255 255 255 / .5), transparent 55%); opacity: 0; pointer-events: none; transition: opacity .25s ease; }
+[data-tilt].is-tilting::before { opacity: 1; }
+/* Pieces that pop out of the tilted card */
+.player .bot, .player h3, .level .tag, .level h3 { translate: 0 0 28px; }
+
+/* Bit can be poked: a click makes it jump */
+.bot { cursor: pointer; }
+
+/* Project banners scroll their stripes while the card is under the mouse */
+.project__banner { background-image: linear-gradient(45deg, rgb(255 255 255 / .16) 25%, transparent 25% 50%, rgb(255 255 255 / .16) 50% 75%, transparent 75%); background-size: 44px 44px; animation: stripes 1.4s linear infinite paused; }
+.project:hover .project__banner { animation-play-state: running; }
+.mission { transition: transform .25s var(--bounce), box-shadow .25s ease; }
+.mission:hover { transform: translateX(6px); box-shadow: inset 18px 0 0 var(--c), 0 6px 0 var(--ink); }
+
+/* The trail dots under each player hop one after the other */
+.player:hover .trail i { animation: trail-hop .5s var(--bounce) var(--i, 0s); }
+.trail i:nth-child(2) { --i: .08s; }
+.trail i:nth-child(3) { --i: .16s; }
+.trail i:nth-child(4) { --i: .24s; }
+
+/* The dashed path draws itself as each step shows up, and the numbers flip in 3D on hover */
+.js .path__step:not(.is-visible)::after { clip-path: inset(0 0 100% 0); }
+.js .path__step.is-visible::after { animation: trace-down .8s ease-out calc(var(--delay, 0s) + .5s) backwards; }
+@media (min-width: 900px) {
+  .js .path__step:not(.is-visible)::after { clip-path: inset(0 100% 0 0); }
+  .js .path__step.is-visible::after { animation-name: trace-right; }
+}
+.path__node { transform: perspective(300px) rotateY(0deg) scale(1); transition: transform .6s var(--bounce); }
+.path__step:hover .path__node { transform: perspective(300px) rotateY(360deg) scale(1.1); }
+
+/* Shooting stars crossing the night sky now and then */
+.shooting { position: absolute; width: 130px; height: 3px; border-radius: 3px; background: linear-gradient(90deg, rgb(255 255 255 / 0), #fff 85%, var(--yellow)); rotate: 24deg; opacity: 0; animation: shoot var(--t, 9s) linear var(--d, 0s) infinite; }
+
+/* Big titles with more depth */
+.hero h1.loud { text-shadow: 0 .05em 0 var(--ink), 0 .1em 0 var(--ink), 0 .16em 0 rgb(47 42 74 / .3); }
+.cta__title { text-shadow: 0 5px 0 #e0a800, 0 10px 0 #b98a00, 0 16px 0 rgb(0 0 0 / .35); }
+
+/* Little animated scenes on the resource cards */
+.game__art { overflow: hidden; }
+.art-g { transform-box: fill-box; transform-origin: center; }
+.r-walk { animation: r-walk 4.6s ease-in-out infinite; }
+.r-star { animation: r-star 4.6s ease-in-out infinite; }
+.n1 { animation: n-arc 2.6s infinite; }
+.n2 { animation: n-arc2 2.6s infinite; animation-delay: -1.3s; }
+.n-slash { stroke-dasharray: 140; animation: n-slash 2.6s infinite; }
+.a-pad { animation: a-pad 1.2s ease-in-out infinite; }
+.a-coin { animation: a-coin 1.8s ease-out var(--d, 0s) infinite; }
+.c-bug { animation: c-bug .8s ease-in-out var(--d, 0s) infinite; }
+.c-lupa { animation: c-lupa 4.5s ease-in-out infinite; }
+.p-piece { animation: p-join 3.2s var(--bounce) infinite; }
+.p-star { animation: p-star 3.2s var(--bounce) infinite; }
+.l-line { transform-box: fill-box; transform-origin: 0 50%; animation: l-write 3.6s ease-in-out var(--d, 0s) infinite backwards; }
+.l-pencil { animation: l-pencil .9s ease-in-out infinite; }
+
+/* Clouds drift slower than the page and the cubes faster, so the sky gets depth on scroll */
+@supports (animation-timeline: view()) {
+  .cloud { --depth: -50px; animation: drift var(--t) linear var(--d) infinite, parallax linear both; animation-timeline: auto, view(); }
+  .scenery .glyph { --depth: 40px; animation: glyph-float 7s ease-in-out var(--d, 0s) infinite, parallax linear both; animation-timeline: auto, view(); }
+  .cube-wrap { --depth: 60px; animation: float 5s ease-in-out var(--d, 0s) infinite, parallax linear both; animation-timeline: auto, view(); }
+}
+
+@keyframes cube-spin { from { transform: rotateX(-24deg) rotateY(0deg); } to { transform: rotateX(-24deg) rotateY(360deg); } }
+@keyframes parallax { from { translate: 0 var(--depth, 50px); } to { translate: 0 calc(var(--depth, 50px) * -1); } }
+@keyframes stripes { to { background-position: 44px 0; } }
+@keyframes trail-hop { 50% { transform: translateY(-10px); } }
+@keyframes trace-down { from { clip-path: inset(0 0 100% 0); } }
+@keyframes trace-right { from { clip-path: inset(0 100% 0 0); } }
+@keyframes shoot { 0% { translate: 0 0; opacity: 0; } 3% { opacity: 1; } 12% { translate: 360px 160px; opacity: 0; } 100% { translate: 360px 160px; opacity: 0; } }
+@keyframes r-walk {
+  0%, 8% { transform: translate(14px, 8px); opacity: 1; }
+  28% { transform: translate(84px, 8px); }
+  48% { transform: translate(84px, 60px); }
+  70%, 88% { transform: translate(110px, 60px); opacity: 1; }
+  93% { transform: translate(110px, 60px); opacity: 0; }
+  94% { transform: translate(14px, 8px); opacity: 0; }
+  100% { transform: translate(14px, 8px); opacity: 1; }
+}
+@keyframes r-star { 0%, 68%, 92%, 100% { transform: scale(1) rotate(0); } 76% { transform: scale(1.4) rotate(25deg); } 84% { transform: scale(.95) rotate(-8deg); } }
+@keyframes n-arc {
+  0% { transform: translate(30px, 130px) rotate(0); animation-timing-function: cubic-bezier(.2, .6, .4, 1); }
+  50% { transform: translate(64px, 18px) rotate(160deg); animation-timing-function: cubic-bezier(.6, 0, .8, .4); }
+  100% { transform: translate(98px, 130px) rotate(320deg); }
+}
+@keyframes n-arc2 {
+  0% { transform: translate(160px, 130px) rotate(0); animation-timing-function: cubic-bezier(.2, .6, .4, 1); }
+  50% { transform: translate(126px, 26px) rotate(-160deg); animation-timing-function: cubic-bezier(.6, 0, .8, .4); }
+  100% { transform: translate(92px, 130px) rotate(-320deg); }
+}
+@keyframes n-slash { 0%, 44% { stroke-dashoffset: 140; opacity: 1; } 52% { stroke-dashoffset: 0; opacity: 1; } 70%, 100% { stroke-dashoffset: 0; opacity: 0; } }
+@keyframes a-pad { 50% { transform: rotate(-4deg) translateY(-3px); } }
+@keyframes a-coin { 0% { transform: translateY(22px) scale(.5); opacity: 0; } 20% { opacity: 1; } 70% { transform: translateY(-12px) scale(1); opacity: 1; } 100% { transform: translateY(-22px) scale(1); opacity: 0; } }
+@keyframes c-bug { 50% { transform: rotate(-9deg) translateY(-3px); } }
+@keyframes c-lupa { 0%, 100% { transform: translate(42px, 76px); } 33% { transform: translate(101px, 37px); } 66% { transform: translate(159px, 81px); } }
+@keyframes p-join { 0%, 100% { transform: translate(var(--px), var(--py)) rotate(var(--pr)); } 40%, 80% { transform: translate(0, 0) rotate(0); } }
+@keyframes p-star { 0%, 45%, 100% { transform: scale(0) rotate(-90deg); } 55%, 80% { transform: scale(1) rotate(0); } }
+@keyframes l-write { 0% { transform: scaleX(0); opacity: 1; } 25%, 85% { transform: scaleX(1); opacity: 1; } 100% { transform: scaleX(1); opacity: 0; } }
+@keyframes l-pencil { 50% { transform: translate(-4px, 3px) rotate(-8deg); } }
 
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
