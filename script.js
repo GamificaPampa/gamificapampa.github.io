@@ -103,8 +103,11 @@ const levelUp = () => {
   burst(box.width / 2, box.height * 0.45, 48, 260);
 };
 
-// Letting Bit go back to its idle bobbing once the jump ends.
-heroBot.addEventListener('animationend', () => heroBot.classList.remove('jump'));
+// Every Bit jumps when clicked, and goes back to its idle bobbing once the jump ends.
+document.querySelectorAll('.bot').forEach((bot) => {
+  bot.addEventListener('click', () => { if (!reducedMotion) replay(bot, 'jump'); });
+  bot.addEventListener('animationend', () => bot.classList.remove('jump'));
+});
 
 const gain = (points, x, y) => {
   experience += points;
@@ -150,7 +153,44 @@ if (!reducedMotion && matchMedia('(pointer: fine)').matches) {
     game.style.transform = `perspective(900px) rotateY(${tiltX}deg) rotateX(${tiltY}deg)`;
   });
   $('.hero').addEventListener('pointerleave', () => { game.style.transform = ''; });
+
+  // Tilting the cards toward the mouse, with a glare at the pointer.
+  document.querySelectorAll('[data-tilt]').forEach((card) => {
+    card.addEventListener('pointermove', (event) => {
+      const box = card.getBoundingClientRect();
+      const x = (event.clientX - box.left) / box.width;
+      const y = (event.clientY - box.top) / box.height;
+      card.style.setProperty('--rx', `${(0.5 - y) * 8}deg`);
+      card.style.setProperty('--ry', `${(x - 0.5) * 10}deg`);
+      card.style.setProperty('--gx', `${x * 100}%`);
+      card.style.setProperty('--gy', `${y * 100}%`);
+      card.classList.add('is-tilting');
+    });
+    card.addEventListener('pointerleave', () => {
+      card.classList.remove('is-tilting');
+      ['--rx', '--ry', '--gx', '--gy'].forEach((name) => card.style.removeProperty(name));
+    });
+  });
+
+  // Bit in the hero follows the mouse with its eyes.
+  const eyes = $('#hero-eyes');
+  addEventListener('pointermove', (event) => {
+    const box = heroBot.getBoundingClientRect();
+    const dx = event.clientX - (box.left + box.width / 2);
+    const dy = event.clientY - (box.top + box.height * 0.45);
+    const length = Math.hypot(dx, dy) || 1;
+    const reach = Math.min(1, length / 200) * 3;
+    eyes.setAttribute('transform', `translate(${(dx / length) * reach} ${(dy / length) * reach})`);
+  }, { passive: true });
 }
+
+// The whole resource card opens its game, not only the button.
+document.querySelectorAll('.game').forEach((card) => {
+  card.addEventListener('click', (event) => {
+    if (event.target.closest('a, button')) return;
+    card.querySelector('.game__actions a').click();
+  });
+});
 
 // Opening each project sheet in a dialog, closing it on the X, on Esc or on a click outside.
 document.querySelectorAll('[data-ficha]').forEach((button) => {
