@@ -1,0 +1,463 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Máquina de prompts · GamificaPampa</title>
+  <meta name="description" content="Escolha a turma, o que criar e o tema. A máquina monta um prompt com Papel, Tarefa, Contexto e Formato, pronto para colar no Gemini.">
+  <meta property="og:title" content="Máquina de prompts">
+  <meta property="og:description" content="Monte em poucos cliques um prompt pronto para o Gemini, com Papel, Tarefa, Contexto e Formato.">
+  <meta property="og:image" content="https://gamificapampa.github.io/identidade-visual/logos/gamificapampa-github-avatar.png">
+  <meta property="og:type" content="website">
+  <meta name="theme-color" content="#5fbcff">
+  <link rel="icon" type="image/svg+xml" href="/identidade-visual/logos/gamificapampa-icone.svg">
+  <link rel="stylesheet" href="/identidade-visual/css/fontes.css">
+  <link rel="stylesheet" href="/identidade-visual/css/cores.css">
+  <link rel="stylesheet" href="/identidade-visual/css/componentes.css">
+  <link rel="stylesheet" href="/identidade-visual/css/cenario.css">
+  <link rel="stylesheet" href="/identidade-visual/css/animacoes.css">
+  <style>
+    p, ol { margin: 0; }
+    [hidden] { display: none !important; }
+    :focus-visible { outline: 4px solid var(--pink); outline-offset: 3px; }
+    .sprite { position: absolute; width: 0; height: 0; overflow: hidden; }
+    .wrap { width: min(1180px, 100% - 32px); margin-inline: auto; }
+    @media (min-width: 768px) { .wrap { width: min(1180px, 100% - 64px); } }
+
+    /* Top bar and opening, with Bit explaining the machine */
+    .top { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px; padding-block: 16px; }
+    .brand { padding: 0 8px 0 4px; background: var(--white); border: 4px solid var(--ink); border-radius: 999px; box-shadow: 0 5px 0 var(--ink); transition: transform .12s ease, box-shadow .12s ease; }
+    .brand:hover { transform: translateY(2px); box-shadow: 0 3px 0 var(--ink); }
+    .brand img { width: 172px; height: auto; }
+    .intro { display: grid; justify-items: start; gap: 18px; padding-block: 14px 34px; }
+    .intro h1 { font-size: clamp(42px, 7vw, 84px); }
+    .talk { display: flex; align-items: center; gap: 18px; max-width: 720px; }
+    .talk img { flex: none; width: clamp(72px, 10vw, 100px); height: auto; }
+    .talk .bubble { min-width: 0; font-size: clamp(16px, 1.8vw, 20px); line-height: 1.35; box-shadow: 0 6px 0 rgb(47 42 74 / .3); }
+
+    /* The machine: the choices on the left and the console with the prompt on the right */
+    .machine { display: grid; gap: 28px; align-items: start; padding-bottom: 56px; }
+    @media (min-width: 980px) {
+      .machine { grid-template-columns: minmax(0, 1fr) minmax(0, 480px); }
+      .console { position: sticky; top: 16px; }
+    }
+    .choices { display: grid; gap: 26px; }
+    .step { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; min-width: 0; margin: 0; padding: 0; border: 0; }
+    .step legend, .step__title { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 10px; width: 100%; margin-bottom: 6px; padding: 0; font-weight: 700; font-size: 20px; }
+    .step__num { display: grid; place-items: center; width: 34px; height: 34px; background: var(--c, var(--yellow)); border: 3px solid var(--ink); border-radius: 50%; font-size: 16px; }
+    .step__note { color: var(--soft); font-weight: 600; font-size: 15px; }
+    .step[disabled] .chip { opacity: .45; }
+    .chip { position: relative; cursor: pointer; }
+    .chip input { position: absolute; inset: 0; margin: 0; opacity: 0; cursor: pointer; }
+    .chip span { display: inline-flex; align-items: center; min-height: 44px; padding: 4px 16px; background: var(--white); border: 3px solid var(--ink); border-radius: 999px; box-shadow: 0 4px 0 var(--ink); font-weight: 600; font-size: 16px; transition: transform .12s ease, box-shadow .12s ease, background .2s ease; }
+    .chip:hover span { transform: translateY(2px); box-shadow: 0 2px 0 var(--ink); }
+    .chip input:checked + span { background: var(--sky2); transform: translateY(4px); box-shadow: none; }
+    .chip input:checked + span::before { content: "✓"; margin-right: 6px; font-weight: 700; }
+    .chip input:focus-visible + span { outline: 4px solid var(--pink); outline-offset: 3px; }
+    .theme { flex: 1 1 100%; min-width: 0; min-height: 52px; padding: 10px 16px; background: var(--white); color: var(--ink); border: 4px solid var(--ink); border-radius: 16px; font: 500 18px var(--font); }
+    .ideas { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; color: var(--soft); font-weight: 600; font-size: 15px; }
+    .ideas button { min-height: 40px; padding: 2px 14px; background: rgb(255 255 255 / .5); color: var(--ink); border: 3px dashed var(--ink); border-radius: 999px; font: 600 15px var(--font); cursor: pointer; }
+    .ideas button:hover { background: var(--white); border-style: solid; }
+    .privacy { display: flex; align-items: flex-start; gap: 10px; width: 100%; padding: 12px 14px; background: #ffe3ec; border: 3px solid var(--pink); border-radius: 16px; font-weight: 600; font-size: 15px; }
+    .privacy svg { flex: none; }
+
+    /* The console, dark like the screen on the hub, with the four lights and the prompt on paper */
+    .console { display: grid; gap: 16px; padding: 20px; background: var(--ink); color: var(--white); border: var(--line); border-radius: var(--radius); box-shadow: var(--drop); }
+    .console.is-ready { animation: ready .7s var(--bounce); }
+    .console__top { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px; }
+    .console__name { padding: 3px 12px; background: var(--yellow); color: var(--ink); border-radius: 999px; font-weight: 700; font-size: 14px; letter-spacing: .04em; }
+    .lights { display: flex; gap: 6px; }
+    .lights i { display: grid; place-items: center; width: 32px; height: 32px; border: 3px solid rgb(255 255 255 / .3); border-radius: 50%; color: rgb(255 255 255 / .45); font-style: normal; font-weight: 700; font-size: 15px; transition: background .3s ease, color .3s ease, border-color .3s ease; }
+    .lights i.is-on { background: var(--c); border-color: var(--white); color: var(--ink); animation: surgir .4s var(--bounce); }
+    /* The same colors as the pieces in the Jogo do Prompt and in the Construtor */
+    [data-light="papel"], .piece--papel, .how__card--papel { --c: #4da3ff; --c-light: #cfe6ff; }
+    [data-light="tarefa"], .piece--tarefa, .how__card--tarefa { --c: #4fd6a6; --c-light: #c9f5e3; }
+    [data-light="contexto"], .piece--contexto, .how__card--contexto { --c: #ffd23f; --c-light: #fff1a8; }
+    [data-light="formato"], .piece--formato, .how__card--formato { --c: #ff8a3d; --c-light: #ffdcc4; }
+    .count { color: rgb(255 255 255 / .85); font-weight: 600; font-size: 15px; }
+    .count.is-ready { color: var(--yellow); }
+    .prompt { display: grid; gap: 8px; padding: 14px; background: var(--white); color: var(--ink); border-radius: 18px; box-shadow: inset 0 -4px 0 rgb(47 42 74 / .12); }
+    .piece { position: relative; display: block; padding: 7px 12px 7px 40px; background: var(--c-light); border: 2px solid var(--c); border-radius: 12px; font-size: 16px; line-height: 1.4; }
+    .piece b { position: absolute; left: 9px; top: 8px; display: grid; place-items: center; width: 22px; height: 22px; background: var(--c); border: 2px solid var(--ink); border-radius: 50%; font-size: 12px; line-height: 1; }
+    .piece.is-empty { background: none; color: var(--soft); border-style: dashed; }
+    .piece.is-new { animation: surgir .45s var(--bounce); }
+    .tip { display: flex; align-items: flex-start; gap: 10px; padding: 10px 12px; background: rgb(255 255 255 / .1); border-radius: 14px; font-size: 15px; line-height: 1.4; }
+    .tip img { flex: none; width: 38px; height: auto; }
+    .actions { display: flex; flex-wrap: wrap; gap: 12px; }
+    .actions .btn[disabled] { opacity: .5; cursor: not-allowed; }
+
+    /* Recent prompts, kept only in this browser */
+    .recent { display: grid; justify-items: start; gap: 14px; padding-bottom: 56px; }
+    .recent h2, .how h2 { font-size: clamp(32px, 4.6vw, 52px); }
+    .recent__note { color: var(--ink); font-weight: 600; }
+    .recent ol { display: grid; grid-template-columns: minmax(0, 1fr); gap: 12px; width: 100%; padding: 0; list-style: none; }
+    .recent li { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px 16px; padding: 12px 16px; background: var(--white); border: 4px solid var(--ink); border-radius: 18px; box-shadow: 0 5px 0 var(--ink); }
+    .recent li div { flex: 1 1 260px; min-width: 0; }
+    .recent li b { display: block; font-size: 17px; }
+    .recent li span { display: block; overflow: hidden; color: var(--soft); font-size: 14px; white-space: nowrap; text-overflow: ellipsis; }
+
+    /* How the machine thinks: the four pieces, and the way to the Oficina */
+    .how { display: grid; justify-items: start; gap: 18px; padding-bottom: clamp(140px, 18vw, 220px); }
+    .how > p { max-width: 640px; font-weight: 600; font-size: clamp(17px, 1.6vw, 20px); }
+    .how__grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 230px), 1fr)); gap: 18px; width: 100%; }
+    .how__card { display: grid; gap: 6px; padding: 26px 18px 18px; background: var(--white); border: 4px solid var(--ink); border-radius: 22px; box-shadow: inset 0 12px 0 var(--c), 0 6px 0 var(--ink); }
+    .how__card h3 { display: flex; align-items: center; gap: 10px; font-size: 24px; }
+    .how__card h3 b { display: grid; place-items: center; width: 34px; height: 34px; background: var(--c); border: 3px solid var(--ink); border-radius: 50%; font-size: 16px; }
+    .how__card p { color: var(--soft); font-size: 16px; }
+    .how__links { display: flex; flex-wrap: wrap; gap: 14px; margin-top: 6px; }
+
+    .foot { position: relative; padding: 0 16px 28px; font-weight: 600; text-align: center; }
+
+    @keyframes ready { 40% { box-shadow: 0 12px 0 var(--ink), 0 0 0 10px var(--yellow); } }
+  </style>
+</head>
+<body class="ceu">
+  <svg class="sprite" aria-hidden="true">
+    <symbol id="tri" viewBox="0 0 24 24"><path d="M6 4l14 8-14 8z" fill="#fff" stroke="#2f2a4a" stroke-width="3" stroke-linejoin="round"/></symbol>
+    <symbol id="i-lupa" viewBox="0 0 24 24"><circle cx="10" cy="10" r="6.5" fill="#fff" stroke="#2f2a4a" stroke-width="3"/><path d="M15 15l5.5 5.5" stroke="#2f2a4a" stroke-width="3.4" stroke-linecap="round"/></symbol>
+    <symbol id="i-copy" viewBox="0 0 24 24"><rect x="8" y="8" width="13" height="13" rx="3" fill="#fff" stroke="#2f2a4a" stroke-width="2.6"/><path d="M16 5.5V5a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h.5" fill="none" stroke="#2f2a4a" stroke-width="2.6" stroke-linecap="round"/></symbol>
+    <symbol id="i-reset" viewBox="0 0 24 24"><path d="M4 12a8 8 0 1 0 2.6-5.9" fill="none" stroke="#2f2a4a" stroke-width="3" stroke-linecap="round"/><path d="M5 2.5v5h5" fill="none" stroke="#2f2a4a" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    <symbol id="i-lock" viewBox="0 0 24 24"><path d="M7.5 11V8a4.5 4.5 0 0 1 9 0v3" fill="none" stroke="#2f2a4a" stroke-width="2.8"/><rect x="4" y="10.5" width="16" height="11" rx="3.5" fill="#ff5f8f" stroke="#2f2a4a" stroke-width="2.6"/><circle cx="12" cy="16" r="1.8" fill="#2f2a4a"/></symbol>
+  </svg>
+
+  <div class="cenario cenario--fixo" aria-hidden="true">
+    <span class="nuvem" style="top: 6%; --w: 190px; --t: 80s; --d: -12s"></span>
+    <span class="nuvem" style="top: 28%; --w: 140px; --t: 65s; --d: -40s"></span>
+    <span class="nuvem" style="top: 52%; --w: 220px; --t: 95s; --d: -70s"></span>
+    <span class="simbolo" style="right: 5%; top: 14%">&lt;/&gt;</span>
+    <span class="simbolo" style="left: 3%; top: 44%; --d: -3s">{ }</span>
+    <span class="simbolo" style="right: 4%; top: 64%; --d: -5s">01</span>
+    <span class="morros"></span>
+  </div>
+
+  <header class="wrap top">
+    <a class="brand" href="/" aria-label="GamificaPampa, voltar ao site"><img src="/identidade-visual/logos/gamificapampa-horizontal.svg" alt="GamificaPampa" width="650" height="144"></a>
+    <a class="btn btn--small" href="/">Voltar ao site</a>
+  </header>
+
+  <main class="wrap">
+    <section class="intro">
+      <p class="pill" style="--c: var(--yellow)">OFICINA DE PROMPTS</p>
+      <h1 class="loud anima-letras"><span>Máquina</span> <span>de</span> <span class="yellow">prompts</span></h1>
+      <div class="talk">
+        <img class="anima-flutuar" id="bit" src="/identidade-visual/mascote/bit.svg" width="100" height="100" alt="Bit, o robô do GamificaPampa">
+        <p class="bubble anima-balao" id="bubble" style="--d: .4s">Escolha as peças e eu monto um prompt para você colar no Gemini. Cada escolha acende uma luz da máquina.</p>
+      </div>
+    </section>
+
+    <div class="machine">
+      <form class="card choices" id="machine">
+        <fieldset class="step" style="--c: #4da3ff">
+          <legend><span class="step__num">1</span>Para qual turma?</legend>
+          <label class="chip"><input type="radio" name="turma" value="infantil"><span>Educação Infantil</span></label>
+          <label class="chip"><input type="radio" name="turma" value="1"><span>1º ano</span></label>
+          <label class="chip"><input type="radio" name="turma" value="2"><span>2º ano</span></label>
+          <label class="chip"><input type="radio" name="turma" value="3"><span>3º ano</span></label>
+          <label class="chip"><input type="radio" name="turma" value="4"><span>4º ano</span></label>
+          <label class="chip"><input type="radio" name="turma" value="5"><span>5º ano</span></label>
+          <label class="chip"><input type="radio" name="turma" value="6"><span>6º ano</span></label>
+          <label class="chip"><input type="radio" name="turma" value="7"><span>7º ano</span></label>
+          <label class="chip"><input type="radio" name="turma" value="8"><span>8º ano</span></label>
+          <label class="chip"><input type="radio" name="turma" value="9"><span>9º ano</span></label>
+        </fieldset>
+
+        <fieldset class="step" id="subject-step" style="--c: #cfe6ff">
+          <legend><span class="step__num">2</span>De qual matéria? <span class="step__note" id="subject-note">Se quiser</span></legend>
+          <label class="chip"><input type="radio" name="materia" value="portugues"><span>Língua Portuguesa</span></label>
+          <label class="chip"><input type="radio" name="materia" value="matematica"><span>Matemática</span></label>
+          <label class="chip"><input type="radio" name="materia" value="ciencias"><span>Ciências</span></label>
+          <label class="chip"><input type="radio" name="materia" value="historia"><span>História</span></label>
+          <label class="chip"><input type="radio" name="materia" value="geografia"><span>Geografia</span></label>
+          <label class="chip"><input type="radio" name="materia" value="arte"><span>Arte</span></label>
+          <label class="chip"><input type="radio" name="materia" value="ingles"><span>Inglês</span></label>
+          <label class="chip"><input type="radio" name="materia" value="educacao-fisica"><span>Educação Física</span></label>
+        </fieldset>
+
+        <fieldset class="step" style="--c: #4fd6a6">
+          <legend><span class="step__num">3</span>O que você quer criar?</legend>
+          <label class="chip"><input type="radio" name="tipo" value="historia"><span>História</span></label>
+          <label class="chip"><input type="radio" name="tipo" value="quiz"><span>Quiz</span></label>
+          <label class="chip"><input type="radio" name="tipo" value="jogo"><span>Jogo</span></label>
+          <label class="chip"><input type="radio" name="tipo" value="atividade"><span>Atividade para imprimir</span></label>
+          <label class="chip"><input type="radio" name="tipo" value="plano"><span>Plano de aula</span></label>
+          <label class="chip"><input type="radio" name="tipo" value="adaptar"><span>Adaptar um texto</span></label>
+        </fieldset>
+
+        <div class="step" style="--c: #c9f5e3">
+          <label class="step__title" for="tema"><span class="step__num">4</span>Sobre qual tema?</label>
+          <input class="theme" id="tema" name="tema" maxlength="80" autocomplete="off" placeholder="Escreva o tema da aula">
+          <div class="ideas" id="ideas"></div>
+          <p class="privacy"><svg width="24" height="24" aria-hidden="true"><use href="#i-lock"/></svg>Nunca escreva o nome ou dados das crianças. Descreva a turma, não as pessoas.</p>
+        </div>
+
+        <fieldset class="step" style="--c: #ffdcc4">
+          <legend><span class="step__num">5</span>Algum ajuste? <span class="step__note">Se quiser</span></legend>
+          <label class="chip"><input type="checkbox" name="extra" value="local"><span>Exemplos de Alegrete e do Pampa</span></label>
+          <label class="chip"><input type="checkbox" name="extra" value="leitura"><span>Alunos com dificuldade de leitura</span></label>
+          <label class="chip"><input type="checkbox" name="extra" value="curto"><span>Resposta curta</span></label>
+        </fieldset>
+      </form>
+
+      <section class="console" id="console" aria-labelledby="console-name">
+        <div class="console__top">
+          <h2 class="console__name" id="console-name">MÁQUINA DE PROMPTS</h2>
+          <span class="lights" aria-hidden="true"><i data-light="papel">P</i><i data-light="tarefa">T</i><i data-light="contexto">C</i><i data-light="formato">F</i></span>
+        </div>
+        <p class="count" id="count" role="status">0 de 4 peças prontas</p>
+        <div class="prompt" id="prompt"></div>
+        <p class="tip"><img src="/identidade-visual/mascote/bit.svg" width="38" height="38" alt=""><span id="tip">Comece pela turma. O Papel e o Contexto saem dela.</span></p>
+        <div class="actions">
+          <button class="btn btn--small" type="button" id="copy" disabled><svg width="18" height="18" aria-hidden="true"><use href="#i-copy"/></svg>Copiar o prompt</button>
+          <a class="btn btn--conhecer btn--small" href="https://gemini.google.com/app" target="_blank" rel="noopener"><svg width="18" height="18" aria-hidden="true"><use href="#i-lupa"/></svg>Abrir o Gemini</a>
+          <button class="btn btn--small" type="button" id="reset"><svg width="18" height="18" aria-hidden="true"><use href="#i-reset"/></svg>Começar de novo</button>
+        </div>
+      </section>
+    </div>
+
+    <section class="recent" id="recent" hidden>
+      <h2 class="loud">Seus últimos <span class="yellow">prompts</span></h2>
+      <p class="recent__note">Ficam guardados só neste navegador, para você copiar de novo.</p>
+      <ol id="recent-list"></ol>
+      <button class="btn btn--small" type="button" id="recent-clear">Apagar a lista</button>
+    </section>
+
+    <section class="how">
+      <h2 class="loud">Como a máquina <span class="yellow">pensa</span></h2>
+      <p>Um bom prompt tem quatro peças. É o mesmo método da Oficina de Prompts, e a máquina já escreve do jeito que deu certo nos testes com o Gemini.</p>
+      <div class="how__grid">
+        <article class="how__card how__card--papel"><h3><b>P</b>Papel</h3><p>Quem o Gemini deve ser. Com a matéria e o ano, ele fala do jeito certo para a turma.</p></article>
+        <article class="how__card how__card--tarefa"><h3><b>T</b>Tarefa</h3><p>O que ele deve fazer, com um verbo claro e um tema concreto.</p></article>
+        <article class="how__card how__card--contexto"><h3><b>C</b>Contexto</h3><p>Para quem e com quais limites: a idade, a leitura e o lugar.</p></article>
+        <article class="how__card how__card--formato"><h3><b>F</b>Formato</h3><p>Como o resultado deve sair, para chegar pronto para usar na aula.</p></article>
+      </div>
+      <div class="how__links">
+        <a class="btn btn--jogar" href="https://gamificapampa.github.io/recursos-pedagogicos/professores/oficina-prompts/jogo.html"><svg width="22" height="22" aria-hidden="true"><use href="#tri"/></svg>Jogo do Prompt</a>
+        <a class="btn btn--conhecer" href="https://gamificapampa.github.io/recursos-pedagogicos/professores/oficina-prompts/construtor.html"><svg width="22" height="22" aria-hidden="true"><use href="#i-lupa"/></svg>Construtor de prompts</a>
+        <a class="btn btn--conhecer" href="https://gamificapampa.github.io/recursos-pedagogicos/professores/oficina-prompts/curso.html"><svg width="22" height="22" aria-hidden="true"><use href="#i-lupa"/></svg>Curso da Oficina</a>
+      </div>
+    </section>
+  </main>
+
+  <footer class="foot">GamificaPampa, projeto de extensão da UNIPAMPA, Campus Alegrete</footer>
+
+  <script>
+    const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const $ = (selector) => document.querySelector(selector);
+    const replay = (element, className) => {
+      element.classList.remove(className);
+      void element.offsetWidth;
+      element.classList.add(className);
+    };
+
+    // The class gives the Papel and the Contexto, what to create gives the Tarefa and the Formato.
+    // The sentences follow what worked in the Gemini tests: Portuguese, no interactive quiz,
+    // no code block, images described in parentheses and no BNCC codes, which the fast model invents.
+    const classes = {
+      infantil: { name: 'Educação Infantil', papel: 'Você é professor(a) da Educação Infantil e cria materiais para crianças pequenas.', age: 'crianças de 4 e 5 anos que ainda não leem; vou apresentar em voz alta' },
+      1: { name: '1º ano', year: 'do 1º ano', age: 'crianças de 6 anos que estão começando a ler' },
+      2: { name: '2º ano', year: 'do 2º ano', age: 'crianças de 7 anos que leem frases curtas' },
+      3: { name: '3º ano', year: 'do 3º ano', age: 'crianças de 8 anos' },
+      4: { name: '4º ano', year: 'do 4º ano', age: 'crianças de 9 anos' },
+      5: { name: '5º ano', year: 'do 5º ano', age: 'crianças de 10 anos' },
+      6: { name: '6º ano', year: 'do 6º ano', age: 'alunos de 11 anos' },
+      7: { name: '7º ano', year: 'do 7º ano', age: 'alunos de 12 anos' },
+      8: { name: '8º ano', year: 'do 8º ano', age: 'alunos de 13 anos' },
+      9: { name: '9º ano', year: 'do 9º ano', age: 'alunos de 14 anos' },
+    };
+    const subjects = {
+      portugues: { name: 'Língua Portuguesa', ideas: ['rimas', 'fábulas', 'substantivos'] },
+      matematica: { name: 'Matemática', ideas: ['frações', 'a tabuada do 7', 'formas geométricas'] },
+      ciencias: { name: 'Ciências', ideas: ['o ciclo da água', 'os animais do Pampa', 'o sistema solar'] },
+      historia: { name: 'História', ideas: ['a história de Alegrete', 'a infância dos avós', 'a Revolução Farroupilha'] },
+      geografia: { name: 'Geografia', ideas: ['o bioma Pampa', 'os rios do Rio Grande do Sul', 'os pontos cardeais'] },
+      arte: { name: 'Arte', ideas: ['as cores primárias', 'arte com sucata', 'retratos'] },
+      ingles: { name: 'Inglês', ideas: ['as cores em inglês', 'os animais em inglês', 'os números em inglês'] },
+      'educacao-fisica': { name: 'Educação Física', ideas: ['brincadeiras antigas', 'jogos cooperativos', 'alongamento'] },
+    };
+    const anyIdeas = ['frações', 'o ciclo da água', 'os animais do Pampa'];
+    const kinds = {
+      historia: {
+        name: 'História',
+        tarefa: (theme) => `Escreva uma história curta sobre ${theme}.`,
+        formato: 'Use até 6 parágrafos curtos, nomes brasileiros e, no fim, 3 perguntas para conversar com a turma.',
+        tip: 'Se o Gemini desenhar com letras e símbolos, peça de novo: "descreva as imagens entre parênteses".',
+      },
+      quiz: {
+        name: 'Quiz',
+        tarefa: (theme) => `Crie um quiz de 8 perguntas sobre ${theme}.`,
+        formato: 'Use múltipla escolha com 3 alternativas, sem usar o teste interativo, e explique o gabarito no fim.',
+        tip: 'O Gemini às vezes abre um teste interativo no lugar do texto. O prompt já pede para não abrir.',
+      },
+      jogo: {
+        name: 'Jogo',
+        tarefa: (theme) => `Crie um jogo sobre ${theme} para jogar no navegador.`,
+        formato: 'Quero botões grandes, 3 fases, som no acerto e estrelas no final.',
+        tip: 'Ligue o Canvas em + > Mais ferramentas > Canvas. Se ele recusar o jogo, mande primeiro só a Tarefa e depois o resto.',
+      },
+      atividade: {
+        name: 'Atividade para imprimir',
+        tarefa: (theme) => `Crie uma atividade para imprimir sobre ${theme}.`,
+        formato: 'Monte uma folha A4 com 5 exercícios, do fácil ao difícil, e o gabarito separado no fim. Escreva fora de bloco de código e descreva as imagens entre parênteses.',
+        tip: 'O Gemini às vezes põe a folha inteira num bloco de código. O prompt já pede para escrever fora dele.',
+      },
+      plano: {
+        name: 'Plano de aula',
+        tarefa: (theme) => `Monte um plano de aula sobre ${theme}.`,
+        formato: 'Divida em objetivo, materiais, passo a passo com o tempo de cada parte e uma forma de avaliar, para uma aula de 50 minutos. Não cite códigos da BNCC.',
+        tip: 'O modelo rápido do Gemini às vezes inventa códigos da BNCC. Por isso o prompt pede para não citar.',
+      },
+      adaptar: {
+        name: 'Adaptar um texto',
+        tarefa: (theme) => `Adapte o texto sobre ${theme} que vou colar no fim, sem mudar o conteúdo.`,
+        formato: 'Use frases curtas, instruções numeradas e, no fim, uma lista do que mudou.',
+        tip: 'Cole o texto depois do prompt. Descreva o que o aluno precisa sem escrever o nome dele.',
+      },
+    };
+    const pieces = [
+      { id: 'papel', letter: 'P', name: 'Papel', hint: 'escolha a turma' },
+      { id: 'tarefa', letter: 'T', name: 'Tarefa', hint: 'escolha o que criar e escreva o tema' },
+      { id: 'contexto', letter: 'C', name: 'Contexto', hint: 'escolha a turma' },
+      { id: 'formato', letter: 'F', name: 'Formato', hint: 'escolha o que criar' },
+    ];
+
+    const form = $('#machine');
+    const consoleBox = $('#console');
+    const copyButton = $('#copy');
+    const bubble = $('#bubble');
+    const greeting = bubble.textContent;
+    const shown = new Map();
+    const pieceElements = pieces.map((piece) => {
+      const element = Object.assign(document.createElement('span'), { className: `piece piece--${piece.id}` });
+      element.append(Object.assign(document.createElement('b'), { textContent: piece.letter }), document.createElement('span'));
+      $('#prompt').append(element);
+      return element;
+    });
+    let current = { text: '', label: '' };
+
+    const read = () => {
+      const data = new FormData(form);
+      const turma = data.get('turma');
+      const group = classes[turma];
+      const subject = turma === 'infantil' ? null : subjects[data.get('materia')];
+      const kind = kinds[data.get('tipo')];
+      const theme = String(data.get('tema') || '').trim().replace(/[.!?]+$/, '');
+      const extras = data.getAll('extra');
+      let papel = '';
+      if (group) papel = group.papel || `Você é professor(a)${subject ? ` de ${subject.name}` : ''} ${group.year} e cria materiais para a sala de aula.`;
+      let contexto = group ? `É para ${group.age}.` : '';
+      if (contexto && extras.includes('leitura')) contexto += ' Alguns alunos têm dificuldade de leitura.';
+      if (contexto && extras.includes('local')) contexto += ' Use exemplos do dia a dia de Alegrete e do Pampa gaúcho.';
+      let formato = kind ? kind.formato : '';
+      if (formato && extras.includes('curto')) formato += ' Seja breve: a resposta deve caber numa página.';
+      if (formato) formato += ' Responda em português do Brasil.';
+      const text = { papel, tarefa: kind && theme ? kind.tarefa(theme) : '', contexto, formato };
+      const label = [kind && kind.name, group && group.name, theme].filter(Boolean).join(' · ');
+      return { text, kind, turma, subject, label };
+    };
+
+    // Ideas for the theme follow the chosen subject.
+    const showIdeas = (subject) => {
+      const box = $('#ideas');
+      box.replaceChildren(Object.assign(document.createElement('span'), { textContent: 'Ideias:' }));
+      for (const idea of subject ? subject.ideas : anyIdeas) {
+        const button = Object.assign(document.createElement('button'), { type: 'button', textContent: idea });
+        button.addEventListener('click', () => { form.elements.tema.value = idea; update(); });
+        box.append(button);
+      }
+    };
+
+    // Cheering when the four pieces are in place, the first time they are.
+    const celebrate = () => {
+      bubble.textContent = 'Prompt pronto! Copie e cole no Gemini. Se a resposta não vier do seu jeito, peça ajustes na mesma conversa.';
+      replay(consoleBox, 'is-ready');
+      if (!reducedMotion) replay($('#bit'), 'anima-saltar');
+    };
+
+    // Bit goes back to floating once the jump ends.
+    $('#bit').addEventListener('animationend', (event) => { if (event.animationName === 'saltar') $('#bit').classList.remove('anima-saltar'); });
+
+    let lastSubject;
+    const update = () => {
+      const { text, kind, turma, subject, label } = read();
+      pieces.forEach((piece, index) => {
+        const value = text[piece.id];
+        if (shown.get(piece.id) === value) return;
+        shown.set(piece.id, value);
+        const element = pieceElements[index];
+        element.lastChild.textContent = value || `${piece.name}: ${piece.hint}`;
+        element.classList.toggle('is-empty', !value);
+        if (value) replay(element, 'is-new');
+        $(`[data-light="${piece.id}"]`).classList.toggle('is-on', Boolean(value));
+      });
+      const done = pieces.filter((piece) => text[piece.id]).length;
+      const wasReady = Boolean(current.text);
+      current = done === 4 ? { text: pieces.map((piece) => text[piece.id]).join(' '), label } : { text: '', label: '' };
+      copyButton.disabled = done < 4;
+      $('#count').textContent = done === 4 ? 'Prompt pronto! As 4 peças estão no lugar.' : `${done} de 4 peças prontas`;
+      $('#count').classList.toggle('is-ready', done === 4);
+      $('#tip').textContent = kind ? kind.tip : turma ? 'Agora escolha o que criar. A Tarefa e o Formato saem daí.' : 'Comece pela turma. O Papel e o Contexto saem dela.';
+      const subjectStep = $('#subject-step');
+      subjectStep.disabled = turma === 'infantil';
+      $('#subject-note').textContent = turma === 'infantil' ? 'Na Educação Infantil não precisa' : 'Se quiser';
+      if (subject !== lastSubject) { lastSubject = subject; showIdeas(subject); }
+      if (done === 4 && !wasReady) celebrate();
+      if (done < 4) bubble.textContent = greeting;
+    };
+
+    // Recent prompts stay only in this browser, so the teacher can copy them again later.
+    const storeKey = 'gamificapampa-maquina';
+    const loadRecent = () => {
+      try { return JSON.parse(localStorage.getItem(storeKey)) || []; } catch { return []; }
+    };
+    const saveRecent = (list) => {
+      try { localStorage.setItem(storeKey, JSON.stringify(list)); } catch {}
+    };
+    const copyText = async (text) => {
+      try {
+        await navigator.clipboard.writeText(text);
+      } catch {
+        const field = Object.assign(document.createElement('textarea'), { value: text });
+        field.style.cssText = 'position: fixed; opacity: 0';
+        document.body.append(field);
+        field.select();
+        document.execCommand('copy');
+        field.remove();
+      }
+    };
+    const flash = (button, text) => {
+      const label = button.lastChild;
+      const before = label.textContent;
+      label.textContent = text;
+      setTimeout(() => { label.textContent = before; }, 2000);
+    };
+    const renderRecent = () => {
+      const list = loadRecent();
+      $('#recent').hidden = list.length === 0;
+      $('#recent-list').replaceChildren(...list.map((item) => {
+        const row = document.createElement('li');
+        const info = document.createElement('div');
+        info.append(Object.assign(document.createElement('b'), { textContent: item.label }), Object.assign(document.createElement('span'), { textContent: item.text }));
+        const button = Object.assign(document.createElement('button'), { type: 'button', className: 'btn btn--small' });
+        button.append('Copiar');
+        button.addEventListener('click', async () => { await copyText(item.text); flash(button, 'Copiado!'); });
+        row.append(info, button);
+        return row;
+      }));
+    };
+
+    copyButton.addEventListener('click', async () => {
+      await copyText(current.text);
+      flash(copyButton, 'Prompt copiado!');
+      saveRecent([current, ...loadRecent().filter((item) => item.text !== current.text)].slice(0, 5));
+      renderRecent();
+    });
+    $('#recent-clear').addEventListener('click', () => { saveRecent([]); renderRecent(); });
+    $('#reset').addEventListener('click', () => { form.reset(); update(); form.querySelector('input').focus(); });
+    form.addEventListener('input', update);
+    form.addEventListener('change', update);
+    form.addEventListener('submit', (event) => event.preventDefault());
+    update();
+    renderRecent();
+  </script>
+</body>
+</html>
