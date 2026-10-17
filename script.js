@@ -48,25 +48,9 @@ const updateScrollBar = () => {
 addEventListener('scroll', updateScrollBar, { passive: true });
 updateScrollBar();
 
-// Running the hero mini game, where clicks on the trophy and coins earn XP and level up.
-const game = $('#game');
+// Effects inside the hero game screen: pixel bursts and the banner, placed relative to the screen.
 const effects = $('#fx');
 const heroBot = $('#hero-bot');
-const missions = [
-  'Missão desbloqueada: criar sua primeira aula gamificada',
-  'Missão desbloqueada: montar um ranking da turma',
-  'Missão desbloqueada: dar medalhas por conquista',
-  'Missão desbloqueada: criar desafios com ajuda da IA',
-  'Você zerou o jogo! Agora é a vez da sua turma.',
-];
-let experience = 0;
-let level = 1;
-
-// Positioning each effect relative to the game screen, at the point of the click.
-const pointIn = (event) => {
-  const box = game.getBoundingClientRect();
-  return { x: event.clientX - box.left, y: event.clientY - box.top };
-};
 
 const spawn = (className, x, y, styles = {}, text = '') => {
   const element = Object.assign(document.createElement('span'), { className, textContent: text });
@@ -91,68 +75,183 @@ const burst = (x, y, count, spread, colors = ['#ffd23f', '#ff5f8f', '#4fd6a6', '
   }
 };
 
-const levelUp = () => {
-  level += 1;
-  $('#level').textContent = level;
-  replay($('#level'), 'bump');
-  $('#caption').textContent = missions[Math.min(level - 1, missions.length - 1)];
-  replay(game, 'level-up');
-  if (!reducedMotion) replay(heroBot, 'jump');
-  const box = game.getBoundingClientRect();
-  spawn('banner', box.width / 2, box.height * 0.42, {}, 'SUBIU DE NÍVEL!');
-  burst(box.width / 2, box.height * 0.45, 48, 260);
-};
-
 // Every Bit jumps when clicked, and goes back to its idle bobbing once the jump ends.
 document.querySelectorAll('.bot').forEach((bot) => {
   bot.addEventListener('click', () => { if (!reducedMotion) replay(bot, 'jump'); });
   bot.addEventListener('animationend', () => bot.classList.remove('jump'));
 });
 
-const gain = (points, x, y) => {
-  experience += points;
-  spawn('plus', x, y - 20, {}, `+${points} XP`);
-  if (experience >= 100) {
-    experience -= 100;
-    levelUp();
-  }
-  $('#xp').style.transform = `translateX(${experience - 100}%)`;
-  $('#xp-count').textContent = (level - 1) * 100 + experience;
-  replay($('#xp-count'), 'bump');
+// The hero mini game: arrows build a program, Rodar runs it, and Bit walks the board to the star.
+// Three phases, from a straight line to a path around the bugs, like the Robô pega a estrela game.
+const levels = [
+  { start: [0, 1], star: [3, 1], bugs: [], intro: 'Fase 1: a estrela está três casas à direita do Bit. Monte as setas e aperte Rodar.' },
+  { start: [0, 0], star: [4, 2], bugs: [[2, 0], [2, 1]], intro: 'Fase 2: a estrela está mais abaixo, e há bugs no caminho reto. Desvie deles.' },
+  { start: [0, 3], star: [5, 0], bugs: [[1, 2], [2, 0], [3, 2], [4, 1]], intro: 'Fase 3: a estrela está no canto de cima, à direita. Ache um caminho entre os bugs.' },
+];
+const steps = { up: [0, -1], down: [0, 1], left: [-1, 0], right: [1, 0] };
+const words = { up: 'cima', down: 'baixo', left: 'esquerda', right: 'direita' };
+const columns = 6;
+const rows = 4;
+const maxMoves = 10;
+const board = $('#board');
+const gameStatus = $('#bit-status');
+const programList = $('#program');
+const pad = $('#pad');
+const greeting = $('#hero-bubble').textContent;
+let levelIndex = 0;
+let program = [];
+let running = false;
+
+const cellAt = (x, y) => board.children[y * columns + x];
+const same = (a, b) => a[0] === b[0] && a[1] === b[1];
+const isBug = (x, y) => levels[levelIndex].bugs.some((bug) => same(bug, [x, y]));
+const outside = (x, y) => x < 0 || y < 0 || x >= columns || y >= rows;
+const placeBit = (x, y) => {
+  bitToken.style.setProperty('--x', x);
+  bitToken.style.setProperty('--y', y);
 };
 
-$('#trophy').addEventListener('click', (event) => {
-  const point = event.detail ? pointIn(event) : { x: game.clientWidth / 2, y: game.clientHeight / 2 };
-  const trophy = event.currentTarget;
-  trophy.classList.add('hit');
-  setTimeout(() => trophy.classList.remove('hit'), 120);
-  burst(point.x, point.y, 12, 90);
-  gain(10, point.x, point.y);
+const bitToken = Object.assign(document.createElement('div'), { className: 'board__bit' });
+bitToken.innerHTML = '<svg viewBox="0 0 100 100"><use href="#bot"/></svg>';
+
+const drawLevel = () => {
+  const level = levels[levelIndex];
+  board.replaceChildren();
+  for (let y = 0; y < rows; y += 1) {
+    for (let x = 0; x < columns; x += 1) {
+      const cell = Object.assign(document.createElement('div'), { className: 'cell' });
+      if (same(level.star, [x, y])) {
+        cell.classList.add('cell--star');
+        cell.innerHTML = '<svg><use href="#star"/></svg>';
+      } else if (isBug(x, y)) {
+        cell.classList.add('cell--bug');
+        cell.innerHTML = '<svg><use href="#bug"/></svg>';
+      }
+      board.append(cell);
+    }
+  }
+  board.append(bitToken);
+  placeBit(...level.start);
+  $('#phase').textContent = `FASE ${levelIndex + 1} DE ${levels.length}`;
+  gameStatus.textContent = level.intro;
+  program = [];
+  drawProgram();
+};
+
+// Showing the program as arrows and its path on the board, with an X where Bit would crash.
+const drawProgram = () => {
+  programList.replaceChildren(...program.map((move) => {
+    const item = document.createElement('li');
+    item.dataset.dir = move;
+    item.innerHTML = `<svg width="18" height="18" aria-hidden="true"><use href="#arrow"/></svg><span class="sr">${words[move]}</span>`;
+    return item;
+  }));
+  board.querySelectorAll('.cell').forEach((cell) => cell.classList.remove('is-plan', 'is-plan-bad'));
+  let [x, y] = levels[levelIndex].start;
+  for (const move of program) {
+    x += steps[move][0];
+    y += steps[move][1];
+    if (outside(x, y)) break;
+    if (isBug(x, y)) { cellAt(x, y).classList.add('is-plan-bad'); break; }
+    cellAt(x, y).classList.add('is-plan');
+  }
+};
+
+const addMove = (move) => {
+  if (running || program.length >= maxMoves) return;
+  program.push(move);
+  drawProgram();
+};
+
+const finishGame = () => {
+  pad.hidden = true;
+  programList.hidden = true;
+  $('#bit-end').hidden = false;
+  gameStatus.textContent = 'Você programou o Bit! É assim que as crianças aprendem algoritmo nos nossos jogos: uma sequência de passos, na ordem certa.';
+  $('#hero-bubble').textContent = 'Você me programou! Na turma, isso vira uma aula de algoritmo.';
+};
+
+const winPhase = () => {
+  const stars = $('#stars').children;
+  stars[levelIndex].classList.add('is-on');
+  $('#stars').setAttribute('aria-label', `${levelIndex + 1} de 3 estrelas`);
+  replay(machineScreen, 'is-won');
+  const box = machineScreen.getBoundingClientRect();
+  spawn('banner', box.width / 2, box.height * 0.4, {}, levelIndex === levels.length - 1 ? 'VOCÊ ZEROU!' : 'FASE CONCLUÍDA!');
+  burst(box.width / 2, box.height * 0.4, 36, 200);
+  if (!reducedMotion) replay(heroBot, 'jump');
+  setTimeout(() => {
+    running = false;
+    pad.classList.remove('is-busy');
+    if (levelIndex === levels.length - 1) { finishGame(); return; }
+    levelIndex += 1;
+    drawLevel();
+  }, 1500);
+};
+
+// Running the program one step at a time; a bug, a wall or a short program sends Bit back to the start.
+const run = () => {
+  if (running) return;
+  if (!program.length) { gameStatus.textContent = 'Primeiro monte o caminho com as setas.'; return; }
+  running = true;
+  pad.classList.add('is-busy');
+  const level = levels[levelIndex];
+  let [x, y] = level.start;
+  let index = 0;
+  const fail = (message) => {
+    gameStatus.textContent = message;
+    replay(bitToken, 'is-hit');
+    setTimeout(() => {
+      placeBit(...level.start);
+      programList.querySelectorAll('.is-now').forEach((item) => item.classList.remove('is-now'));
+      running = false;
+      pad.classList.remove('is-busy');
+    }, 900);
+  };
+  const tick = () => {
+    programList.querySelectorAll('.is-now').forEach((item) => item.classList.remove('is-now'));
+    if (index === program.length) {
+      if (same([x, y], level.star)) winPhase();
+      else fail('O Bit parou antes da estrela. Acrescente mais setas e rode de novo.');
+      return;
+    }
+    const move = program[index];
+    programList.children[index].classList.add('is-now');
+    const next = [x + steps[move][0], y + steps[move][1]];
+    if (outside(...next)) { fail('Ops! O Bit ia sair do tabuleiro. Mude as setas e tente de novo.'); return; }
+    [x, y] = next;
+    placeBit(x, y);
+    if (isBug(x, y)) { fail('Ops! O Bit bateu num bug. Mude as setas e tente de novo.'); return; }
+    index += 1;
+    setTimeout(tick, reducedMotion ? 150 : 380);
+  };
+  gameStatus.textContent = 'Rodando o programa...';
+  tick();
+};
+
+const machineScreen = $('#bit-game');
+pad.querySelectorAll('[data-move]').forEach((key) => key.addEventListener('click', () => addMove(key.dataset.move)));
+$('#undo').addEventListener('click', () => { if (!running) { program.pop(); drawProgram(); } });
+$('#run').addEventListener('click', run);
+$('#again').addEventListener('click', () => {
+  levelIndex = 0;
+  [...$('#stars').children].forEach((star) => star.classList.remove('is-on'));
+  $('#stars').setAttribute('aria-label', '0 de 3 estrelas');
+  pad.hidden = false;
+  programList.hidden = false;
+  $('#bit-end').hidden = true;
+  $('#hero-bubble').textContent = greeting;
+  drawLevel();
 });
-
-// Collecting a floating coin gives more XP, and the coin comes back after a few seconds.
-document.querySelectorAll('.coin').forEach((coin) => {
-  coin.addEventListener('click', (event) => {
-    const point = pointIn(event);
-    coin.classList.add('collected');
-    burst(point.x, point.y, 10, 70, ['#ffd23f', '#ffffff']);
-    gain(25, point.x, point.y);
-    setTimeout(() => coin.classList.remove('collected'), 3000);
-  });
+// The arrow keys also build the program while the focus is inside the game.
+machineScreen.addEventListener('keydown', (event) => {
+  const move = { ArrowUp: 'up', ArrowDown: 'down', ArrowLeft: 'left', ArrowRight: 'right' }[event.key];
+  if (move) { event.preventDefault(); addMove(move); }
+  if (event.key === 'Backspace' && !running) { event.preventDefault(); program.pop(); drawProgram(); }
 });
+drawLevel();
 
-// Filling part of the bar on load, so the first visit already shows progress.
-setTimeout(() => gain(40, game.clientWidth * 0.62, 70), reducedMotion ? 0 : 900);
-
-// Tilting the game screen in 3D as the mouse moves over the hero.
 if (!reducedMotion && matchMedia('(pointer: fine)').matches) {
-  $('.hero').addEventListener('pointermove', (event) => {
-    const box = game.getBoundingClientRect();
-    const tiltX = ((event.clientX - box.left) / box.width - 0.5) * 10;
-    const tiltY = ((event.clientY - box.top) / box.height - 0.5) * -10;
-    game.style.transform = `perspective(900px) rotateY(${tiltX}deg) rotateX(${tiltY}deg)`;
-  });
-  $('.hero').addEventListener('pointerleave', () => { game.style.transform = ''; });
 
   // Tilting the cards toward the mouse, with a glare at the pointer.
   document.querySelectorAll('[data-tilt]').forEach((card) => {
@@ -251,6 +350,7 @@ const shares = {
   'caca-bugs': { title: 'Caça aos Bugs!', url: 'https://gamificapampa.github.io/caca-bugs' },
   'jogo-do-prompt': { title: 'Jogo do Prompt', url: 'https://gamificapampa.github.io/jogo-do-prompt' },
   prompt: { title: 'Construtor de prompts', url: 'https://gamificapampa.github.io/prompt' },
+  maquina: { title: 'Máquina de prompts', url: 'https://gamificapampa.github.io/maquina' },
 };
 const shareSheet = $('#partilha');
 const copyButton = $('#partilha-copiar');
