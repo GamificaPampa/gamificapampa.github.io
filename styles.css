@@ -406,8 +406,8 @@ h2 { font-size: clamp(38px, 5.6vw, 66px); }
 .mirim { display: grid; gap: 40px; }
 @media (min-width: 1024px) { .mirim { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); align-items: start; gap: 48px; } }
 .mirim .section__head { margin-bottom: 0; }
-.chips { display: flex; flex-wrap: wrap; gap: 10px; }
-.chips li { padding: 4px 14px; background: rgb(255 255 255 / .8); border: 3px solid var(--ink); border-radius: 999px; font-weight: 600; font-size: 15px; }
+.mirim .section__head p a { font-weight: 700; text-decoration-thickness: 3px; text-underline-offset: 4px; }
+.ver-todos { max-width: 420px; margin-top: -4px; font-weight: 600; font-size: 16px; color: var(--soft); }
 .games { display: grid; gap: 24px; }
 @media (min-width: 560px) { .games { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 .game { display: flex; flex-direction: column; overflow: hidden; cursor: pointer; }
@@ -521,15 +521,10 @@ body:has(dialog[open]) { overflow: hidden; }
 .share:hover svg { transform: scale(1.2) rotate(-10deg); }
 .share--icon { width: 48px; padding: 0; justify-content: center; }
 .share:focus-visible { outline: 4px solid var(--pink); outline-offset: 3px; }
-.share-row { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; margin-top: 20px; font-weight: 600; }
-.share-row .share { margin-top: 0; }
 .partilha__body { justify-items: center; text-align: center; }
 .partilha__qr { width: min(300px, 72vw); height: auto; aspect-ratio: 1; padding: 6px; background: #fff; border: 4px solid var(--ink); border-radius: 18px; }
 .partilha__link { font-weight: 700; font-size: clamp(18px, 3vw, 24px); overflow-wrap: anywhere; }
 .partilha .ficha__actions { justify-content: center; }
-.extras { display: grid; gap: 14px; margin-top: 4px; }
-.extras li { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 14px; font-weight: 600; }
-.extras li span { flex: 1 1 220px; }
 
 /* 3D code blocks floating in the sky, like toy bricks */
 .cube-wrap { position: absolute; perspective: 700px; animation: float 5s ease-in-out var(--d, 0s) infinite; }
