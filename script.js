@@ -342,8 +342,6 @@ document.querySelectorAll('[data-contato]').forEach((link) => {
 
 // Sharing a resource: the dialog shows its QR code, to project for the class, and the link for WhatsApp, Classroom or copying.
 const shares = {
-  turma: { title: 'Jogos para a turma', url: 'https://gamificapampa.github.io/turma/' },
-  oficina: { title: 'Oficina de Prompts', url: 'https://gamificapampa.github.io/oficina' },
   fracoes: { title: 'Pizzaria das Frações', url: 'https://gamificapampa.github.io/fracoes' },
   'ciclo-da-agua': { title: 'Ciclo da Água', url: 'https://gamificapampa.github.io/ciclo-da-agua' },
   silabas: { title: 'Fábrica de Sílabas', url: 'https://gamificapampa.github.io/silabas' },
