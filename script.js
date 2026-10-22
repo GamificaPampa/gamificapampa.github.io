@@ -1,6 +1,7 @@
 document.documentElement.classList.add('js');
 
-const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
+// Quem parou as animações (botão redondo do topo, lembrado no aparelho) também fica sem os efeitos feitos em script
+const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)').matches || Boolean(window.Animacoes?.paradas);
 const $ = (selector) => document.querySelector(selector);
 
 // Restarting a CSS animation class, so the same effect can play again on every hit.
@@ -280,6 +281,12 @@ machineScreen.addEventListener('keydown', (event) => {
 });
 drawLevel();
 
+// O botão de parar as animações fica no topo, antes do Jogos para a turma; no celular, dentro do Menu
+if (window.Animacoes) {
+  $('.nav__cta').before(Animacoes.botao());
+  $('#menu').append(Animacoes.botao({ texto: true }));
+}
+
 if (!reducedMotion && matchMedia('(pointer: fine)').matches) {
 
   // Tilting the cards toward the mouse, with a glare at the pointer.
@@ -370,12 +377,13 @@ document.querySelectorAll('[data-contato]').forEach((link) => {
 });
 
 // Sharing a resource: the dialog shows its QR code, to project for the class, and the link for WhatsApp, Classroom or copying.
+// The QR code is a file of its own, loaded only when the dialog opens.
 const shares = {
-  fracoes: { title: 'Pizzaria das Frações', url: 'https://gamificapampa.github.io/fracoes' },
-  'ciclo-da-agua': { title: 'Ciclo da Água', url: 'https://gamificapampa.github.io/ciclo-da-agua' },
-  silabas: { title: 'Fábrica de Sílabas', url: 'https://gamificapampa.github.io/silabas' },
-  robo: { title: 'Robô pega a estrela', url: 'https://gamificapampa.github.io/robo' },
-  maquina: { title: 'Máquina de prompts', url: 'https://gamificapampa.github.io/maquina' },
+  fracoes: { title: 'Pizzaria das Frações', url: 'https://gamificapampa.github.io/fracoes', qr: '/recursos-pedagogicos/criancas/pizzaria-das-fracoes/qr.svg' },
+  'ciclo-da-agua': { title: 'Ciclo da Água', url: 'https://gamificapampa.github.io/ciclo-da-agua', qr: '/recursos-pedagogicos/criancas/ciclo-da-agua/qr.svg' },
+  silabas: { title: 'Fábrica de Sílabas', url: 'https://gamificapampa.github.io/silabas', qr: '/recursos-pedagogicos/criancas/fabrica-de-silabas/qr.svg' },
+  robo: { title: 'Robô pega a estrela', url: 'https://gamificapampa.github.io/robo', qr: '/recursos-pedagogicos/criancas/robo/qr.svg' },
+  maquina: { title: 'Máquina de prompts', url: 'https://gamificapampa.github.io/maquina', qr: '/atalhos/qr/maquina.svg' },
 };
 const shareSheet = $('#partilha');
 const copyButton = $('#partilha-copiar');
@@ -386,8 +394,8 @@ document.querySelectorAll('[data-share]').forEach((button) => {
   button.addEventListener('click', () => {
     shared = shares[button.dataset.share];
     const qr = shareSheet.querySelector('.partilha__qr');
-    qr.querySelector('use').setAttribute('href', `#qr-${button.dataset.share}`);
-    qr.setAttribute('aria-label', `QR code de ${shared.title}`);
+    qr.src = shared.qr;
+    qr.alt = `QR code de ${shared.title}`;
     $('#partilha-titulo').textContent = shared.title;
     $('#partilha-link').textContent = shared.url.replace('https://', '');
     $('#partilha-whatsapp').href = `https://wa.me/?text=${encodeURIComponent(`${shared.title}, do GamificaPampa: ${shared.url}`)}`;
