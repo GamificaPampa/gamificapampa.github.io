@@ -28,8 +28,6 @@
   .atalho__acoes { display: flex; gap: 8px; }
   /* O --c da linha é a cor do grupo; copiar e QR são ações secundárias, brancas */
   .atalho__acoes .btn { --c: var(--white); min-height: 48px; }
-  .aviso { position: fixed; left: 50%; bottom: 20px; z-index: 50; translate: -50% 0; padding: 8px 22px; background: var(--ink); color: var(--white); border: 4px solid var(--white); border-radius: 999px; font-weight: 600; opacity: 0; pointer-events: none; transition: opacity .2s ease; }
-  .aviso.is-on { opacity: 1; }
   .qr-tela { width: min(100% - 24px, 640px); padding: 24px; text-align: center; background: var(--white); color: var(--ink); border: 6px solid var(--ink); border-radius: 30px; box-shadow: 0 12px 0 var(--ink); }
   .qr-tela::backdrop { background: rgb(47 42 74 / .7); }
   .qr-tela h2 { font-size: clamp(24px, 4vw, 36px); }
@@ -51,7 +49,6 @@
   <div id="grupos"></div>
 </main>
 
-<p class="aviso" id="aviso" role="status"></p>
 <dialog class="qr-tela" id="qr-tela" aria-labelledby="qr-titulo">
   <h2 id="qr-titulo"></h2>
   <img id="qr-imagem" alt="">
@@ -62,6 +59,7 @@
 <script src="/jogos.js"></script>
 <script src="/atalhos.js"></script>
 <script src="/identidade-visual/js/icones.js"></script>
+<script src="/identidade-visual/js/copiar.js"></script>
 <script>
 (() => {
   const icone = (nome) => (window.Icones ? Icones.svg(nome) : '');
@@ -70,27 +68,6 @@
   for (const [atalho, [grupo, rotulo, , qr]] of Object.entries(ATALHOS)) {
     if (rotulo) (grupos[grupo] ||= []).push([atalho, rotulo, qr || 'qr/' + atalho + '.svg']);
   }
-
-  const aviso = document.getElementById('aviso');
-  let some;
-  const avisar = (texto) => {
-    aviso.textContent = texto;
-    aviso.classList.add('is-on');
-    clearTimeout(some);
-    some = setTimeout(() => aviso.classList.remove('is-on'), 2000);
-  };
-  // Só diz "copiado" quando o texto foi mesmo para a área de transferência
-  const copiar = async (texto) => {
-    try { await navigator.clipboard.writeText(texto); return true; } catch {}
-    const campo = Object.assign(document.createElement('textarea'), { value: texto });
-    campo.style.cssText = 'position: fixed; top: 0; left: 0; opacity: 0';
-    document.body.append(campo);
-    campo.select();
-    let ok = false;
-    try { ok = document.execCommand('copy'); } catch {}
-    campo.remove();
-    return ok;
-  };
 
   const dialogo = document.getElementById('qr-tela');
   const lugar = document.getElementById('grupos');
@@ -115,7 +92,7 @@
       link.href = '/' + atalho;
       link.textContent = endereco;
       item.querySelector('[data-acao="copiar"]').addEventListener('click', async () => {
-        avisar(await copiar('https://' + endereco) ? 'Copiado: ' + endereco : 'Não deu para copiar. Selecione o endereço e copie à mão.');
+        await Copiar.texto('https://' + endereco, { aviso: 'Copiado: ' + endereco });
       });
       item.querySelector('[data-acao="qr"]').addEventListener('click', () => {
         document.getElementById('qr-titulo').textContent = rotulo;
