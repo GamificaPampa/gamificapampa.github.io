@@ -5,55 +5,12 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="robots" content="noindex">
   <title>Página não encontrada · GamificaPampa</title>
-  <link rel="icon" href="/identidade-visual/logos/gamificapampa-icone.svg">
-  <link rel="stylesheet" href="/identidade-visual/css/fontes.css">
-  <link rel="stylesheet" href="/identidade-visual/css/cores.css">
-  <link rel="stylesheet" href="/identidade-visual/css/componentes.css">
+  <script src="/jogos.js"></script>
+  <script src="/atalhos.js"></script>
   <script>
-    // Links curtos: gamificapampa.github.io/ninja leva para o jogo, /prompt para o construtor e assim por diante.
-    // O GitHub Pages mostra esta página para todo endereço que não existe; ela procura o nome aqui e redireciona.
-    // Para um atalho novo, acrescente uma linha. Sem rótulo, o atalho funciona mas não aparece na lista abaixo.
-    const RP = 'https://gamificapampa.github.io/recursos-pedagogicos/';
-    const AULA = RP + 'professores/aula-engenharia-de-software/';
-    const OFICINA = RP + 'professores/oficina-prompts/';
-    const ATALHOS = {
-      robo: ['Jogos', 'Robô pega a estrela', RP + 'criancas/robo/'],
-      ninja: ['Jogos', 'Ninja dos Bugs', RP + 'criancas/ninja/'],
-      dupla: ['Jogos', 'Programação em Dupla', RP + 'criancas/dupla/'],
-      conecta: ['Jogos', 'Conecta o Sistema', RP + 'criancas/conecta/'],
-      arcade: ['Jogos', 'Arcade do Código', RP + 'criancas/arcade/'],
-      'caca-bugs': ['Jogos', 'Caça aos Bugs', RP + 'criancas/caca-bugs/'],
-      'missao-dev': ['Jogos', 'Missão Dev', RP + 'criancas/missao-dev/'],
-      fracoes: ['Jogos por matéria', 'Pizzaria das Frações (Matemática)', RP + 'criancas/pizzaria-das-fracoes/'],
-      'ciclo-da-agua': ['Jogos por matéria', 'Ciclo da Água (Ciências)', RP + 'criancas/ciclo-da-agua/'],
-      silabas: ['Jogos por matéria', 'Fábrica de Sílabas (Língua Portuguesa)', RP + 'criancas/fabrica-de-silabas/'],
-      caminho: ['Jogos por matéria', 'Caminho da Escola (Geografia)', RP + 'criancas/caminho-da-escola/'],
-      balanca: ['Jogos por matéria', 'Balança do Bit (Matemática)', RP + 'criancas/balanca-do-bit/'],
-      detetive: ['Jogos por matéria', 'Detetive da Notícia (Língua Portuguesa)', RP + 'criancas/detetive-da-noticia/'],
-      mapas: ['Jogos', 'Mapas da Programação em Dupla (PDF)', RP + 'criancas/dupla/mapas.pdf'],
-      aula: ['Aula com as crianças', 'Página da aula, com todos os materiais', AULA],
-      slides: ['Aula com as crianças', 'Slides da aula', AULA + 'slides.html'],
-      roteiro: ['Aula com as crianças', 'Roteiro da aula (PDF)', AULA + 'roteiro.pdf'],
-      atividades: ['Aula com as crianças', 'Folha de atividades (PDF)', AULA + 'atividades.pdf'],
-      certificado: ['Aula com as crianças', 'Certificado de Programador(a) Mirim', AULA + 'certificado.html'],
-      medalhas: ['Aula com as crianças', 'Medalhas do Bit para imprimir', RP + 'professores/medalhas/'],
-      kit: ['Aula com as crianças', 'Kit sem internet, para pendrive (zip)', 'https://github.com/GamificaPampa/recursos-pedagogicos/releases/download/kit-sem-internet/kit-sem-internet.zip'],
-      oficina: ['Oficina de Prompts', 'Página da oficina', OFICINA],
-      curso: ['Oficina de Prompts', 'Curso online', OFICINA + 'curso.html'],
-      'jogo-do-prompt': ['Oficina de Prompts', 'Jogo do Prompt', OFICINA + 'jogo.html'],
-      prompt: ['Oficina de Prompts', 'Construtor de prompts', OFICINA + 'construtor.html'],
-      maquina: ['Oficina de Prompts', 'Máquina de prompts', 'https://gamificapampa.github.io/maquina/'],
-      biblioteca: ['Oficina de Prompts', 'Biblioteca de prompts', OFICINA + 'biblioteca.html'],
-      gems: ['Oficina de Prompts', 'Gems prontos', OFICINA + 'gems.html'],
-      guia: ['Oficina de Prompts', 'Guia do professor (PDF)', OFICINA + 'guia.pdf'],
-      galeria: ['Oficina de Prompts', 'Galeria de jogos', OFICINA + 'galeria.html'],
-      'passo-a-passo': ['Oficina de Prompts', 'Passo a passo no Gemini', OFICINA + 'passo-a-passo.html'],
-      avaliar: ['', '', 'https://docs.google.com/forms/d/e/1FAIpQLSdZMkwO4v7j69BfUQbcLZWGtVhlDgyL12tRhPseMAruZeperg/viewform'],
-      gemini: ['', '', 'https://gemini.google.com/app'],
-    };
-
-    const nome = decodeURIComponent(location.pathname).toLowerCase().replace(/\/index\.html$/, '').replace(/^\/+|\/+$/g, '');
-    if (ATALHOS[nome]) {
+    // A lista fica em /atalhos.js. Aqui só se procura o nome digitado e se redireciona, antes de carregar o CSS
+    const nome = atalhoDe(location.pathname);
+    if (nome) {
       const novo = new URL(ATALHOS[nome][2]);
       if (location.hash && !novo.hash) novo.hash = location.hash;
       if (location.search && !novo.search) novo.search = location.search;
@@ -61,6 +18,10 @@
       location.replace(novo.href);
     }
   </script>
+  <link rel="icon" href="/identidade-visual/logos/gamificapampa-icone.svg">
+  <link rel="stylesheet" href="/identidade-visual/css/fontes.css">
+  <link rel="stylesheet" href="/identidade-visual/css/cores.css">
+  <link rel="stylesheet" href="/identidade-visual/css/componentes.css">
   <style>
     body { display: grid; place-items: center; min-height: 100vh; padding: 24px 16px; }
     main { display: grid; gap: 24px; width: min(860px, 100%); }
@@ -88,7 +49,7 @@
       <p class="bubble">Não achei esse endereço. Talvez você procure um destes atalhos. Dá para digitar direto no navegador, como <b>gamificapampa.github.io/ninja</b>.</p>
     </div>
     <div class="card grupos" id="grupos"></div>
-    <p><a class="btn" href="/">Voltar ao início</a></p>
+    <p><a class="btn" href="/">Voltar ao início</a> <a class="btn btn--conhecer" href="/atalhos/">Ver todos os links curtos</a></p>
   </main>
   <script>
     // Grupo sem cor aqui ganha o rosa, para nenhum cartão ficar sem a faixa

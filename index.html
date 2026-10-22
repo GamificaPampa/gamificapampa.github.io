@@ -14,7 +14,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css?v=17">
+  <link rel="stylesheet" href="styles.css?v=18">
 <style>/* tipografia automatica (viuvas, orfas e forcas) */
 p, li, blockquote {
   orphans: 2;
@@ -57,11 +57,11 @@ p, li, blockquote {
         <img src="/identidade-visual/logos/gamificapampa-horizontal.svg" alt="GamificaPampa" width="650" height="144">
       </a>
       <button class="nav__toggle" id="menu-button" type="button" aria-expanded="false" aria-controls="menu"><span class="burger" aria-hidden="true"></span>Menu</button>
-      <nav class="nav__links" id="menu" aria-label="Seções">
-        <a href="#recursos">Recursos</a>
-        <a href="#como-funciona">Como funciona</a>
+      <nav class="nav__links" id="menu" aria-label="Menu do site">
+        <a href="/recursos-pedagogicos/professores/oficina-prompts/">Oficina</a>
+        <a href="maquina/">Máquina</a>
+        <a href="/recursos-pedagogicos/">Recursos</a>
         <a href="#projetos">Projetos</a>
-        <a href="#escola">Para a escola</a>
         <a href="#contato">Contato</a>
         <a class="nav__menu-cta" href="turma/">Jogos para a turma</a>
       </nav>
@@ -95,12 +95,13 @@ p, li, blockquote {
             <span class="pill pill--white start"><svg width="28" height="28"><use href="#play"/></svg>Aperte <b>START</b></span>
             <h1 class="loud title-hop"><span>Sua</span> <span>aula</span> <span>no</span> <span class="yellow">modo</span> <span class="pink">jogo</span></h1>
             <p class="tagline">Gamificação e IA para professores</p>
-            <p class="lead">O GamificaPampa reúne projetos de extensão da UNIPAMPA, Campus Alegrete, que levam gamificação e inteligência artificial a professores da Educação Básica, em parceria com escolas públicas de Alegrete/RS.</p>
             <div class="ctas">
-              <a class="btn btn--conhecer btn--big" href="#projetos"><svg width="24" height="24" aria-hidden="true"><use href="#i-lupa"/></svg>Conheça os projetos</a>
               <a class="btn btn--jogar btn--big" href="turma/"><svg width="24" height="24" aria-hidden="true"><use href="#tri"/></svg>Jogos para a turma</a>
+              <a class="btn btn--conhecer btn--big" href="/recursos-pedagogicos/professores/oficina-prompts/"><svg width="24" height="24" aria-hidden="true"><use href="#i-lupa"/></svg>Oficina de Prompts</a>
+              <a class="btn btn--conhecer btn--big" href="maquina/"><svg width="24" height="24" aria-hidden="true"><use href="#i-lupa"/></svg>Máquina de prompts</a>
             </div>
-            <p class="hero__talk">Quer levar para a sua escola? <a class="btn btn--falar btn--small" href="#contato"><svg width="20" height="20" aria-hidden="true"><use href="#i-chat"/></svg>Fale com a equipe</a></p>
+            <p class="hero__talk">Quer levar para a sua escola? <a class="btn btn--falar btn--small" href="#contato"><svg width="20" height="20" aria-hidden="true"><use href="#i-chat"/></svg>Fale com a equipe</a> <a class="hero__link" href="#projetos">Conheça os projetos</a></p>
+            <p class="lead">O GamificaPampa reúne projetos de extensão da UNIPAMPA, Campus Alegrete, que levam gamificação e inteligência artificial a professores da Educação Básica, em parceria com escolas públicas de Alegrete/RS.</p>
             <div class="hello">
               <svg class="bot" id="hero-bot" width="96" height="96" viewBox="0 0 100 100" aria-hidden="true"><line x1="50" y1="8" x2="50" y2="22" stroke="#2f2a4a" stroke-width="4"/><circle cx="50" cy="8" r="6" fill="#ff4d4d" stroke="#2f2a4a" stroke-width="2"/><rect x="18" y="22" width="64" height="48" rx="14" fill="#4da3ff" stroke="#2f2a4a" stroke-width="4"/><circle cx="38" cy="44" r="9" fill="#fff"/><circle cx="62" cy="44" r="9" fill="#fff"/><g id="hero-eyes"><circle cx="40" cy="45" r="4" fill="#2f2a4a"/><circle cx="64" cy="45" r="4" fill="#2f2a4a"/></g><circle cx="27" cy="57" r="4" fill="#ff8fb0"/><circle cx="73" cy="57" r="4" fill="#ff8fb0"/><path d="M40 60 q10 7 20 0" stroke="#2f2a4a" stroke-width="4" fill="none" stroke-linecap="round"/><rect x="30" y="72" width="40" height="20" rx="6" fill="#8cc4ff" stroke="#2f2a4a" stroke-width="4"/></svg>
               <p class="bubble" id="hero-bubble">Oi! Eu sou o Bit. Monte as setas e me leve até a estrela.</p>
@@ -517,10 +518,11 @@ p, li, blockquote {
       <div class="footer__info">
         <strong>Gamificação e IA para professores.</strong>
         <span>Iniciativa de extensão da UNIPAMPA, Campus Alegrete</span>
+        <a class="footer__link" href="atalhos/">Links curtos para a turma</a>
       </div>
     </div>
   </footer>
 
-  <script src="script.js?v=14" defer></script>
+  <script src="script.js?v=15" defer></script>
 </body>
 </html>

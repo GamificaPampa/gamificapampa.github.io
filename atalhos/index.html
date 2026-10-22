@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Links curtos · GamificaPampa</title>
+<meta name="description" content="Os links curtos do GamificaPampa, para escrever no quadro ou mandar à turma: jogos, aula e Oficina de Prompts.">
+<meta name="theme-color" content="#5fbcff">
+<link rel="icon" type="image/svg+xml" href="/identidade-visual/logos/gamificapampa-icone.svg">
+<link rel="stylesheet" href="/identidade-visual/css/fontes.css">
+<link rel="stylesheet" href="/identidade-visual/css/cores.css">
+<link rel="stylesheet" href="/identidade-visual/css/componentes.css">
+<link rel="stylesheet" href="/identidade-visual/css/cenario.css">
+<style>
+  /* layout: uma lista por grupo; cada link curto tem o nome, o endereço grande para escrever no quadro, copiar e QR */
+  [hidden] { display: none !important; }
+  .icone { display: inline-block; width: 1.15em; height: 1.15em; vertical-align: -.22em; flex: none; }
+  .pagina { width: min(980px, 100% - 32px); margin: 0 auto; padding: 24px 0 48px; }
+  h1 { font-size: clamp(36px, 7vw, 60px); margin-bottom: 10px; }
+  .intro { max-width: 40em; margin: 0 0 22px; font-weight: 600; font-size: 18px; }
+  .grupo { margin-top: 26px; }
+  .grupo h2 { display: inline-block; margin-bottom: 12px; padding: 4px 18px; background: var(--white); border: 4px solid var(--ink); border-radius: 999px; box-shadow: 0 5px 0 var(--ink); font-size: 22px; }
+  .lista { display: grid; gap: 12px; margin: 0; padding: 0; list-style: none; }
+  .atalho { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 14px; padding: 12px 14px 12px 20px; background: var(--white); border: 4px solid var(--ink); border-radius: 20px; box-shadow: inset 10px 0 0 var(--c), 0 6px 0 var(--ink); }
+  .atalho__texto { flex: 1 1 260px; min-width: 0; padding-left: 6px; }
+  .atalho__texto b { display: block; font-size: 18px; }
+  .atalho__texto a { font-weight: 700; font-size: clamp(17px, 2.4vw, 21px); color: var(--ink); overflow-wrap: anywhere; text-decoration-thickness: 2px; text-underline-offset: 3px; }
+  .atalho__acoes { display: flex; gap: 8px; }
+  /* O --c da linha é a cor do grupo; copiar e QR são ações secundárias, brancas */
+  .atalho__acoes .btn { --c: var(--white); min-height: 48px; }
+  .aviso { position: fixed; left: 50%; bottom: 20px; z-index: 50; translate: -50% 0; padding: 8px 22px; background: var(--ink); color: var(--white); border: 4px solid var(--white); border-radius: 999px; font-weight: 600; opacity: 0; pointer-events: none; transition: opacity .2s ease; }
+  .aviso.is-on { opacity: 1; }
+  .qr-tela { width: min(100% - 24px, 640px); padding: 24px; text-align: center; background: var(--white); color: var(--ink); border: 6px solid var(--ink); border-radius: 30px; box-shadow: 0 12px 0 var(--ink); }
+  .qr-tela::backdrop { background: rgb(47 42 74 / .7); }
+  .qr-tela h2 { font-size: clamp(24px, 4vw, 36px); }
+  .qr-tela img { display: block; width: min(60vh, 100%); aspect-ratio: 1; margin: 14px auto; }
+  .qr-tela p { margin: 0 0 16px; font-size: clamp(15px, 4.2vw, 28px); font-weight: 700; overflow-wrap: anywhere; }
+</style>
+<script src="/identidade-visual/js/barra.js" defer></script>
+</head>
+<body class="ceu">
+<div class="cenario cenario--fixo" aria-hidden="true">
+  <span class="nuvem" style="top: 8%; --w: 190px; --t: 80s; --d: -10s"></span>
+  <span class="nuvem" style="top: 46%; --w: 150px; --t: 70s; --d: -40s"></span>
+  <span class="morros" style="--altura: 110px"></span>
+</div>
+
+<main class="pagina">
+  <h1 class="loud">Links <span class="yellow">curtos</span></h1>
+  <p class="intro">Endereços fáceis de escrever no quadro ou de mandar no grupo da turma. Todos começam com gamificapampa.github.io e funcionam sem acento.</p>
+  <div id="grupos"></div>
+</main>
+
+<p class="aviso" id="aviso" role="status"></p>
+<dialog class="qr-tela" id="qr-tela" aria-labelledby="qr-titulo">
+  <h2 id="qr-titulo"></h2>
+  <img id="qr-imagem" alt="">
+  <p id="qr-link"></p>
+  <form method="dialog"><button class="btn" type="submit">Fechar</button></form>
+</dialog>
+
+<script src="/jogos.js"></script>
+<script src="/atalhos.js"></script>
+<script src="/identidade-visual/js/icones.js"></script>
+<script>
+(() => {
+  const icone = (nome) => (window.Icones ? Icones.svg(nome) : '');
+  const cores = { 'Jogos': 'var(--blue)', 'Jogos por matéria': 'var(--orange)', 'Aula com as crianças': 'var(--yellow)', 'Oficina de Prompts': 'var(--mint)' };
+  const grupos = {};
+  for (const [atalho, [grupo, rotulo, , qr]] of Object.entries(ATALHOS)) {
+    if (rotulo) (grupos[grupo] ||= []).push([atalho, rotulo, qr || 'qr/' + atalho + '.svg']);
+  }
+
+  const aviso = document.getElementById('aviso');
+  let some;
+  const avisar = (texto) => {
+    aviso.textContent = texto;
+    aviso.classList.add('is-on');
+    clearTimeout(some);
+    some = setTimeout(() => aviso.classList.remove('is-on'), 2000);
+  };
+  // Só diz "copiado" quando o texto foi mesmo para a área de transferência
+  const copiar = async (texto) => {
+    try { await navigator.clipboard.writeText(texto); return true; } catch {}
+    const campo = Object.assign(document.createElement('textarea'), { value: texto });
+    campo.style.cssText = 'position: fixed; top: 0; left: 0; opacity: 0';
+    document.body.append(campo);
+    campo.select();
+    let ok = false;
+    try { ok = document.execCommand('copy'); } catch {}
+    campo.remove();
+    return ok;
+  };
+
+  const dialogo = document.getElementById('qr-tela');
+  const lugar = document.getElementById('grupos');
+  for (const [grupo, itens] of Object.entries(grupos)) {
+    const secao = document.createElement('section');
+    secao.className = 'grupo';
+    const titulo = Object.assign(document.createElement('h2'), { textContent: grupo });
+    const lista = Object.assign(document.createElement('ul'), { className: 'lista' });
+    for (const [atalho, rotulo, qr] of itens) {
+      const endereco = 'gamificapampa.github.io/' + atalho;
+      const item = document.createElement('li');
+      item.className = 'atalho';
+      item.style.setProperty('--c', cores[grupo] || 'var(--pink)');
+      item.innerHTML = `
+        <div class="atalho__texto"><b></b><a></a></div>
+        <div class="atalho__acoes">
+          <button class="btn btn--small" type="button" data-acao="copiar">${icone('prancheta')} Copiar</button>
+          <button class="btn btn--small" type="button" data-acao="qr">${icone('qr')} QR</button>
+        </div>`;
+      item.querySelector('b').textContent = rotulo;
+      const link = item.querySelector('a');
+      link.href = '/' + atalho;
+      link.textContent = endereco;
+      item.querySelector('[data-acao="copiar"]').addEventListener('click', async () => {
+        avisar(await copiar('https://' + endereco) ? 'Copiado: ' + endereco : 'Não deu para copiar. Selecione o endereço e copie à mão.');
+      });
+      item.querySelector('[data-acao="qr"]').addEventListener('click', () => {
+        document.getElementById('qr-titulo').textContent = rotulo;
+        document.getElementById('qr-link').textContent = endereco;
+        const imagem = document.getElementById('qr-imagem');
+        imagem.src = qr;
+        imagem.alt = 'QR code de ' + endereco;
+        dialogo.showModal();
+      });
+      lista.append(item);
+    }
+    secao.append(titulo, lista);
+    lugar.append(secao);
+  }
+  dialogo.addEventListener('click', (evento) => { if (evento.target === dialogo) dialogo.close(); });
+})();
+</script>
+</body>
+</html>

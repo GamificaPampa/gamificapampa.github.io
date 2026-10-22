@@ -178,15 +178,18 @@ h2 { font-size: clamp(38px, 5.6vw, 66px); }
   .nav__cta { display: inline-flex; }
   .nav__links .nav__menu-cta { display: none; }
 }
-@media (max-width: 1199px) {
+/* O menu fica aberto na barra a partir de 1024 px, a largura do projetor da escola */
+@media (max-width: 1023px) {
   .js .nav__toggle { display: inline-flex; }
   .js .nav__links { display: none; position: absolute; top: calc(100% + 4px); left: 0; right: 0; flex-direction: column; padding: 16px; background: var(--white); border: 5px solid var(--ink); border-radius: 28px; box-shadow: 0 10px 0 var(--ink); }
   .js .nav.is-open .nav__links { display: flex; animation: menu-in .3s var(--bounce); }
 }
-@media (min-width: 1200px) {
+@media (min-width: 1024px) {
   .nav__inner { flex-wrap: nowrap; }
-  .nav__links { order: 0; width: auto; }
+  .nav__links { order: 0; width: auto; flex-wrap: nowrap; gap: 8px; }
+  .nav__links a { padding-inline: 13px; }
 }
+.footer__link { display: inline-flex; align-items: center; min-height: 44px; font-weight: 700; text-decoration-thickness: 2px; text-underline-offset: 3px; }
 .scrollxp { height: 12px; background: var(--white); border-block: 3px solid var(--ink); overflow: hidden; }
 .scrollxp span { display: block; height: 100%; background: repeating-linear-gradient(90deg, var(--yellow) 0 18px, var(--orange) 18px 22px); transform: translateX(-100%); }
 
@@ -239,6 +242,10 @@ h2 { font-size: clamp(38px, 5.6vw, 66px); }
 .lead { max-width: 580px; font-weight: 600; font-size: clamp(17px, 1.6vw, 20px); }
 .ctas { display: flex; flex-wrap: wrap; gap: 18px; }
 .hero__talk { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 14px; font-weight: 600; }
+.hero__link { display: inline-flex; align-items: center; min-height: 44px; font-weight: 700; text-decoration-thickness: 3px; text-underline-offset: 4px; }
+/* No celular, o minijogo e o Bit descem para depois dos recursos (o script.js muda o lugar) */
+.bit-celular { padding-block: 10px 40px; }
+.bit-celular .hello { margin-bottom: 18px; }
 @media (max-width: 599px) {
   .hero .ctas { flex-direction: column; align-self: stretch; }
   .hero .ctas .btn { width: 100%; }

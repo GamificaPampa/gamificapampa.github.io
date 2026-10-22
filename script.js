@@ -18,7 +18,36 @@ const setMenu = (open) => {
   menuButton.setAttribute('aria-expanded', String(open));
 };
 menuButton.addEventListener('click', () => setMenu(!nav.classList.contains('is-open')));
+// The menu also closes with Esc and with a tap anywhere outside it.
+document.addEventListener('keydown', (event) => {
+  if (event.key === 'Escape' && nav.classList.contains('is-open')) { setMenu(false); menuButton.focus(); }
+});
+document.addEventListener('click', (event) => {
+  if (nav.classList.contains('is-open') && !nav.contains(event.target)) setMenu(false);
+});
 nav.querySelectorAll('.nav__links a').forEach((link) => link.addEventListener('click', () => setMenu(false)));
+
+// On phones and tablets, the Programe o Bit game and the Bit's bubble move below the resources, so the games and the
+// teacher tools are the first thing under the title. On wide screens they go back to the side of the title.
+const bitGame = $('#bit-game');
+const bitHello = $('.hero .hello');
+if (bitGame && bitHello) {
+  const homes = [[bitHello, bitHello.parentElement, bitHello.nextSibling], [bitGame, bitGame.parentElement, bitGame.nextSibling]];
+  const phoneSpot = Object.assign(document.createElement('section'), { className: 'container bit-celular' });
+  phoneSpot.setAttribute('aria-label', 'Programe o Bit');
+  const small = matchMedia('(max-width: 1023px)');
+  const place = () => {
+    if (small.matches) {
+      if (!phoneSpot.isConnected) $('#recursos').after(phoneSpot);
+      phoneSpot.append(bitHello, bitGame);
+    } else {
+      homes.forEach(([element, parent, next]) => parent.insertBefore(element, next));
+      phoneSpot.remove();
+    }
+  };
+  place();
+  small.addEventListener('change', place);
+}
 
 // Revealing sections and filling the level blocks as they enter the screen.
 const revealObserver = new IntersectionObserver((entries) => {
