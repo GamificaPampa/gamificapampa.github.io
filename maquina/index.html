@@ -118,6 +118,7 @@
     @keyframes ready { 40% { box-shadow: 0 12px 0 var(--ink), 0 0 0 10px var(--yellow); } }
   </style>
 <script src="/identidade-visual/js/barra.js" defer></script>
+<script src="/identidade-visual/js/copiar.js"></script>
 </head>
 <body class="ceu">
   <svg class="sprite" aria-hidden="true">
@@ -252,6 +253,7 @@
 
   <footer class="foot">GamificaPampa, projeto de extensão da UNIPAMPA, Campus Alegrete</footer>
 
+<script src="/identidade-visual/js/lembrar.js"></script>
   <script>
     const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
     const $ = (selector) => document.querySelector(selector);
@@ -428,22 +430,8 @@
     const saveRecent = (list) => {
       try { localStorage.setItem(storeKey, JSON.stringify(list)); } catch {}
     };
-    // Says whether the text really reached the clipboard, so the button only says "copiado" when it did
-    const copyText = async (text) => {
-      try {
-        await navigator.clipboard.writeText(text);
-        return true;
-      } catch {
-        const field = Object.assign(document.createElement('textarea'), { value: text });
-        field.style.cssText = 'position: fixed; top: 0; left: 0; opacity: 0';
-        document.body.append(field);
-        field.select();
-        let ok = false;
-        try { ok = document.execCommand('copy'); } catch {}
-        field.remove();
-        return ok;
-      }
-    };
+    // Copiar do identidade-visual: só diz que copiou quando copiou e, se não der, mostra o texto para copiar à mão
+    const copyText = (text) => Copiar.texto(text, { avisar: false });
     const flash = (button, text) => {
       const label = button.lastChild;
       const before = label.textContent;
@@ -475,7 +463,11 @@
       renderRecent();
     });
     $('#recent-clear').addEventListener('click', () => { saveRecent([]); renderRecent(); });
-    $('#reset').addEventListener('click', () => { form.reset(); update(); form.querySelector('input').focus(); });
+    // O site lembra a última turma, matéria, tipo, tema e ajustes neste aparelho; Começar de novo esquece
+    Lembrar.campos('maquina', form.elements);
+    // No celular, o console com o Copiar fica depois das perguntas: uma barra no pé da tela traz o Copiar e as peças prontas
+    Copiar.barraFixa({ observar: document.querySelector('#console .actions'), copiar: copyButton, contador: $('#count') });
+    $('#reset').addEventListener('click', () => { form.reset(); Lembrar.guardar('maquina', {}); update(); form.querySelector('input').focus(); });
     form.addEventListener('input', update);
     form.addEventListener('change', update);
     form.addEventListener('submit', (event) => event.preventDefault());
