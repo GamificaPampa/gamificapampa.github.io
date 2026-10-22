@@ -4,9 +4,9 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Máquina de prompts · GamificaPampa</title>
-  <meta name="description" content="Escolha a turma, o que criar e o tema. A máquina monta um prompt com Papel, Tarefa, Contexto e Formato, pronto para colar no Gemini.">
+  <meta name="description" content="Da Educação Infantil ao Ensino Médio, em qualquer matéria: escolha a turma, o que criar e o tema, e a máquina monta um prompt com Papel, Tarefa, Contexto e Formato, pronto para colar no Gemini.">
   <meta property="og:title" content="Máquina de prompts">
-  <meta property="og:description" content="Monte em poucos cliques um prompt pronto para o Gemini, com Papel, Tarefa, Contexto e Formato.">
+  <meta property="og:description" content="Monte em poucos cliques um prompt para o Gemini criar planos de aula, atividades, quizzes, histórias e jogos, da Educação Infantil ao Ensino Médio.">
   <meta property="og:image" content="https://gamificapampa.github.io/identidade-visual/logos/gamificapampa-github-avatar.png">
   <meta property="og:type" content="website">
   <meta name="theme-color" content="#5fbcff">
@@ -163,6 +163,9 @@
           <label class="chip"><input type="radio" name="turma" value="7"><span>7º ano</span></label>
           <label class="chip"><input type="radio" name="turma" value="8"><span>8º ano</span></label>
           <label class="chip"><input type="radio" name="turma" value="9"><span>9º ano</span></label>
+          <label class="chip"><input type="radio" name="turma" value="em1"><span>1ª série EM</span></label>
+          <label class="chip"><input type="radio" name="turma" value="em2"><span>2ª série EM</span></label>
+          <label class="chip"><input type="radio" name="turma" value="em3"><span>3ª série EM</span></label>
         </fieldset>
 
         <fieldset class="step" id="subject-step" style="--c: #cfe6ff">
@@ -175,6 +178,11 @@
           <label class="chip"><input type="radio" name="materia" value="arte"><span>Arte</span></label>
           <label class="chip"><input type="radio" name="materia" value="ingles"><span>Inglês</span></label>
           <label class="chip"><input type="radio" name="materia" value="educacao-fisica"><span>Educação Física</span></label>
+          <label class="chip"><input type="radio" name="materia" value="fisica"><span>Física</span></label>
+          <label class="chip"><input type="radio" name="materia" value="quimica"><span>Química</span></label>
+          <label class="chip"><input type="radio" name="materia" value="biologia"><span>Biologia</span></label>
+          <label class="chip"><input type="radio" name="materia" value="filosofia"><span>Filosofia</span></label>
+          <label class="chip"><input type="radio" name="materia" value="sociologia"><span>Sociologia</span></label>
         </fieldset>
 
         <fieldset class="step" style="--c: #4fd6a6">
@@ -191,7 +199,7 @@
           <label class="step__title" for="tema"><span class="step__num">4</span>Sobre qual tema?</label>
           <input class="theme" id="tema" name="tema" maxlength="80" autocomplete="off" placeholder="Escreva o tema da aula">
           <div class="ideas" id="ideas"></div>
-          <p class="privacy"><svg width="24" height="24" aria-hidden="true"><use href="#i-lock"/></svg>Nunca escreva o nome ou dados das crianças. Descreva a turma, não as pessoas.</p>
+          <p class="privacy"><svg width="24" height="24" aria-hidden="true"><use href="#i-lock"/></svg>Nunca escreva o nome ou dados dos alunos. Descreva a turma, não as pessoas.</p>
         </div>
 
         <fieldset class="step" style="--c: #ffdcc4">
@@ -277,6 +285,9 @@
       7: { name: '7º ano', year: 'do 7º ano', age: 'alunos de 12 anos' },
       8: { name: '8º ano', year: 'do 8º ano', age: 'alunos de 13 anos' },
       9: { name: '9º ano', year: 'do 9º ano', age: 'alunos de 14 anos' },
+      em1: { name: '1ª série do Ensino Médio', year: 'da 1ª série do Ensino Médio', age: 'estudantes de 15 anos' },
+      em2: { name: '2ª série do Ensino Médio', year: 'da 2ª série do Ensino Médio', age: 'estudantes de 16 anos' },
+      em3: { name: '3ª série do Ensino Médio', year: 'da 3ª série do Ensino Médio', age: 'estudantes de 17 anos, que se preparam para o Enem' },
     };
     const subjects = {
       portugues: { name: 'Língua Portuguesa', ideas: ['rimas', 'fábulas', 'substantivos'] },
@@ -287,6 +298,11 @@
       arte: { name: 'Arte', ideas: ['as cores primárias', 'arte com sucata', 'retratos'] },
       ingles: { name: 'Inglês', ideas: ['as cores em inglês', 'os animais em inglês', 'os números em inglês'] },
       'educacao-fisica': { name: 'Educação Física', ideas: ['brincadeiras antigas', 'jogos cooperativos', 'alongamento'] },
+      fisica: { name: 'Física', ideas: ['as leis de Newton', 'a conta de luz de casa', 'ondas e som'] },
+      quimica: { name: 'Química', ideas: ['a tabela periódica', 'reações do dia a dia', 'ácidos e bases'] },
+      biologia: { name: 'Biologia', ideas: ['genética', 'a ecologia do Pampa', 'o sistema imunológico'] },
+      filosofia: { name: 'Filosofia', ideas: ['ética no dia a dia', 'o que é justiça', 'os filósofos gregos'] },
+      sociologia: { name: 'Sociologia', ideas: ['desigualdade social', 'trabalho e tecnologia', 'a cultura gaúcha'] },
     };
     const anyIdeas = ['frações', 'o ciclo da água', 'os animais do Pampa'];
     const kinds = {
