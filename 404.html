@@ -91,7 +91,8 @@
     <p><a class="btn" href="/">Voltar ao início</a></p>
   </main>
   <script>
-    const cores = { 'Jogos': 'var(--blue)', 'Aula com as crianças': 'var(--yellow)', 'Oficina de Prompts': 'var(--mint)' };
+    // Grupo sem cor aqui ganha o rosa, para nenhum cartão ficar sem a faixa
+    const cores = { 'Jogos': 'var(--blue)', 'Jogos por matéria': 'var(--orange)', 'Aula com as crianças': 'var(--yellow)', 'Oficina de Prompts': 'var(--mint)' };
     const grupos = {};
     for (const [atalho, [grupo, rotulo]] of Object.entries(ATALHOS)) {
       if (rotulo) (grupos[grupo] ||= []).push([atalho, rotulo]);
@@ -106,7 +107,7 @@
         const item = document.createElement('li');
         const link = document.createElement('a');
         link.href = '/' + atalho;
-        link.style.setProperty('--c', cores[grupo]);
+        link.style.setProperty('--c', cores[grupo] || 'var(--pink)');
         link.innerHTML = '<b></b><span></span>';
         link.querySelector('b').textContent = rotulo;
         link.querySelector('span').textContent = 'gamificapampa.github.io/' + atalho;
