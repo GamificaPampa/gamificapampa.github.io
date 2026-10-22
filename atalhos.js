@@ -44,6 +44,8 @@ const APELIDOS = {
   pizzaria: 'fracoes', 'pizzaria-das-fracoes': 'fracoes', fracao: 'fracoes',
   fabrica: 'silabas', 'fabrica-de-silabas': 'silabas', silaba: 'silabas',
   'caminho-da-escola': 'caminho', 'balanca-do-bit': 'balanca', 'detetive-da-noticia': 'detetive',
+  'reta-do-bit': 'reta', funcao: 'reta', 'laboratorio-de-equacoes': 'laboratorio', balanceamento: 'laboratorio',
+  'genetica-do-bit': 'genetica', mendel: 'genetica',
   ciclo: 'ciclo-da-agua', agua: 'ciclo-da-agua', 'robo-pega-a-estrela': 'robo', estrela: 'robo',
   construtor: 'prompt', 'construtor-de-prompts': 'prompt', 'maquina-de-prompts': 'maquina',
   cacabugs: 'caca-bugs', missao: 'missao-dev', 'programacao-em-dupla': 'dupla',
