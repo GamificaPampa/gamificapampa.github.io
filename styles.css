@@ -162,6 +162,25 @@ h2 { font-size: clamp(38px, 5.6vw, 66px); }
 .night .xp__bar { border: 0; }
 @media (max-width: 479px) { .xp { flex-basis: 130px; } .xp b { font-size: 20px; } .xp__bar { height: 20px; } }
 
+/* Leve para a sua escola: o que a equipe leva, cada um com o seu botão, e os três passos para combinar */
+.itens { display: grid; gap: 24px; }
+@media (min-width: 860px) { .itens { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+.item { display: flex; align-items: flex-start; gap: 20px; padding: clamp(20px, 2.6vw, 28px); }
+.item__arte { display: grid; flex: none; place-items: center; width: 92px; height: 92px; background: var(--c); border: var(--line-fina); border-radius: 24px; }
+.item__arte svg { width: 64px; height: auto; }
+.item__texto { display: flex; flex-direction: column; align-items: flex-start; gap: 10px; min-width: 0; }
+.item__texto h3 { font-size: clamp(21px, 2vw, 25px); }
+.item__texto p { color: var(--soft); font-size: 17px; line-height: 1.45; }
+.item__texto .btn { margin-top: 4px; }
+@media (max-width: 520px) { .item { flex-direction: column; } .item__arte { width: 76px; height: 76px; } .item__arte svg { width: 54px; } }
+.rota { display: grid; gap: 18px; align-items: center; margin-top: clamp(32px, 4vw, 48px); padding: clamp(20px, 2.6vw, 28px); background: rgb(255 255 255 / .78); border: var(--line-fina); border-radius: var(--radius); }
+.rota__titulo { font-size: clamp(22px, 2.2vw, 28px); }
+.rota__passos { display: grid; gap: 12px; counter-reset: passo; }
+.rota__passos li { display: flex; align-items: center; gap: 12px; font-weight: 600; line-height: 1.35; }
+.rota__passos b { display: grid; flex: none; place-items: center; width: 38px; height: 38px; background: var(--yellow); border: var(--line-fina); border-radius: 50%; font-size: 18px; }
+.rota .btn { justify-self: start; }
+@media (min-width: 860px) { .rota { grid-template-columns: 1fr auto; grid-template-areas: "titulo botao" "passos passos"; column-gap: 24px; } .rota__titulo { grid-area: titulo; } .rota .btn { grid-area: botao; } .rota__passos { grid-area: passos; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; } }
+
 /* Hero */
 .hero { padding-block: clamp(32px, 5vw, 64px) clamp(24px, 4vw, 48px); }
 .hero__inner { display: grid; gap: 48px; align-items: center; }
@@ -315,35 +334,7 @@ h2 { font-size: clamp(38px, 5.6vw, 66px); }
 .project--locked:hover .lock { animation: shake .4s ease-in-out; }
 
 /* Players: what teachers, managers and students get */
-.players { display: grid; gap: 32px; }
-@media (min-width: 900px) { .players { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
-.player { display: flex; flex-direction: column; align-items: center; gap: 18px; padding: clamp(22px, 3vw, 30px); }
-.player h3 { font-size: 21px; letter-spacing: 0; }
-.player ul { display: grid; gap: 12px; font-weight: 600; }
-.player li { position: relative; padding-left: 30px; }
-.player li::before { content: ""; position: absolute; left: 0; top: .2em; width: 20px; height: 20px; background: var(--c); border: 4px solid var(--ink); border-radius: 50%; }
-.trail { position: relative; display: flex; justify-content: space-between; width: 70%; margin-top: auto; padding-top: 8px; }
-.trail::before { content: ""; position: absolute; left: 0; right: 0; top: calc(50% + 4px); height: 4px; margin-top: -2px; background: var(--ink); }
-.trail i { position: relative; width: 24px; height: 24px; background: var(--c); border: 4px solid var(--ink); border-radius: 50%; }
 
-/* Level path on the night sky */
-.path { display: grid; gap: 24px; }
-.path__step:not(:last-child)::after { content: ""; position: absolute; top: 32px; bottom: -56px; left: 29px; border-left: 6px dashed var(--yellow); }
-.path__step { position: relative; display: flex; align-items: flex-start; gap: 18px; }
-.path__step:nth-child(2) { --delay: .15s; }
-.path__step:nth-child(3) { --delay: .3s; }
-.path__step:nth-child(4) { --delay: .45s; }
-.path__node { position: relative; z-index: 1; display: grid; flex: none; place-items: center; width: 64px; height: 64px; background: var(--c); color: var(--ink); border: 5px solid var(--white); border-radius: 50%; box-shadow: 0 6px 0 rgb(0 0 0 / .35); font-weight: 700; font-size: 28px; }
-.path__step.is-visible .path__node { animation: node-pop .6s var(--bounce) calc(var(--delay, 0s) + .2s) backwards; }
-.path__card { flex: 1; padding: 18px 22px; background: var(--white); color: var(--ink); border-radius: 28px; box-shadow: 0 10px 0 var(--c); }
-.path__card h3 { margin-bottom: 6px; font-size: 23px; }
-.path__card p { color: var(--soft); font-size: 16px; }
-@media (min-width: 900px) {
-  .path { grid-template-columns: repeat(4, minmax(0, 1fr)); }
-  .path__step:not(:last-child)::after { top: 29px; bottom: auto; left: 32px; right: -56px; border-left: 0; border-top: 6px dashed var(--yellow); }
-  .path__step { flex-direction: column; }
-  .path__card { align-self: stretch; }
-}
 
 /* Recursos pedagógicos */
 .mirim { display: grid; gap: 40px; }
@@ -383,8 +374,8 @@ h2 { font-size: clamp(38px, 5.6vw, 66px); }
 /* Bouncy reveal on scroll (only when JS runs) */
 .js .reveal:not(.is-visible) { opacity: 0; }
 .js .reveal.is-visible { animation: rise-in .7s var(--bounce) var(--delay, 0s) backwards; }
-.projects .reveal:nth-child(2), .players .reveal:nth-child(2) { --delay: .14s; }
-.projects .reveal:nth-child(3), .players .reveal:nth-child(3) { --delay: .28s; }
+.projects .reveal:nth-child(2), .itens .reveal:nth-child(2n) { --delay: .14s; }
+.projects .reveal:nth-child(3) { --delay: .28s; }
 
 @keyframes drift { from { transform: translateX(calc(-100% - var(--x))); } to { transform: translateX(calc(100vw - var(--x))); } }
 @keyframes glyph-float { 50% { transform: translateY(-14px) rotate(8deg); } }
@@ -395,7 +386,6 @@ h2 { font-size: clamp(38px, 5.6vw, 66px); }
 @keyframes bubble-in { from { opacity: 0; transform: scale(.4); } }
 @keyframes rise-in { from { opacity: 0; transform: translateY(var(--rise, 48px)) scale(.94); } }
 @keyframes menu-in { from { opacity: 0; transform: translateY(-12px) scale(.96); } }
-@keyframes node-pop { from { transform: scale(0); } }
 @keyframes pulse { 50% { transform: scale(1.04); } }
 @keyframes float { 50% { transform: translateY(-9px); } }
 @keyframes spin-y { to { rotate: y 360deg; } }
@@ -485,11 +475,10 @@ body:has(dialog[open]) { overflow: hidden; }
 [data-tilt] { position: relative; transform: perspective(900px) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg)); transform-style: preserve-3d; transition: transform .45s var(--bounce), box-shadow .2s ease; }
 [data-tilt].is-tilting { transition: transform .08s linear, box-shadow .2s ease; }
 .card[data-tilt]:hover { transform: perspective(900px) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg)) translateY(-6px); box-shadow: 0 18px 0 var(--ink); }
-.path__card[data-tilt]:hover { transform: perspective(900px) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg)) translateY(-6px); box-shadow: 0 16px 0 var(--c); }
 [data-tilt]::before { content: ""; position: absolute; inset: 0; z-index: 3; border-radius: inherit; background: radial-gradient(circle at var(--gx, 50%) var(--gy, 0%), rgb(255 255 255 / .5), transparent 55%); opacity: 0; pointer-events: none; transition: opacity .25s ease; }
 [data-tilt].is-tilting::before { opacity: 1; }
 /* Pieces that pop out of the tilted card */
-.player .bot, .player h3, .level .tag, .level h3 { translate: 0 0 28px; }
+.level .tag, .level h3 { translate: 0 0 28px; }
 
 /* Bit can be poked: a click makes it jump */
 .bot { cursor: pointer; }
@@ -500,21 +489,7 @@ body:has(dialog[open]) { overflow: hidden; }
 .mission { transition: transform .25s var(--bounce), box-shadow .25s ease; }
 .mission:hover { transform: translateX(6px); box-shadow: inset 18px 0 0 var(--c), 0 6px 0 var(--ink); }
 
-/* The trail dots under each player hop one after the other */
-.player:hover .trail i { animation: trail-hop .5s var(--bounce) var(--i, 0s); }
-.trail i:nth-child(2) { --i: .08s; }
-.trail i:nth-child(3) { --i: .16s; }
-.trail i:nth-child(4) { --i: .24s; }
 
-/* The dashed path draws itself as each step shows up, and the numbers flip in 3D on hover */
-.js .path__step:not(.is-visible)::after { clip-path: inset(0 0 100% 0); }
-.js .path__step.is-visible::after { animation: trace-down .8s ease-out calc(var(--delay, 0s) + .5s) backwards; }
-@media (min-width: 900px) {
-  .js .path__step:not(.is-visible)::after { clip-path: inset(0 100% 0 0); }
-  .js .path__step.is-visible::after { animation-name: trace-right; }
-}
-.path__node { transform: perspective(300px) rotateY(0deg) scale(1); transition: transform .6s var(--bounce); }
-.path__step:hover .path__node { transform: perspective(300px) rotateY(360deg) scale(1.1); }
 
 /* Shooting stars crossing the night sky now and then */
 .shooting { position: absolute; width: 130px; height: 3px; border-radius: 3px; background: linear-gradient(90deg, rgb(255 255 255 / 0), #fff 85%, var(--yellow)); rotate: 24deg; opacity: 0; animation: shoot var(--t, 9s) linear var(--d, 0s) infinite; }
@@ -554,9 +529,6 @@ body:has(dialog[open]) { overflow: hidden; }
 @keyframes cube-spin { from { transform: rotateX(-24deg) rotateY(0deg); } to { transform: rotateX(-24deg) rotateY(360deg); } }
 @keyframes parallax { from { translate: 0 var(--depth, 50px); } to { translate: 0 calc(var(--depth, 50px) * -1); } }
 @keyframes stripes { to { background-position: 44px 0; } }
-@keyframes trail-hop { 50% { transform: translateY(-10px); } }
-@keyframes trace-down { from { clip-path: inset(0 0 100% 0); } }
-@keyframes trace-right { from { clip-path: inset(0 100% 0 0); } }
 @keyframes shoot { 0% { translate: 0 0; opacity: 0; } 3% { opacity: 1; } 12% { translate: 360px 160px; opacity: 0; } 100% { translate: 360px 160px; opacity: 0; } }
 @keyframes r-walk {
   0%, 8% { transform: translate(14px, 8px); opacity: 1; }
