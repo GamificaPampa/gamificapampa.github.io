@@ -460,10 +460,6 @@ body:has(dialog[open]) { overflow: hidden; }
 .partilha .ficha__actions { justify-content: center; }
 
 /* 3D code blocks floating in the sky, like toy bricks */
-.cube-wrap { position: absolute; perspective: 700px; animation: float 5s ease-in-out var(--d, 0s) infinite; }
-/* A lesson plan and an open book float in the sky, the things a teacher creates on the site */
-.prop { display: block; width: var(--s); height: var(--s); rotate: var(--r, 0deg); filter: drop-shadow(0 5px 0 rgb(47 42 74 / .35)); }
-@media (max-width: 1023px) { .cube-wrap--wide { display: none; } }
 
 /* Cards tilt in 3D toward the mouse and get a glare that follows it (script.js). On touch they only lift */
 [data-tilt] { position: relative; transform: perspective(900px) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg)); transform-style: preserve-3d; transition: transform .45s var(--bounce), box-shadow .2s ease; }
@@ -513,11 +509,10 @@ body:has(dialog[open]) { overflow: hidden; }
 .w-chuva { animation: w-chuva .8s linear var(--d, 0s) infinite; }
 .s-peca { animation: s-peca 3s var(--bounce) var(--d, 0s) infinite backwards; }
 
-/* Clouds drift slower than the page and the cubes faster, so the sky gets depth on scroll */
+/* Clouds drift slower than the page, so the sky gets depth on scroll */
 @supports (animation-timeline: view()) {
   .cloud { --depth: -50px; animation: drift var(--t) linear var(--d) infinite, parallax linear both; animation-timeline: auto, view(); }
   .scenery .glyph { --depth: 40px; animation: glyph-float 7s ease-in-out var(--d, 0s) infinite, parallax linear both; animation-timeline: auto, view(); }
-  .cube-wrap { --depth: 60px; animation: float 5s ease-in-out var(--d, 0s) infinite, parallax linear both; animation-timeline: auto, view(); }
 }
 
 @keyframes parallax { from { translate: 0 var(--depth, 50px); } to { translate: 0 calc(var(--depth, 50px) * -1); } }
