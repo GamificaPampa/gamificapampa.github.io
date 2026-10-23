@@ -47,7 +47,8 @@
   .grupo__nome small { font-size: 16px; color: var(--soft); }
   .jogos { display: grid; grid-template-columns: repeat(var(--vao, 1), minmax(0, 1fr)); gap: 22px; }
 
-  .jogo { display: flex; flex-direction: column; overflow: hidden; background: var(--white); border: 4px solid var(--ink); border-radius: 24px; box-shadow: 0 8px 0 var(--ink); }
+  /* Os cartões de matérias diferentes ficam em grades separadas; o script iguala a altura de todos em --altura */
+  .jogo { min-height: var(--altura, 0); display: flex; flex-direction: column; overflow: hidden; background: var(--white); border: 4px solid var(--ink); border-radius: 24px; box-shadow: 0 8px 0 var(--ink); }
   .jogo__capa { display: block; height: 128px; background-color: var(--c); background-image: radial-gradient(rgb(255 255 255 / .3) 2px, transparent 2.5px); background-size: 18px 18px; border-bottom: 4px solid var(--ink); }
   .jogo__capa img { display: block; width: 100%; height: 100%; object-fit: contain; }
   .jogo__corpo { display: flex; flex: 1; flex-direction: column; gap: 6px; padding: 12px 16px 16px; }
@@ -70,7 +71,7 @@
   .professor summary { display: flex; align-items: center; gap: 12px; font-size: clamp(24px, 5vw, 32px); font-weight: 700; cursor: pointer; list-style: none; min-height: 44px; }
   .professor summary::-webkit-details-marker { display: none; }
   .professor summary img { width: 54px; height: auto; }
-  .professor summary::after { content: "+"; display: grid; place-items: center; width: 44px; height: 44px; margin-left: auto; background: var(--yellow); border: 3px solid var(--ink); border-radius: 50%; font-size: 28px; transition: transform .2s ease; }
+  .professor summary::after { content: ""; flex: none; width: 44px; height: 44px; margin-left: auto; background: linear-gradient(var(--ink), var(--ink)) center / 18px 4px no-repeat, linear-gradient(var(--ink), var(--ink)) center / 4px 18px no-repeat, var(--yellow); border: 3px solid var(--ink); border-radius: 50%; transition: transform .2s ease; }
   .professor[open] summary::after { transform: rotate(45deg); }
   .professor h3 { margin: 26px 0 10px; font-size: 24px; }
   .professor ul { margin: 0; padding-left: 24px; }
@@ -353,9 +354,19 @@
     // O nome escondido da continuação só guarda lugar quando a fileira tem uma matéria com nome ao lado
     fileiras.forEach((linha) => linha.forEach(({ secao, segue }) => secao.classList.toggle('sem-vizinho', segue && linha.every((b) => b.segue))));
     lista.replaceChildren(...fileiras.flat().map(({ secao }) => secao));
+    igualar();
     $('vazio').hidden = blocos.length > 0;
   };
-  addEventListener('resize', () => { if (colunasAgora() !== colunas) desenhar(); });
+  // Todos os cartões com a altura do mais alto, para as fileiras saírem retas mesmo com matérias lado a lado
+  const igualar = () => {
+    const lista = $('lista');
+    lista.style.removeProperty('--altura');
+    const maior = Math.max(0, ...[...lista.querySelectorAll('.jogo')].map((jogo) => jogo.offsetHeight));
+    if (maior) lista.style.setProperty('--altura', maior + 'px');
+  };
+  addEventListener('resize', () => { if (colunasAgora() !== colunas) desenhar(); else igualar(); });
+  document.fonts?.ready.then(igualar);
+  addEventListener('load', igualar);
 
   document.querySelector('.filtros').addEventListener('click', (evento) => {
     const chip = evento.target.closest('.chip');
