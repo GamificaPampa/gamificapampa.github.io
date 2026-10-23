@@ -37,10 +37,15 @@
   .chip[aria-pressed="true"] { background: var(--yellow); }
   .chip:focus-visible { outline: 4px solid var(--pink); outline-offset: 2px; }
 
-  .grupo { margin-top: 18px; }
-  .grupo h2 { display: inline-block; margin-bottom: 14px; padding: 4px 18px; background: var(--white); border: 4px solid var(--ink); border-radius: 999px; box-shadow: 0 5px 0 var(--ink); font-size: 22px; }
-  .grupo h2 small { font-size: 17px; color: var(--soft); }
-  .jogos { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 268px), 1fr)); gap: 22px; }
+  /* As matérias se encaixam lado a lado: cada grupo ocupa tantas colunas quantos jogos tem (até a largura toda),
+     e o grid preenche os buracos com os grupos pequenos. O script põe --colunas na lista e --vao em cada grupo */
+  #lista { --colunas: 4; display: grid; grid-template-columns: repeat(var(--colunas), minmax(0, 1fr)); gap: 26px 22px; margin-top: 18px; }
+  .grupo { grid-column: span var(--vao, 1); min-width: 0; }
+  .grupo--segue .grupo__nome { visibility: hidden; }
+  .grupo--segue.sem-vizinho .grupo__nome { display: none; }
+  .grupo__nome { display: inline-flex; align-items: baseline; gap: 8px; margin: 0 0 12px; line-height: 1.2; padding: 3px 16px; background: var(--white); border: 3px solid var(--ink); border-radius: 999px; font-size: 21px; }
+  .grupo__nome small { font-size: 16px; color: var(--soft); }
+  .jogos { display: grid; grid-template-columns: repeat(var(--vao, 1), minmax(0, 1fr)); gap: 22px; }
 
   .jogo { display: flex; flex-direction: column; overflow: hidden; background: var(--white); border: 4px solid var(--ink); border-radius: 24px; box-shadow: 0 8px 0 var(--ink); }
   .jogo__capa { display: block; height: 128px; background-color: var(--c); background-image: radial-gradient(rgb(255 255 255 / .3) 2px, transparent 2.5px); background-size: 18px 18px; border-bottom: 4px solid var(--ink); }
@@ -105,6 +110,21 @@
     .opcoes { flex: 1; min-width: 0; flex-wrap: nowrap; overflow-x: auto; padding: 2px 12px 8px 2px; scrollbar-width: none; }
     .opcoes::-webkit-scrollbar { display: none; }
     .chip { flex: none; font-size: 16px; padding: 4px 13px; }
+    /* Duas colunas de cartões compactos: a criança no celular já está com o jogo na mão, então o QR sai */
+    #lista { gap: 22px 12px; }
+    .grupo__nome { padding: 2px 12px; font-size: 17px; }
+    .grupo__nome small { font-size: 13px; }
+    .jogos { gap: 14px 12px; }
+    .jogo { border-width: 3px; border-radius: 20px; box-shadow: 0 6px 0 var(--ink); }
+    .jogo__capa { height: 84px; border-bottom-width: 3px; }
+    .jogo__corpo { gap: 4px; padding: 8px 10px 12px; }
+    .jogo h3 { font-size: 18px; }
+    .jogo p { font-size: 14px; line-height: 1.3; }
+    .jogo .frase { display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+    .jogo .meta { font-size: 13px; }
+    .meta .marcador::before { width: 10px; height: 10px; border-width: 2px; }
+    .jogo__acoes .qr { display: none; }
+    .jogo__acoes .btn { min-height: 46px; padding: 4px 10px; font-size: 16px; }
   }
 </style>
 </head>
@@ -275,24 +295,67 @@
     return item;
   };
 
+  // Quantas colunas cabem: duas no celular, e no resto um cartão de pelo menos 250 px
+  const colunasAgora = () => {
+    const largura = $('lista').clientWidth;
+    return largura < 600 ? 2 : Math.max(2, Math.min(5, Math.floor((largura + 22) / (250 + 22))));
+  };
+
+  // As matérias se encaixam lado a lado. Matéria com mais jogos que colunas vira blocos de uma fileira, e a
+  // continuação leva o nome escondido, para os cartões ficarem na mesma altura dos vizinhos
+  let colunas = 0;
   const desenhar = () => {
     document.querySelectorAll('.chip').forEach((chip) => chip.setAttribute('aria-pressed', String(filtro[chip.dataset.tipo] === chip.dataset.valor)));
-    const grupos = materias.map((materia) => {
+    colunas = colunasAgora();
+    const blocos = [];
+    materias.forEach((materia) => {
       const lista = jogos.filter((jogo) => jogo.materia === materia && passa(jogo));
-      if (!lista.length) return null;
-      const secao = document.createElement('section');
-      secao.className = 'grupo';
-      const titulo = document.createElement('h2');
-      titulo.innerHTML = `${materia} <small>${lista.length} ${lista.length === 1 ? 'jogo' : 'jogos'}</small>`;
-      const grade = document.createElement('div');
-      grade.className = 'jogos';
-      grade.append(...lista.map(cartao));
-      secao.append(titulo, grade);
-      return secao;
-    }).filter(Boolean);
-    $('lista').replaceChildren(...grupos);
-    $('vazio').hidden = grupos.length > 0;
+      for (let i = 0; i < lista.length; i += colunas) {
+        const parte = lista.slice(i, i + colunas);
+        const secao = document.createElement(i ? 'div' : 'section');
+        secao.className = 'grupo' + (i ? ' grupo--segue' : '');
+        const titulo = document.createElement(i ? 'p' : 'h2');
+        titulo.className = 'grupo__nome';
+        titulo.innerHTML = `${materia} <small>${lista.length} ${lista.length === 1 ? 'jogo' : 'jogos'}</small>`;
+        if (i) titulo.setAttribute('aria-hidden', 'true');
+        const grade = document.createElement('div');
+        grade.className = 'jogos';
+        grade.append(...parte.map(cartao));
+        secao.append(titulo, grade);
+        blocos.push({ secao, n: parte.length, segue: i > 0, inteira: lista.length <= colunas });
+      }
+    });
+    const lista = $('lista');
+    lista.style.setProperty('--colunas', colunas);
+    // Com um filtro que deixa uma matéria só, os jogos usam a largura toda
+    const sozinho = new Set(blocos.map(({ secao }) => secao.querySelector('.grupo__nome').textContent)).size === 1 && blocos.length === 1;
+    blocos.forEach(({ secao, n }) => secao.style.setProperty('--vao', sozinho ? colunas : n));
+    // Monta as fileiras na ordem das matérias. Sobrando lugar, sobe a próxima matéria que caiba inteira, com o nome
+    // à vista; a continuação de uma matéria vem logo depois dela
+    const fila = [...blocos];
+    const fileiras = [];
+    let fileira = [];
+    let livre = colunas;
+    while (fila.length) {
+      const bloco = fila.shift();
+      if (bloco.n > livre) { fileiras.push(fileira); fileira = []; livre = colunas; }
+      fileira.push(bloco);
+      livre -= sozinho ? colunas : bloco.n;
+      while (livre > 0) {
+        const vez = fila.findIndex((outro) => outro.inteira && !outro.segue && outro.n <= livre);
+        if (vez < 0) break;
+        const [outro] = fila.splice(vez, 1);
+        fileira.push(outro);
+        livre -= outro.n;
+      }
+    }
+    if (fileira.length) fileiras.push(fileira);
+    // O nome escondido da continuação só guarda lugar quando a fileira tem uma matéria com nome ao lado
+    fileiras.forEach((linha) => linha.forEach(({ secao, segue }) => secao.classList.toggle('sem-vizinho', segue && linha.every((b) => b.segue))));
+    lista.replaceChildren(...fileiras.flat().map(({ secao }) => secao));
+    $('vazio').hidden = blocos.length > 0;
   };
+  addEventListener('resize', () => { if (colunasAgora() !== colunas) desenhar(); });
 
   document.querySelector('.filtros').addEventListener('click', (evento) => {
     const chip = evento.target.closest('.chip');
