@@ -461,14 +461,8 @@ body:has(dialog[open]) { overflow: hidden; }
 
 /* 3D code blocks floating in the sky, like toy bricks */
 .cube-wrap { position: absolute; perspective: 700px; animation: float 5s ease-in-out var(--d, 0s) infinite; }
-.cube { --h: calc(var(--s) / 2); position: relative; width: var(--s); height: var(--s); transform-style: preserve-3d; animation: cube-spin var(--t, 16s) linear infinite; }
-.cube i { position: absolute; inset: 0; display: grid; place-items: center; background: var(--c); border: 4px solid var(--ink); border-radius: 10px; color: var(--ink); font-style: normal; font-weight: 700; font-size: calc(var(--s) * .3); line-height: 1; }
-.cube i:nth-child(1) { transform: translateZ(var(--h)); }
-.cube i:nth-child(2) { transform: rotateY(90deg) translateZ(var(--h)); filter: brightness(.86); }
-.cube i:nth-child(3) { transform: rotateY(180deg) translateZ(var(--h)); }
-.cube i:nth-child(4) { transform: rotateY(-90deg) translateZ(var(--h)); filter: brightness(.86); }
-.cube i:nth-child(5) { transform: rotateX(90deg) translateZ(var(--h)); filter: brightness(1.12); }
-.cube i:nth-child(6) { transform: rotateX(-90deg) translateZ(var(--h)); filter: brightness(.72); }
+/* A lesson plan and an open book float in the sky, the things a teacher creates on the site */
+.prop { display: block; width: var(--s); height: var(--s); rotate: var(--r, 0deg); filter: drop-shadow(0 5px 0 rgb(47 42 74 / .35)); }
 @media (max-width: 1023px) { .cube-wrap--wide { display: none; } }
 
 /* Cards tilt in 3D toward the mouse and get a glare that follows it (script.js). On touch they only lift */
@@ -526,7 +520,6 @@ body:has(dialog[open]) { overflow: hidden; }
   .cube-wrap { --depth: 60px; animation: float 5s ease-in-out var(--d, 0s) infinite, parallax linear both; animation-timeline: auto, view(); }
 }
 
-@keyframes cube-spin { from { transform: rotateX(-24deg) rotateY(0deg); } to { transform: rotateX(-24deg) rotateY(360deg); } }
 @keyframes parallax { from { translate: 0 var(--depth, 50px); } to { translate: 0 calc(var(--depth, 50px) * -1); } }
 @keyframes stripes { to { background-position: 44px 0; } }
 @keyframes shoot { 0% { translate: 0 0; opacity: 0; } 3% { opacity: 1; } 12% { translate: 360px 160px; opacity: 0; } 100% { translate: 360px 160px; opacity: 0; } }
