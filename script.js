@@ -28,14 +28,14 @@ document.addEventListener('click', (event) => {
 });
 nav.querySelectorAll('.nav__links a').forEach((link) => link.addEventListener('click', () => setMenu(false)));
 
-// On phones and tablets, the Programe o Bit game and the Bit's bubble move below the resources, so the games and the
+// On phones and tablets, the prompt scene and the Bit's bubble move below the resources, so the games and the
 // teacher tools are the first thing under the title. On wide screens they go back to the side of the title.
-const bitGame = $('#bit-game');
+const bitGame = $('#estudio');
 const bitHello = $('.hero .hello');
 if (bitGame && bitHello) {
   const homes = [[bitHello, bitHello.parentElement, bitHello.nextSibling], [bitGame, bitGame.parentElement, bitGame.nextSibling]];
   const phoneSpot = Object.assign(document.createElement('section'), { className: 'container bit-celular' });
-  phoneSpot.setAttribute('aria-label', 'Programe o Bit');
+  phoneSpot.setAttribute('aria-label', 'Do pedido ao material');
   const small = matchMedia('(max-width: 1023px)');
   const place = () => {
     if (small.matches) {
@@ -78,32 +78,7 @@ const updateScrollBar = () => {
 addEventListener('scroll', updateScrollBar, { passive: true });
 updateScrollBar();
 
-// Effects inside the hero game screen: pixel bursts and the banner, placed relative to the screen.
-const effects = $('#fx');
 const heroBot = $('#hero-bot');
-
-const spawn = (className, x, y, styles = {}, text = '') => {
-  const element = Object.assign(document.createElement('span'), { className, textContent: text });
-  Object.assign(element.style, { left: `${x}px`, top: `${y}px`, ...styles });
-  effects.append(element);
-  element.addEventListener('animationend', () => element.remove());
-};
-
-// Throwing square pixels in random directions, like the debris of a retro explosion.
-const burst = (x, y, count, spread, colors = ['#ffd23f', '#ff5f8f', '#4fd6a6', '#4da3ff', '#ffffff']) => {
-  if (reducedMotion) return;
-  for (let index = 0; index < count; index += 1) {
-    const angle = Math.random() * Math.PI * 2;
-    const distance = spread * (0.4 + Math.random() * 0.6);
-    spawn('bit', x, y, {
-      '--x': `${Math.cos(angle) * distance}px`,
-      '--y': `${Math.sin(angle) * distance + spread * 0.3}px`,
-      '--r': `${Math.random() * 360}deg`,
-      '--t': `${0.6 + Math.random() * 0.6}s`,
-      '--c': colors[index % colors.length],
-    });
-  }
-};
 
 // Every Bit jumps when clicked, and goes back to its idle bobbing once the jump ends.
 document.querySelectorAll('.bot').forEach((bot) => {
@@ -111,175 +86,105 @@ document.querySelectorAll('.bot').forEach((bot) => {
   bot.addEventListener('animationend', () => bot.classList.remove('jump'));
 });
 
-// The hero mini game: arrows build a program, Rodar runs it, and Bit walks the board to the star.
-// Three phases, from a straight line to a path around the bugs, like the Robô pega a estrela game.
-const levels = [
-  { start: [0, 1], star: [3, 1], bugs: [], intro: 'Fase 1: a estrela está três casas à direita do Bit. Monte as setas e aperte Rodar.' },
-  { start: [0, 0], star: [4, 2], bugs: [[2, 0], [2, 1]], intro: 'Fase 2: a estrela está mais abaixo, e há bugs no caminho reto. Desvie deles.' },
-  { start: [0, 3], star: [5, 0], bugs: [[1, 2], [2, 0], [3, 2], [4, 1]], intro: 'Fase 3: a estrela está no canto de cima, à direita. Ache um caminho entre os bugs.' },
+// Cena do topo: o pedido se escreve no notebook, parte por parte (Papel, Tarefa, Contexto e Formato), a IA pensa
+// e os materiais saem voando. Cada exemplo termina num jogo de verdade do site. A cena passa sozinha pelos três
+// exemplos; tocar numa aba mostra aquele e para a troca automática
+const EXEMPLOS = [
+  {
+    partes: [['p', 'Você é professora do 4º ano.'], ['t', 'Crie uma atividade de frações'], ['c', 'para crianças de 9 anos, com pizza e chocolate.'], ['f', 'Uma folha A4 com 5 exercícios e o gabarito.']],
+    saidas: [['Plano de aula', 'Frações na pizzaria, 50 minutos', 'prancheta', 'var(--yellow-claro)'], ['Folha de exercícios', '5 questões e o gabarito', 'folha', 'var(--blue-claro)']],
+    jogo: ['Pizzaria das Frações', 'pizzaria-das-fracoes', '/fracoes'],
+    legenda: 'Um pedido com as quatro partes vira o plano, a folha e o jogo da aula de frações.',
+  },
+  {
+    partes: [['p', 'Você é professor de Ciências do 5º ano.'], ['t', 'Explique o ciclo da água'], ['c', 'para crianças de 10 anos, com o rio Ibirapuitã.'], ['f', 'Uma história curta e 4 perguntas.']],
+    saidas: [['História', 'A viagem da Gotinha pelo Ibirapuitã', 'livro', 'var(--mint-claro)'], ['Quiz', '4 perguntas para a turma', 'balao', 'var(--purple-claro)']],
+    jogo: ['Ciclo da Água', 'ciclo-da-agua', '/ciclo-da-agua'],
+    legenda: 'O rio da cidade entra no pedido, e a explicação chega mais perto da turma.',
+  },
+  {
+    partes: [['p', 'Você é professora de alfabetização.'], ['t', 'Crie um jogo de sílabas'], ['c', 'para o 1º ano, com os bichos do Pampa.'], ['f', 'Cartas para recortar e as regras em 4 passos.']],
+    saidas: [['Cartas para recortar', 'QUE-RO, QUE-RO e outras sílabas', 'tesoura', 'var(--pink-claro)'], ['Regras do jogo', '4 passos para a roda', 'lista', 'var(--orange-claro)']],
+    jogo: ['Fábrica de Sílabas', 'fabrica-de-silabas', '/silabas'],
+    legenda: 'Até um jogo de mesa sai do pedido. E a turma ainda pode jogar a versão no projetor.',
+  },
 ];
-const steps = { up: [0, -1], down: [0, 1], left: [-1, 0], right: [1, 0] };
-const words = { up: 'cima', down: 'baixo', left: 'esquerda', right: 'direita' };
-const columns = 6;
-const rows = 4;
-const maxMoves = 10;
-const board = $('#board');
-const gameStatus = $('#bit-status');
-const programList = $('#program');
-const pad = $('#pad');
-const greeting = $('#hero-bubble').textContent;
-let levelIndex = 0;
-let program = [];
-let running = false;
-
-const cellAt = (x, y) => board.children[y * columns + x];
-const same = (a, b) => a[0] === b[0] && a[1] === b[1];
-const isBug = (x, y) => levels[levelIndex].bugs.some((bug) => same(bug, [x, y]));
-const outside = (x, y) => x < 0 || y < 0 || x >= columns || y >= rows;
-const placeBit = (x, y) => {
-  bitToken.style.setProperty('--x', x);
-  bitToken.style.setProperty('--y', y);
+const I = '#2f2a4a';
+const ARTES = {
+  prancheta: `<svg width="34" height="34" viewBox="0 0 32 32"><rect x="7" y="5" width="18" height="23" rx="3" fill="#fff" stroke="${I}" stroke-width="2.4"/><rect x="11" y="3" width="10" height="5" rx="2" fill="#ffd23f" stroke="${I}" stroke-width="2"/><path d="M11 14h10M11 19h10M11 24h6" stroke="${I}" stroke-width="2.2" stroke-linecap="round"/></svg>`,
+  folha: `<svg width="34" height="34" viewBox="0 0 32 32"><path d="M8 4h12l5 5v19H8z" fill="#fff" stroke="${I}" stroke-width="2.4" stroke-linejoin="round"/><path d="M12 14h9M12 19h9M12 24h5" stroke="#4da3ff" stroke-width="2.4" stroke-linecap="round"/><path d="M20 4v5h5" fill="none" stroke="${I}" stroke-width="2.2"/></svg>`,
+  livro: `<svg width="34" height="34" viewBox="0 0 32 32"><path d="M16 8C12 5 7 5 4 6v19c3-1 8-1 12 2 4-3 9-3 12-2V6c-3-1-8-1-12 2z" fill="#fff" stroke="${I}" stroke-width="2.4" stroke-linejoin="round"/><path d="M16 8v19" stroke="${I}" stroke-width="2.2"/></svg>`,
+  balao: `<svg width="34" height="34" viewBox="0 0 32 32"><path d="M5 6h22a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H14l-6 5v-5H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2z" fill="#fff" stroke="${I}" stroke-width="2.4" stroke-linejoin="round"/><text x="16" y="19" text-anchor="middle" font-family="Fredoka, sans-serif" font-weight="700" font-size="11" fill="${I}">?</text></svg>`,
+  tesoura: `<svg width="34" height="34" viewBox="0 0 32 32"><rect x="5" y="6" width="12" height="16" rx="3" fill="#fff" stroke="${I}" stroke-width="2.4" transform="rotate(-8 11 14)"/><rect x="15" y="9" width="12" height="16" rx="3" fill="#ffd23f" stroke="${I}" stroke-width="2.4" transform="rotate(8 21 17)"/><text x="21" y="21" text-anchor="middle" font-family="Fredoka, sans-serif" font-weight="700" font-size="8" fill="${I}">BA</text></svg>`,
+  lista: `<svg width="34" height="34" viewBox="0 0 32 32"><rect x="6" y="5" width="20" height="23" rx="3" fill="#fff" stroke="${I}" stroke-width="2.4"/><path d="M10 12l2 2 3-4M10 20l2 2 3-4" fill="none" stroke="#4fd6a6" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/><path d="M18 12h5M18 20h5" stroke="${I}" stroke-width="2.2" stroke-linecap="round"/></svg>`,
 };
+const estudio = $('#estudio');
+if (estudio) {
+  const prompt = $('#estudio-prompt');
+  const saidas = $('#estudio-saidas');
+  const bit = $('#estudio-bit');
+  const legenda = $('#estudio-legenda');
+  const abas = [...estudio.querySelectorAll('.estudio__aba')];
+  const pose = (nome) => { bit.src = `/identidade-visual/mascote/bit-${nome}.svg`; };
+  let relogios = [];
+  let atual = 0;
+  let sozinho = true;
+  const depois = (ms, f) => relogios.push(setTimeout(f, ms));
+  const limpar = () => { relogios.forEach(clearTimeout); relogios = []; };
 
-const bitToken = Object.assign(document.createElement('div'), { className: 'board__bit' });
-bitToken.innerHTML = '<svg viewBox="0 0 100 100"><use href="#bot"/></svg>';
-
-const drawLevel = () => {
-  const level = levels[levelIndex];
-  board.replaceChildren();
-  for (let y = 0; y < rows; y += 1) {
-    for (let x = 0; x < columns; x += 1) {
-      const cell = Object.assign(document.createElement('div'), { className: 'cell' });
-      if (same(level.star, [x, y])) {
-        cell.classList.add('cell--star');
-        cell.innerHTML = '<svg><use href="#star"/></svg>';
-      } else if (isBug(x, y)) {
-        cell.classList.add('cell--bug');
-        cell.innerHTML = '<svg><use href="#bug"/></svg>';
-      }
-      board.append(cell);
-    }
-  }
-  board.append(bitToken);
-  placeBit(...level.start);
-  $('#phase').textContent = `FASE ${levelIndex + 1} DE ${levels.length}`;
-  gameStatus.textContent = level.intro;
-  program = [];
-  drawProgram();
-};
-
-// Showing the program as arrows and its path on the board, with an X where Bit would crash.
-const drawProgram = () => {
-  programList.replaceChildren(...program.map((move) => {
-    const item = document.createElement('li');
-    item.dataset.dir = move;
-    item.innerHTML = `<svg width="18" height="18" aria-hidden="true"><use href="#arrow"/></svg><span class="sr">${words[move]}</span>`;
-    return item;
-  }));
-  board.querySelectorAll('.cell').forEach((cell) => cell.classList.remove('is-plan', 'is-plan-bad'));
-  let [x, y] = levels[levelIndex].start;
-  for (const move of program) {
-    x += steps[move][0];
-    y += steps[move][1];
-    if (outside(x, y)) break;
-    if (isBug(x, y)) { cellAt(x, y).classList.add('is-plan-bad'); break; }
-    cellAt(x, y).classList.add('is-plan');
-  }
-};
-
-const addMove = (move) => {
-  if (running || program.length >= maxMoves) return;
-  program.push(move);
-  drawProgram();
-};
-
-const finishGame = () => {
-  pad.hidden = true;
-  programList.hidden = true;
-  $('#bit-end').hidden = false;
-  gameStatus.textContent = 'Você programou o Bit! É assim que as crianças aprendem algoritmo nos nossos jogos: uma sequência de passos, na ordem certa.';
-  $('#hero-bubble').textContent = 'Você me programou! Na turma, isso vira uma aula de algoritmo.';
-};
-
-const winPhase = () => {
-  const stars = $('#stars').children;
-  stars[levelIndex].classList.add('is-on');
-  $('#stars').setAttribute('aria-label', `${levelIndex + 1} de 3 estrelas`);
-  replay(machineScreen, 'is-won');
-  const box = machineScreen.getBoundingClientRect();
-  spawn('banner', box.width / 2, box.height * 0.4, {}, levelIndex === levels.length - 1 ? 'VOCÊ ZEROU!' : 'FASE CONCLUÍDA!');
-  burst(box.width / 2, box.height * 0.4, 36, 200);
-  if (!reducedMotion) replay(heroBot, 'jump');
-  setTimeout(() => {
-    running = false;
-    pad.classList.remove('is-busy');
-    if (levelIndex === levels.length - 1) { finishGame(); return; }
-    levelIndex += 1;
-    drawLevel();
-  }, 1500);
-};
-
-// Running the program one step at a time; a bug, a wall or a short program sends Bit back to the start.
-const run = () => {
-  if (running) return;
-  if (!program.length) { gameStatus.textContent = 'Primeiro monte o caminho com as setas.'; return; }
-  running = true;
-  pad.classList.add('is-busy');
-  const level = levels[levelIndex];
-  let [x, y] = level.start;
-  let index = 0;
-  const fail = (message) => {
-    gameStatus.textContent = message;
-    replay(bitToken, 'is-hit');
-    setTimeout(() => {
-      placeBit(...level.start);
-      programList.querySelectorAll('.is-now').forEach((item) => item.classList.remove('is-now'));
-      running = false;
-      pad.classList.remove('is-busy');
-    }, 900);
-  };
-  const tick = () => {
-    programList.querySelectorAll('.is-now').forEach((item) => item.classList.remove('is-now'));
-    if (index === program.length) {
-      if (same([x, y], level.star)) winPhase();
-      else fail('O Bit parou antes da estrela. Acrescente mais setas e rode de novo.');
+  const mostrar = (n) => {
+    limpar();
+    atual = n;
+    const exemplo = EXEMPLOS[n];
+    abas.forEach((aba, i) => aba.setAttribute('aria-pressed', String(i === n)));
+    estudio.classList.remove('is-pensando', 'is-enviando');
+    legenda.textContent = '';
+    prompt.textContent = '';
+    saidas.innerHTML = [...exemplo.saidas.map(([titulo, texto, arte, cor]) => `<li class="saida"><span class="saida__arte" style="--c: ${cor}">${ARTES[arte]}</span><span><b>${titulo}</b><small>${texto}</small></span></li>`),
+      `<li class="saida saida--jogo"><span class="saida__arte" style="--c: var(--white)"><img src="/recursos-pedagogicos/criancas/${exemplo.jogo[1]}/capa.svg" alt="" width="54" height="54"></span><span><b><a href="${exemplo.jogo[2]}">${exemplo.jogo[0]}</a></b><small>O jogo já está pronto no site</small><span class="saida__jogar"><svg width="12" height="12" viewBox="0 0 24 24"><path d="M6 4l14 8-14 8z" fill="#fff" stroke="#2f2a4a" stroke-width="3" stroke-linejoin="round"/></svg>Jogar</span></span></li>`].join('');
+    const pecas = exemplo.partes.map(([tipo, texto]) => {
+      const parte = Object.assign(document.createElement('span'), { className: `parte parte--${tipo}` });
+      parte.innerHTML = `<b>${tipo.toUpperCase()}</b>`;
+      parte.append(Object.assign(document.createElement('span'), { textContent: '' }));
+      return [parte, texto];
+    });
+    const cartoes = [...saidas.children];
+    // Parado, a cena aparece pronta
+    if (reducedMotion || window.Animacoes?.paradas) {
+      pecas.forEach(([parte, texto], i) => { parte.lastChild.textContent = texto; prompt.append(parte, i < pecas.length - 1 ? ' ' : ''); });
+      cartoes.forEach((cartao) => cartao.classList.add('is-fora'));
+      pose('comemorando');
+      legenda.textContent = exemplo.legenda;
       return;
     }
-    const move = program[index];
-    programList.children[index].classList.add('is-now');
-    const next = [x + steps[move][0], y + steps[move][1]];
-    if (outside(...next)) { fail('Ops! O Bit ia sair do tabuleiro. Mude as setas e tente de novo.'); return; }
-    [x, y] = next;
-    placeBit(x, y);
-    if (isBug(x, y)) { fail('Ops! O Bit bateu num bug. Mude as setas e tente de novo.'); return; }
-    index += 1;
-    setTimeout(tick, reducedMotion ? 150 : 380);
+    pose('pensando');
+    // O pedido se escreve letra por letra, uma parte de cada vez
+    let tempo = 400;
+    pecas.forEach(([parte, texto], i) => {
+      depois(tempo, () => prompt.append(parte, i < pecas.length - 1 ? ' ' : ''));
+      [...texto].forEach((_, k) => { depois(tempo + 30 + k * 28, () => { parte.lastChild.textContent = texto.slice(0, k + 1); }); });
+      tempo += texto.length * 28 + 260;
+    });
+    depois(tempo, () => { estudio.classList.add('is-enviando'); pose('acenando'); });
+    depois(tempo + 450, () => estudio.classList.add('is-pensando'));
+    depois(tempo + 1700, () => { estudio.classList.remove('is-pensando', 'is-enviando'); pose('comemorando'); legenda.textContent = exemplo.legenda; });
+    cartoes.forEach((cartao, i) => depois(tempo + 1800 + i * 380, () => cartao.classList.add('is-fora')));
+    depois(tempo + 1800 + 3 * 380 + 4200, () => { if (sozinho) mostrar((atual + 1) % EXEMPLOS.length); });
   };
-  gameStatus.textContent = 'Rodando o programa...';
-  tick();
-};
 
-const machineScreen = $('#bit-game');
-pad.querySelectorAll('[data-move]').forEach((key) => key.addEventListener('click', () => addMove(key.dataset.move)));
-$('#undo').addEventListener('click', () => { if (!running) { program.pop(); drawProgram(); } });
-$('#run').addEventListener('click', run);
-$('#again').addEventListener('click', () => {
-  levelIndex = 0;
-  [...$('#stars').children].forEach((star) => star.classList.remove('is-on'));
-  $('#stars').setAttribute('aria-label', '0 de 3 estrelas');
-  pad.hidden = false;
-  programList.hidden = false;
-  $('#bit-end').hidden = true;
-  $('#hero-bubble').textContent = greeting;
-  drawLevel();
-});
-// The arrow keys also build the program while the focus is inside the game.
-machineScreen.addEventListener('keydown', (event) => {
-  const move = { ArrowUp: 'up', ArrowDown: 'down', ArrowLeft: 'left', ArrowRight: 'right' }[event.key];
-  if (move) { event.preventDefault(); addMove(move); }
-  if (event.key === 'Backspace' && !running) { event.preventDefault(); program.pop(); drawProgram(); }
-});
-drawLevel();
+  abas.forEach((aba, i) => aba.addEventListener('click', () => { sozinho = false; mostrar(i); }));
+  // Só anima quando a cena está na tela
+  let comecou = false;
+  const comecar = () => { if (!comecou) { comecou = true; mostrar(0); } };
+  const aVista = () => { const caixa = estudio.getBoundingClientRect(); return caixa.top < innerHeight * .8 && caixa.bottom > 0; };
+  if (aVista()) comecar();
+  else {
+    const olho = new IntersectionObserver(([item]) => { if (item.isIntersecting) { comecar(); olho.disconnect(); } }, { threshold: .3 });
+    olho.observe(estudio);
+    addEventListener('scroll', () => { if (aVista()) comecar(); }, { passive: true });
+  }
+  window.Animacoes?.aoMudar?.(() => { if (comecou) mostrar(atual); });
+}
 
 // O botão de parar as animações fica no topo, antes do Jogos para a turma; no celular, dentro do Menu
 if (window.Animacoes) {
