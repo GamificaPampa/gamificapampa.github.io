@@ -258,8 +258,10 @@
   const passa = (jogo) => {
     if (filtro.materia && jogo.materia !== filtro.materia) return false;
     const faixa = IDADES.find(([rotulo]) => rotulo === filtro.idade);
-    if (!faixa || jogo.de == null) return true;
-    return jogo.de <= faixa[2] && (jogo.ate ?? 99) >= faixa[1];
+    if (!faixa) return true;
+    // Jogo sem idade máxima ("a partir de 6 anos", "todas as idades") é das crianças: aparece até os 14 anos, não no ensino médio
+    if (jogo.ate == null) return (jogo.de ?? 0) <= faixa[2] && faixa[1] < 15;
+    return jogo.de <= faixa[2] && jogo.ate >= faixa[1];
   };
 
   const cartao = (jogo) => {
