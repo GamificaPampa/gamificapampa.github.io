@@ -193,6 +193,7 @@
           <label class="chip"><input type="radio" name="tipo" value="atividade"><span>Atividade para imprimir</span></label>
           <label class="chip"><input type="radio" name="tipo" value="plano"><span>Plano de aula</span></label>
           <label class="chip"><input type="radio" name="tipo" value="adaptar"><span>Adaptar um texto</span></label>
+          <label class="chip"><input type="radio" name="tipo" value="enem"><span>Questões do Enem</span></label>
         </fieldset>
 
         <div class="step" style="--c: #c9f5e3">
@@ -341,6 +342,12 @@
         tarefa: (theme) => `Adapte o texto sobre ${theme} que vou colar no fim, sem mudar o conteúdo.`,
         formato: 'Use frases curtas, instruções numeradas e, no fim, uma lista do que mudou.',
         tip: 'Cole o texto depois do prompt. Descreva o que o aluno precisa sem escrever o nome dele.',
+      },
+      enem: {
+        name: 'Questões do Enem',
+        tarefa: (theme) => `Crie 5 questões no estilo do Enem sobre ${theme}.`,
+        formato: 'Cada questão com um texto-base curto, um comando claro e 5 alternativas, de A a E, sem usar o teste interativo. No fim, o gabarito explicado, com o motivo de cada alternativa errada. Não diga que as questões são de provas reais.',
+        tip: 'Funciona melhor com o Ensino Médio. Confira as contas e os dados de cada questão antes de aplicar.',
       },
     };
     const pieces = [
