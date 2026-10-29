@@ -30,6 +30,7 @@ const ATALHOS = {
   prompt: ['Oficina de Prompts', 'Construtor de prompts', OFICINA + 'construtor.html'],
   maquina: ['Oficina de Prompts', 'Máquina de prompts', 'https://gamificapampa.github.io/maquina/'],
   biblioteca: ['Oficina de Prompts', 'Biblioteca de prompts', OFICINA + 'biblioteca.html'],
+  frases: ['Oficina de Prompts', 'Frases que salvam', OFICINA + 'frases.html'],
   gems: ['Oficina de Prompts', 'Gems prontos', OFICINA + 'gems.html'],
   guia: ['Oficina de Prompts', 'Guia do professor (PDF)', OFICINA + 'guia.pdf'],
   galeria: ['Oficina de Prompts', 'Galeria de jogos', OFICINA + 'galeria.html'],
