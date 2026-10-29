@@ -194,6 +194,7 @@
           <label class="chip"><input type="radio" name="tipo" value="plano"><span>Plano de aula</span></label>
           <label class="chip"><input type="radio" name="tipo" value="adaptar"><span>Adaptar um texto</span></label>
           <label class="chip"><input type="radio" name="tipo" value="enem"><span>Questões do Enem</span></label>
+          <label class="chip"><input type="radio" name="tipo" value="sequencia"><span>Sequência didática</span></label>
         </fieldset>
 
         <div class="step" style="--c: #c9f5e3">
@@ -349,6 +350,12 @@
         tarefa: (theme) => `Crie 5 questões no estilo do Enem sobre ${theme}.`,
         formato: 'Cada questão com um texto-base curto, um comando claro e 5 alternativas, de A a E, sem usar o teste interativo. No fim, o gabarito explicado, com o motivo de cada alternativa errada. Não diga que as questões são de provas reais.',
         tip: 'Funciona melhor com o Ensino Médio. Confira as contas e os dados de cada questão antes de aplicar.',
+      },
+      sequencia: {
+        name: 'Sequência didática',
+        tarefa: (theme) => `Crie uma sequência didática de 3 aulas sobre ${theme}, com o material de cada aula.`,
+        formato: 'Para cada aula: objetivo, passo a passo com o tempo de cada parte e o material. Aula 1: uma atividade para imprimir, escrita fora de bloco de código. Aula 2: um quiz de 8 perguntas com gabarito, sem usar o teste interativo. Aula 3: a ideia de um jogo em uma frase, para eu pedir depois no Canvas. Descreva as imagens entre parênteses e não cite códigos da BNCC.',
+        tip: 'Para o jogo da aula 3, abra uma conversa nova com o Canvas ligado e mande primeiro só a ideia curta.',
       },
     };
     const pieces = [
