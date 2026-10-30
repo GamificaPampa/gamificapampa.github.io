@@ -1,0 +1,216 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Novidades · GamificaPampa</title>
+  <meta name="description" content="O que há de novo no GamificaPampa para os professores: jogos, materiais, a Oficina de Prompts e a Máquina de prompts, mês a mês.">
+  <meta property="og:title" content="Novidades do GamificaPampa">
+  <meta property="og:description" content="Jogos, materiais e ferramentas novas para os professores, mês a mês.">
+  <meta property="og:image" content="https://gamificapampa.github.io/identidade-visual/logos/gamificapampa-github-avatar.png">
+  <meta property="og:type" content="website">
+  <meta name="theme-color" content="#5fbcff">
+  <link rel="icon" type="image/svg+xml" href="/identidade-visual/logos/gamificapampa-icone.svg">
+  <link rel="stylesheet" href="/identidade-visual/css/fontes.css">
+  <link rel="stylesheet" href="/identidade-visual/css/cores.css">
+  <link rel="stylesheet" href="/identidade-visual/css/componentes.css">
+  <link rel="stylesheet" href="/identidade-visual/css/cenario.css">
+  <link rel="stylesheet" href="/identidade-visual/css/animacoes.css">
+  <style>
+    p, ul { margin: 0; }
+    :focus-visible { outline: 4px solid var(--pink); outline-offset: 3px; }
+    .icone { display: inline-block; width: 1.15em; height: 1.15em; vertical-align: -.22em; flex: none; }
+    .wrap { width: min(1180px, 100% - 32px); margin-inline: auto; }
+    @media (min-width: 768px) { .wrap { width: min(1180px, 100% - 64px); } }
+
+    /* Abertura, com o Bit chamando quem já fez a oficina */
+    .intro { display: grid; justify-items: start; gap: 18px; padding-block: 14px 30px; }
+    .intro h1 { font-size: clamp(42px, 7vw, 84px); }
+    .talk { display: flex; align-items: center; gap: 18px; max-width: 720px; }
+    .talk img { flex: none; width: clamp(72px, 10vw, 100px); height: auto; }
+    .talk .bubble { min-width: 0; font-size: clamp(16px, 1.8vw, 20px); line-height: 1.35; box-shadow: 0 6px 0 rgb(47 42 74 / .3); }
+
+    /* Um bloco por mês, o mais novo em cima */
+    .mes { display: grid; justify-items: start; gap: 18px; padding-bottom: 40px; }
+    .mes h2 { display: inline-block; padding: 4px 20px; background: var(--white); border: 4px solid var(--ink); border-radius: 999px; box-shadow: 0 5px 0 var(--ink); font-size: clamp(24px, 3.4vw, 32px); }
+    .lista { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 340px), 1fr)); gap: 20px; width: 100%; padding: 0; list-style: none; }
+    .novo { display: grid; align-content: start; gap: 10px; min-width: 0; padding: 26px 20px 20px; background: var(--white); border: 4px solid var(--ink); border-radius: 22px; box-shadow: inset 0 12px 0 var(--c), 0 6px 0 var(--ink); }
+    .novo__topo { display: flex; align-items: center; gap: 12px; }
+    .novo__icone { display: grid; place-items: center; flex: none; width: 48px; height: 48px; background: var(--c); border: 3px solid var(--ink); border-radius: 50%; }
+    .novo__icone .icone { width: 30px; height: 30px; }
+    .novo time { display: inline-block; padding: 2px 12px; background: var(--sky2); border: 3px solid var(--ink); border-radius: 999px; font-weight: 700; font-size: 14px; }
+    .novo h3 { font-size: clamp(20px, 2.2vw, 23px); line-height: 1.2; overflow-wrap: anywhere; }
+    .novo p { color: var(--soft); font-size: 16px; line-height: 1.45; }
+    .novo__links { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 4px; }
+    .novo__links .btn { max-width: 100%; text-align: left; }
+    .novo__links .icone, .fim .icone { width: 22px; height: 22px; }
+    .vazio { padding: 18px 20px; font-weight: 600; }
+
+    .fim { display: flex; flex-wrap: wrap; gap: 14px; padding-bottom: clamp(140px, 18vw, 220px); }
+    .foot { position: relative; padding: 0 16px 28px; font-weight: 600; text-align: center; }
+  </style>
+<script src="/identidade-visual/js/barra.js" defer></script>
+</head>
+<body class="ceu">
+  <div class="cenario cenario--fixo" aria-hidden="true">
+    <span class="nuvem" style="top: 6%; --w: 190px; --t: 80s; --d: -12s"></span>
+    <span class="nuvem" style="top: 28%; --w: 140px; --t: 65s; --d: -40s"></span>
+    <span class="nuvem" style="top: 52%; --w: 220px; --t: 95s; --d: -70s"></span>
+    <span class="morros"></span>
+  </div>
+
+  <main class="wrap">
+    <section class="intro">
+      <p class="pill" style="--c: var(--yellow)">PARA QUEM JÁ FEZ A OFICINA</p>
+      <h1 class="loud anima-letras"><span>O</span> <span>que</span> <span>há</span> <span class="yellow">de novo</span></h1>
+      <div class="talk">
+        <img class="anima-flutuar" src="/identidade-visual/mascote/bit-acenando.svg" width="100" height="100" alt="Bit, o robô do GamificaPampa, acenando">
+        <p class="bubble anima-balao" style="--d: .4s">Voltou por aqui? Veja o que entrou no ar desde a oficina: jogos, materiais e ferramentas para a sua sala.</p>
+      </div>
+    </section>
+
+    <div id="meses">
+      <noscript><p class="card vazio">Esta página precisa do JavaScript ligado para mostrar a lista. Os materiais ficam em <a href="/recursos-pedagogicos/">Recursos</a>.</p></noscript>
+    </div>
+
+    <p class="fim">
+      <a class="btn btn--conhecer" href="/recursos-pedagogicos/professores/oficina-prompts/"><span data-icone="lupa"></span>Oficina de Prompts</a>
+      <a class="btn btn--jogar" href="/turma/"><span data-icone="play"></span>Jogos para a turma</a>
+      <a class="btn btn--white" href="/"><span data-icone="casa"></span>Voltar ao início</a>
+    </p>
+  </main>
+
+  <footer class="foot">GamificaPampa, projeto de extensão da UNIPAMPA, Campus Alegrete</footer>
+
+<script src="/identidade-visual/js/icones.js"></script>
+<script>
+// COMO ACRESCENTAR UMA NOVIDADE
+// Ponha um objeto novo em NOVIDADES, de preferência no começo da lista. A página ordena pela data, então a ordem
+// no arquivo não manda, e o bloco de cada mês aparece sozinho, com o mês mais novo em cima. Cada item tem:
+//   data    o dia em que entrou no ar, no formato 'AAAA-MM-DD', por exemplo '2026-11-05'
+//   titulo  o nome curto da novidade, escrito para o professor (nada de termo de programação)
+//   texto   uma ou duas frases dizendo o que é e para que serve
+//   icone   o nome de um ícone do identidade-visual (seção Ícones da vitrine): 'estrela', 'controle', 'livros'...
+//   cor     uma cor de cores.css, para a faixa do cartão: 'blue', 'mint', 'yellow', 'orange', 'pink' ou 'purple'
+//   links   lista de [rótulo, endereço, ação]. A ação dá a cor do botão: 'jogar' (verde, para jogos),
+//           'conhecer' (amarelo, para páginas e materiais; é o padrão), 'baixar' (laranja, PDF ou impressão),
+//           'compartilhar' (roxo) ou 'secundaria' (branco). Use endereços que começam com / (/recursos-pedagogicos/...)
+// Exemplo:
+//   { data: '2026-11-05', titulo: 'Jogo novo de Geografia', texto: 'Uma frase curta.', icone: 'controle', cor: 'mint',
+//     links: [['Jogar', '/recursos-pedagogicos/criancas/pasta-do-jogo/', 'jogar']] },
+// Sem dado de aluno, sem detalhe técnico: só o que muda para o professor.
+const NOVIDADES = [
+  { data: '2026-10-30', titulo: 'Aula sobre IA, para o 9º ano e o Ensino Médio', texto: 'Roteiro, slides, folha de atividades e o jogo Detetive da IA, para uma aula de 50 minutos. Há também uma folha para mandar às famílias.',
+    icone: 'computador', cor: 'purple', links: [
+      ['Aula sobre IA', '/recursos-pedagogicos/professores/aula-inteligencia-artificial/'],
+      ['Detetive da IA', '/recursos-pedagogicos/criancas/detetive-da-ia/', 'jogar'],
+      ['Folha para as famílias', '/recursos-pedagogicos/professores/ia-em-casa/'],
+    ] },
+  { data: '2026-10-30', titulo: 'Oficina de Prompts: Adaptador e Baralho', texto: 'O Adaptador ajuda a incluir estudantes com necessidades diferentes, sem dado de aluno. O Baralho tem cartas para imprimir e montar pedidos para o Gemini.',
+    icone: 'adaptar', cor: 'mint', links: [
+      ['Adaptador de atividades', '/recursos-pedagogicos/professores/oficina-prompts/adaptar.html'],
+      ['Baralho de prompts', '/recursos-pedagogicos/professores/oficina-prompts/baralho.html'],
+      ['Baralho em PDF', '/recursos-pedagogicos/professores/oficina-prompts/baralho.pdf', 'baixar'],
+    ] },
+  { data: '2026-10-30', titulo: 'Para a sala: modo professor e estrelas guardadas', texto: 'Nos jogos, o modo professor (tecla P) deixa escolher a fase, mostrar a resposta e pausar. As estrelas de cada fase ficam guardadas. No placar, o apelido é sorteado e cada turma tem a sua sala.',
+    icone: 'estrela', cor: 'yellow', links: [
+      ['Jogos para a turma', '/turma/', 'jogar'],
+      ['Arcade do Código', '/recursos-pedagogicos/criancas/arcade/', 'jogar'],
+    ] },
+  { data: '2026-10-30', titulo: 'Bichos do Pampa, para a Educação Infantil', texto: 'Jogo para crianças de 4 e 5 anos, com cores, formas, contagem e sombras de bichos. O Bit fala cada pedido em voz alta.',
+    icone: 'broto', cor: 'pink', links: [
+      ['Jogar Bichos do Pampa', '/recursos-pedagogicos/criancas/bichos-do-pampa/', 'jogar'],
+    ] },
+  { data: '2026-10-29', titulo: 'Quatro jogos novos por matéria', texto: 'Mapa do Bit (Geografia), Detetive da História, Galeria do Bit (Artes) e Cozinha das Misturas (Ciências). Cada um tem link curto: /geografia, /historia, /arte e /misturas.',
+    icone: 'controle', cor: 'blue', links: [
+      ['Mapa do Bit', '/recursos-pedagogicos/criancas/mapa-do-bit/', 'jogar'],
+      ['Detetive da História', '/recursos-pedagogicos/criancas/detetive-da-historia/', 'jogar'],
+      ['Galeria do Bit', '/recursos-pedagogicos/criancas/galeria-do-bit/', 'jogar'],
+      ['Cozinha das Misturas', '/recursos-pedagogicos/criancas/cozinha-das-misturas/', 'jogar'],
+    ] },
+  { data: '2026-10-29', titulo: 'Máquina e Construtor: pedidos mais certeiros', texto: 'Frases que salvam evita os erros mais comuns do Gemini. A Máquina e o Construtor montam uma sequência didática, com três aulas sobre o mesmo tema. A Biblioteca tem mais prompts e filtro por matéria.',
+    icone: 'sequencia', cor: 'orange', links: [
+      ['Máquina de prompts', '/maquina/'],
+      ['Construtor de prompts', '/recursos-pedagogicos/professores/oficina-prompts/construtor.html'],
+      ['Frases que salvam', '/recursos-pedagogicos/professores/oficina-prompts/frases.html'],
+      ['Biblioteca', '/recursos-pedagogicos/professores/oficina-prompts/biblioteca.html'],
+    ] },
+  { data: '2026-10-29', titulo: 'Curso com a sua etapa e Galeria de professores', texto: 'O curso online traz exemplos da etapa de cada professor, dá um selo por módulo e o comprovante cabe numa folha. A Galeria recebe os jogos que os professores criaram: mande o seu.',
+    icone: 'livros', cor: 'blue', links: [
+      ['Curso online', '/recursos-pedagogicos/professores/oficina-prompts/curso.html'],
+      ['Galeria de jogos', '/recursos-pedagogicos/professores/oficina-prompts/galeria.html'],
+    ] },
+  { data: '2026-10-25', titulo: 'Ensino Médio e Enem', texto: 'Gem do Ensino Médio e do Enem, módulo extra no curso e questões no estilo do Enem na Máquina e na Biblioteca. Mais cinco jogos de exemplo: Lâmpada do Bit, Quem Pensou Isso?, Dados em Jogo, Escolas Literárias e Monte a Redação.',
+    icone: 'enem', cor: 'purple', links: [
+      ['Gems prontos', '/recursos-pedagogicos/professores/oficina-prompts/gems.html'],
+      ['Máquina de prompts', '/maquina/'],
+      ['Jogos para a turma', '/turma/', 'jogar'],
+    ] },
+  { data: '2026-10-22', titulo: 'Todas as matérias, da Educação Infantil ao Ensino Médio', texto: 'O hub, a Máquina, o Construtor e a Biblioteca servem a qualquer matéria. O menu da turma reúne todos os jogos, com filtro por idade e QR. As páginas lembram as suas escolhas e imprimem melhor.',
+    icone: 'mochila', cor: 'mint', links: [
+      ['Jogos para a turma', '/turma/', 'jogar'],
+      ['Recursos pedagógicos', '/recursos-pedagogicos/'],
+    ] },
+  { data: '2026-10-17', titulo: 'Gem do Bit e Medalhas do Bit', texto: 'Um Gem com a ajuda do Bit dentro do Gemini e medalhas para imprimir e premiar a turma.',
+    icone: 'trofeu', cor: 'pink', links: [
+      ['Gems prontos', '/recursos-pedagogicos/professores/oficina-prompts/gems.html'],
+      ['Medalhas do Bit', '/recursos-pedagogicos/professores/medalhas/', 'baixar'],
+    ] },
+];
+
+(() => {
+  const MESES = ['janeiro', 'fevereiro', 'março', 'abril', 'maio', 'junho', 'julho', 'agosto', 'setembro', 'outubro', 'novembro', 'dezembro'];
+  // A ação de cada link dá a cor e o ícone do botão
+  const ACOES = { jogar: ['btn--jogar', 'play'], conhecer: ['btn--conhecer', 'lupa'], baixar: ['btn--baixar', 'disquete'], compartilhar: ['btn--compartilhar', 'qr'], secundaria: ['btn--white', 'lupa'] };
+  const icone = (nome) => (window.Icones ? Icones.svg(nome) : '');
+  const criar = (tag, classe, texto) => Object.assign(document.createElement(tag), { className: classe || '', textContent: texto || '' });
+
+  // Os ícones dos botões do fim da página
+  document.querySelectorAll('[data-icone]').forEach((lugar) => { lugar.outerHTML = icone(lugar.dataset.icone); });
+
+  // Do mais novo para o mais velho; no mesmo dia vale a ordem da lista
+  const ordenadas = NOVIDADES.map((n, i) => [n, i]).sort((a, b) => b[0].data.localeCompare(a[0].data) || a[1] - b[1]).map(([n]) => n);
+  const porMes = new Map();
+  for (const novidade of ordenadas) {
+    const mes = novidade.data.slice(0, 7);
+    if (!porMes.has(mes)) porMes.set(mes, []);
+    porMes.get(mes).push(novidade);
+  }
+
+  const lugar = document.getElementById('meses');
+  lugar.textContent = '';
+  for (const [mes, itens] of porMes) {
+    const [ano, numero] = mes.split('-');
+    const secao = criar('section', 'mes');
+    secao.setAttribute('aria-labelledby', 'mes-' + mes);
+    const titulo = criar('h2', '', MESES[Number(numero) - 1] + ' de ' + ano);
+    titulo.id = 'mes-' + mes;
+    const lista = criar('ul', 'lista');
+    for (const n of itens) {
+      const item = criar('li', 'novo');
+      item.style.setProperty('--c', `var(--${n.cor || 'yellow'})`);
+      const topo = criar('div', 'novo__topo');
+      const bolinha = criar('span', 'novo__icone');
+      bolinha.innerHTML = icone(n.icone || 'estrela');
+      const data = criar('time', '', n.data.slice(8, 10) + '/' + numero);
+      data.dateTime = n.data;
+      topo.append(bolinha, data);
+      const links = criar('div', 'novo__links');
+      for (const [rotulo, endereco, acao] of n.links || []) {
+        const [classe, nome] = ACOES[acao] || ACOES.conhecer;
+        const a = criar('a', 'btn btn--small ' + classe);
+        a.href = endereco;
+        a.innerHTML = icone(nome);
+        a.append(rotulo);
+        links.append(a);
+      }
+      item.append(topo, criar('h3', '', n.titulo), criar('p', '', n.texto), links);
+      lista.append(item);
+    }
+    secao.append(titulo, lista);
+    lugar.append(secao);
+  }
+})();
+</script>
+</body>
+</html>
