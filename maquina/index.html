@@ -4,9 +4,9 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Máquina de prompts · GamificaPampa</title>
-  <meta name="description" content="Da Educação Infantil ao Ensino Médio, em qualquer matéria: escolha a turma, o que criar e o tema, e a máquina monta um prompt com Papel, Tarefa, Contexto e Formato, pronto para colar no Gemini.">
+  <meta name="description" content="Da Educação Infantil ao Ensino Médio e na EJA, em qualquer matéria: escolha a turma, o que criar e o tema, e a máquina monta um prompt com Papel, Tarefa, Contexto e Formato, pronto para colar no Gemini.">
   <meta property="og:title" content="Máquina de prompts">
-  <meta property="og:description" content="Monte em poucos cliques um prompt para o Gemini criar planos de aula, atividades, quizzes, histórias e jogos, da Educação Infantil ao Ensino Médio.">
+  <meta property="og:description" content="Monte em poucos cliques um prompt para o Gemini criar planos de aula, atividades, quizzes, histórias e jogos, da Educação Infantil ao Ensino Médio e na EJA.">
   <meta property="og:image" content="https://gamificapampa.github.io/identidade-visual/logos/gamificapampa-github-avatar.png">
   <meta property="og:type" content="website">
   <meta name="theme-color" content="#5fbcff">
@@ -166,6 +166,9 @@
           <label class="chip"><input type="radio" name="turma" value="em1"><span>1ª série EM</span></label>
           <label class="chip"><input type="radio" name="turma" value="em2"><span>2ª série EM</span></label>
           <label class="chip"><input type="radio" name="turma" value="em3"><span>3ª série EM</span></label>
+          <label class="chip"><input type="radio" name="turma" value="eja1"><span>EJA anos iniciais</span></label>
+          <label class="chip"><input type="radio" name="turma" value="eja2"><span>EJA anos finais</span></label>
+          <label class="chip"><input type="radio" name="turma" value="eja3"><span>EJA Ensino Médio</span></label>
         </fieldset>
 
         <fieldset class="step" id="subject-step" style="--c: #cfe6ff">
@@ -194,6 +197,7 @@
           <label class="chip"><input type="radio" name="tipo" value="plano"><span>Plano de aula</span></label>
           <label class="chip"><input type="radio" name="tipo" value="adaptar"><span>Adaptar um texto</span></label>
           <label class="chip"><input type="radio" name="tipo" value="enem"><span>Questões do Enem</span></label>
+          <label class="chip"><input type="radio" name="tipo" value="encceja"><span>Questões do Encceja</span></label>
           <label class="chip"><input type="radio" name="tipo" value="sequencia"><span>Sequência didática</span></label>
         </fieldset>
 
@@ -291,7 +295,12 @@
       em1: { name: '1ª série do Ensino Médio', year: 'da 1ª série do Ensino Médio', age: 'estudantes de 15 anos' },
       em2: { name: '2ª série do Ensino Médio', year: 'da 2ª série do Ensino Médio', age: 'estudantes de 16 anos' },
       em3: { name: '3ª série do Ensino Médio', year: 'da 3ª série do Ensino Médio', age: 'estudantes de 17 anos, que se preparam para o Enem' },
+      // Na EJA a turma é de jovens e adultos: o Contexto pede linguagem adulta, exemplos do trabalho e atividades curtas
+      eja1: { name: 'EJA anos iniciais', year: 'da EJA (Educação de Jovens e Adultos), nos anos iniciais,', age: 'jovens e adultos da EJA que estão aprendendo a ler e escrever; use frases curtas e palavras do dia a dia', adult: true },
+      eja2: { name: 'EJA anos finais', year: 'da EJA (Educação de Jovens e Adultos), nos anos finais do Ensino Fundamental,', age: 'jovens e adultos da EJA, nos anos finais do Ensino Fundamental', adult: true },
+      eja3: { name: 'EJA Ensino Médio', year: 'da EJA (Educação de Jovens e Adultos), no Ensino Médio,', age: 'jovens e adultos da EJA, no Ensino Médio', adult: true },
     };
+    const adultContext = ' Muitos trabalham e chegam cansados à aula. Use linguagem adulta e respeitosa, nada infantilizado, com exemplos do trabalho e da vida adulta, valorize o que eles já sabem da vida e proponha atividades curtas.';
     const subjects = {
       portugues: { name: 'Língua Portuguesa', ideas: ['rimas', 'fábulas', 'substantivos'] },
       matematica: { name: 'Matemática', ideas: ['frações', 'a tabuada do 7', 'formas geométricas'] },
@@ -308,6 +317,17 @@
       sociologia: { name: 'Sociologia', ideas: ['desigualdade social', 'trabalho e tecnologia', 'a cultura gaúcha'] },
     };
     const anyIdeas = ['frações', 'o ciclo da água', 'os animais do Pampa'];
+    // Na EJA, as ideias saem da vida adulta; a matéria sem ideias próprias usa as da lista de cima
+    const adultIdeas = {
+      any: ['as contas de casa', 'o currículo', 'a pressão alta'],
+      portugues: ['o currículo', 'o requerimento', 'a carta de apresentação'],
+      matematica: ['as contas de casa', 'porcentagem e desconto', 'os juros do crediário'],
+      ciencias: ['a pressão alta', 'a alimentação no dia a dia', 'a vacinação de adultos'],
+      historia: ['a história do trabalho no Brasil', 'os direitos trabalhistas', 'a migração do campo para a cidade'],
+      geografia: ['a migração do campo para a cidade', 'o trabalho no campo e na cidade', 'o bioma Pampa'],
+      biologia: ['a pressão alta', 'a alimentação no dia a dia', 'a vacinação de adultos'],
+      sociologia: ['trabalho e tecnologia', 'os direitos trabalhistas', 'desigualdade social'],
+    };
     const kinds = {
       historia: {
         name: 'História',
@@ -325,6 +345,7 @@
         name: 'Jogo',
         tarefa: (theme) => `Crie um jogo sobre ${theme} para jogar no navegador.`,
         formato: 'Quero botões grandes, 3 fases, som no acerto e estrelas no final.',
+        formatoAdulto: 'Quero botões grandes, visual adulto e sem bichinhos, 3 fases, som no acerto e a pontuação no final.',
         tip: 'Ligue o Canvas em + > Mais ferramentas > Canvas. Se ele recusar o jogo, mande primeiro só a Tarefa e depois o resto.',
       },
       atividade: {
@@ -350,6 +371,12 @@
         tarefa: (theme) => `Crie 5 questões no estilo do Enem sobre ${theme}.`,
         formato: 'Cada questão com um texto-base curto, um comando claro e 5 alternativas, de A a E, sem usar o teste interativo. No fim, o gabarito explicado, com o motivo de cada alternativa errada. Não diga que as questões são de provas reais.',
         tip: 'Funciona melhor com o Ensino Médio. Confira as contas e os dados de cada questão antes de aplicar.',
+      },
+      encceja: {
+        name: 'Questões do Encceja',
+        tarefa: (theme) => `Crie 5 questões no estilo do Encceja sobre ${theme}.`,
+        formato: 'Cada questão com uma situação do trabalho ou da vida adulta, um comando claro e 4 alternativas, de A a D, sem usar o teste interativo. No fim, o gabarito explicado em linguagem simples. Não diga que as questões são de provas reais e não invente o ano de uma prova.',
+        tip: 'Pensado para a EJA. Confira as contas e os dados de cada questão antes de aplicar.',
       },
       sequencia: {
         name: 'Sequência didática',
@@ -389,22 +416,29 @@
       const extras = data.getAll('extra');
       let papel = '';
       if (group) papel = group.papel || `Você é professor(a)${subject ? ` de ${subject.name}` : ''} ${group.year} e cria materiais para a sala de aula.`;
+      const adult = Boolean(group && group.adult);
       let contexto = group ? `É para ${group.age}.` : '';
-      if (contexto && extras.includes('leitura')) contexto += ' Alguns alunos têm dificuldade de leitura.';
+      if (adult) contexto += adultContext;
+      if (contexto && extras.includes('leitura')) contexto += adult ? ' Alguns estudantes têm dificuldade de leitura.' : ' Alguns alunos têm dificuldade de leitura.';
       if (contexto && extras.includes('local')) contexto += ' Use exemplos do dia a dia de Alegrete e do Pampa gaúcho.';
-      let formato = kind ? kind.formato : '';
+      let formato = kind ? (adult && kind.formatoAdulto) || kind.formato : '';
       if (formato && extras.includes('curto')) formato += ' Seja breve: a resposta deve caber numa página.';
       if (formato) formato += ' Responda em português do Brasil.';
       const text = { papel, tarefa: kind && theme ? kind.tarefa(theme) : '', contexto, formato };
       const label = [kind && kind.name, group && group.name, theme].filter(Boolean).join(' · ');
-      return { text, kind, turma, subject, label };
+      return { text, kind, turma, subject, label, adult };
     };
 
-    // Ideas for the theme follow the chosen subject.
-    const showIdeas = (subject) => {
+    // Ideas for the theme follow the chosen subject, and in the EJA they come from adult life.
+    const ideasFor = (subject, adult) => {
+      if (!adult) return subject ? subject.ideas : anyIdeas;
+      const key = subject && Object.keys(subjects).find((id) => subjects[id] === subject);
+      return adultIdeas[key] || (subject ? subject.ideas : adultIdeas.any);
+    };
+    const showIdeas = (subject, adult) => {
       const box = $('#ideas');
       box.replaceChildren(Object.assign(document.createElement('span'), { textContent: 'Ideias:' }));
-      for (const idea of subject ? subject.ideas : anyIdeas) {
+      for (const idea of ideasFor(subject, adult)) {
         const button = Object.assign(document.createElement('button'), { type: 'button', textContent: idea });
         button.addEventListener('click', () => { form.elements.tema.value = idea; update(); });
         box.append(button);
@@ -422,9 +456,9 @@
     // Bit goes back to floating once the jump ends.
     $('#bit').addEventListener('animationend', (event) => { if (event.animationName === 'saltar') $('#bit').classList.remove('anima-saltar'); });
 
-    let lastSubject;
+    let lastIdeas;
     const update = () => {
-      const { text, kind, turma, subject, label } = read();
+      const { text, kind, turma, subject, label, adult } = read();
       pieces.forEach((piece, index) => {
         const value = text[piece.id];
         if (shown.get(piece.id) === value) return;
@@ -445,7 +479,8 @@
       const subjectStep = $('#subject-step');
       subjectStep.disabled = turma === 'infantil';
       $('#subject-note').textContent = turma === 'infantil' ? 'Na Educação Infantil não precisa' : 'Se quiser';
-      if (subject !== lastSubject) { lastSubject = subject; showIdeas(subject); }
+      const ideas = ideasFor(subject, adult);
+      if (ideas !== lastIdeas) { lastIdeas = ideas; showIdeas(subject, adult); }
       if (done === 4 && !wasReady) celebrate();
       if (done < 4) {
         bubble.textContent = greeting;
