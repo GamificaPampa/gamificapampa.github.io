@@ -45,6 +45,7 @@ const ATALHOS = {
   avaliar: ['', '', 'https://docs.google.com/forms/d/e/1FAIpQLSdZMkwO4v7j69BfUQbcLZWGtVhlDgyL12tRhPseMAruZeperg/viewform'],
   gemini: ['', '', 'https://gemini.google.com/app'],
   jogos: ['', '', 'https://gamificapampa.github.io/turma/'],
+  novidades: ['Oficina de Prompts', 'Novidades do site', 'https://gamificapampa.github.io/novidades/'],
 };
 
 // Outros nomes que levam ao mesmo atalho: o nome inteiro do jogo e o jeito como as pessoas falam
@@ -61,6 +62,7 @@ const APELIDOS = {
   ciclo: 'ciclo-da-agua', agua: 'ciclo-da-agua', 'robo-pega-a-estrela': 'robo', estrela: 'robo',
   construtor: 'prompt', 'construtor-de-prompts': 'prompt', 'maquina-de-prompts': 'maquina',
   cacabugs: 'caca-bugs', missao: 'missao-dev', 'programacao-em-dupla': 'dupla',
+  novidade: 'novidades', novo: 'novidades',
 };
 
 // Do endereço digitado ao nome da lista: sem acento, sem maiúscula, com hífen no lugar de espaço
