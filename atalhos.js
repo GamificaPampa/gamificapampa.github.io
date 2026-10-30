@@ -27,6 +27,7 @@ const ATALHOS = {
   'aula-ia': ['Aula sobre IA', 'Página da aula sobre IA, com todos os materiais', AULA_IA],
   'slides-ia': ['Aula sobre IA', 'Slides da aula sobre IA', AULA_IA + 'slides.html'],
   'atividades-ia': ['Aula sobre IA', 'Folha de atividades da aula sobre IA (PDF)', AULA_IA + 'atividades.pdf'],
+  familias: ['Aula sobre IA', 'Folha IA em casa, para as famílias', RP + 'professores/ia-em-casa/'],
   kit: ['Aula com as crianças', 'Kit sem internet, para pendrive (zip)', 'https://github.com/GamificaPampa/recursos-pedagogicos/releases/download/kit-sem-internet/kit-sem-internet.zip'],
   oficina: ['Oficina de Prompts', 'Página da oficina', OFICINA],
   curso: ['Oficina de Prompts', 'Curso online', OFICINA + 'curso.html'],
@@ -48,7 +49,7 @@ const ATALHOS = {
 
 // Outros nomes que levam ao mesmo atalho: o nome inteiro do jogo e o jeito como as pessoas falam
 const APELIDOS = {
-  'detetive-da-ia': 'detetive-ia', ia: 'aula-ia', 'aula-sobre-ia': 'aula-ia', adaptador: 'adaptar', inclusao: 'adaptar', cartas: 'baralho',
+  'detetive-da-ia': 'detetive-ia', ia: 'aula-ia', 'aula-sobre-ia': 'aula-ia', adaptador: 'adaptar', inclusao: 'adaptar', cartas: 'baralho', 'ia-em-casa': 'familias', 'familia': 'familias',
   'bichos-do-pampa': 'bichos', infantil: 'bichos', 'educacao-infantil': 'bichos',
   pizzaria: 'fracoes', 'pizzaria-das-fracoes': 'fracoes', fracao: 'fracoes',
   fabrica: 'silabas', 'fabrica-de-silabas': 'silabas', silaba: 'silabas',
