@@ -6,6 +6,7 @@
    Sem rótulo, o atalho funciona mas não aparece nas listas. Carregue o jogos.js antes deste arquivo. */
 const RP = 'https://gamificapampa.github.io/recursos-pedagogicos/';
 const AULA = RP + 'professores/aula-engenharia-de-software/';
+const AULA_IA = RP + 'professores/aula-inteligencia-artificial/';
 const OFICINA = RP + 'professores/oficina-prompts/';
 // Os jogos vêm do jogos.js (carregado antes deste arquivo): o link curto, o nome e o QR da pasta do jogo
 const ATALHOS_DOS_JOGOS = Object.fromEntries((window.JOGOS || []).map((jogo) => [jogo.atalho, [
@@ -23,6 +24,9 @@ const ATALHOS = {
   atividades: ['Aula com as crianças', 'Folha de atividades (PDF)', AULA + 'atividades.pdf'],
   certificado: ['Aula com as crianças', 'Certificado de Programador(a) Mirim', AULA + 'certificado.html'],
   medalhas: ['Aula com as crianças', 'Medalhas do Bit para imprimir', RP + 'professores/medalhas/'],
+  'aula-ia': ['Aula sobre IA', 'Página da aula sobre IA, com todos os materiais', AULA_IA],
+  'slides-ia': ['Aula sobre IA', 'Slides da aula sobre IA', AULA_IA + 'slides.html'],
+  'atividades-ia': ['Aula sobre IA', 'Folha de atividades da aula sobre IA (PDF)', AULA_IA + 'atividades.pdf'],
   kit: ['Aula com as crianças', 'Kit sem internet, para pendrive (zip)', 'https://github.com/GamificaPampa/recursos-pedagogicos/releases/download/kit-sem-internet/kit-sem-internet.zip'],
   oficina: ['Oficina de Prompts', 'Página da oficina', OFICINA],
   curso: ['Oficina de Prompts', 'Curso online', OFICINA + 'curso.html'],
@@ -42,6 +46,7 @@ const ATALHOS = {
 
 // Outros nomes que levam ao mesmo atalho: o nome inteiro do jogo e o jeito como as pessoas falam
 const APELIDOS = {
+  'detetive-da-ia': 'detetive-ia', ia: 'aula-ia', 'aula-sobre-ia': 'aula-ia',
   'bichos-do-pampa': 'bichos', infantil: 'bichos', 'educacao-infantil': 'bichos',
   pizzaria: 'fracoes', 'pizzaria-das-fracoes': 'fracoes', fracao: 'fracoes',
   fabrica: 'silabas', 'fabrica-de-silabas': 'silabas', silaba: 'silabas',
