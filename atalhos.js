@@ -36,6 +36,7 @@ const ATALHOS = {
   biblioteca: ['Oficina de Prompts', 'Biblioteca de prompts', OFICINA + 'biblioteca.html'],
   frases: ['Oficina de Prompts', 'Frases que salvam', OFICINA + 'frases.html'],
   adaptar: ['Oficina de Prompts', 'Adaptador de atividades', OFICINA + 'adaptar.html'],
+  baralho: ['Oficina de Prompts', 'Baralho de prompts para imprimir', OFICINA + 'baralho.html'],
   gems: ['Oficina de Prompts', 'Gems prontos', OFICINA + 'gems.html'],
   guia: ['Oficina de Prompts', 'Guia do professor (PDF)', OFICINA + 'guia.pdf'],
   galeria: ['Oficina de Prompts', 'Galeria de jogos', OFICINA + 'galeria.html'],
@@ -47,7 +48,7 @@ const ATALHOS = {
 
 // Outros nomes que levam ao mesmo atalho: o nome inteiro do jogo e o jeito como as pessoas falam
 const APELIDOS = {
-  'detetive-da-ia': 'detetive-ia', ia: 'aula-ia', 'aula-sobre-ia': 'aula-ia', adaptador: 'adaptar', inclusao: 'adaptar',
+  'detetive-da-ia': 'detetive-ia', ia: 'aula-ia', 'aula-sobre-ia': 'aula-ia', adaptador: 'adaptar', inclusao: 'adaptar', cartas: 'baralho',
   'bichos-do-pampa': 'bichos', infantil: 'bichos', 'educacao-infantil': 'bichos',
   pizzaria: 'fracoes', 'pizzaria-das-fracoes': 'fracoes', fracao: 'fracoes',
   fabrica: 'silabas', 'fabrica-de-silabas': 'silabas', silaba: 'silabas',
