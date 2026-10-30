@@ -237,7 +237,7 @@
   document.querySelectorAll('[data-icone]').forEach((el) => el.insertAdjacentHTML('afterbegin', icone(el.dataset.icone) + ' '));
 
   // Filtros: matéria e faixa de idade. A escolha fica guardada neste aparelho
-  const IDADES = [['6 e 7', 6, 7], ['8 e 9', 8, 9], ['10 e 11', 10, 11], ['12 a 14', 12, 14], ['Ensino médio', 15, 18]];
+  const IDADES = [['4 e 5', 4, 5], ['6 e 7', 6, 7], ['8 e 9', 8, 9], ['10 e 11', 10, 11], ['12 a 14', 12, 14], ['Ensino médio', 15, 18]];
   const materias = [...new Set(jogos.map((jogo) => jogo.materia))];
   const chave = 'turma-filtros';
   let filtro = { materia: '', idade: '' };

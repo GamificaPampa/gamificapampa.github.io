@@ -42,6 +42,7 @@ const ATALHOS = {
 
 // Outros nomes que levam ao mesmo atalho: o nome inteiro do jogo e o jeito como as pessoas falam
 const APELIDOS = {
+  'bichos-do-pampa': 'bichos', infantil: 'bichos', 'educacao-infantil': 'bichos',
   pizzaria: 'fracoes', 'pizzaria-das-fracoes': 'fracoes', fracao: 'fracoes',
   fabrica: 'silabas', 'fabrica-de-silabas': 'silabas', silaba: 'silabas',
   'caminho-da-escola': 'caminho', 'balanca-do-bit': 'balanca', 'detetive-da-noticia': 'detetive',
