@@ -127,6 +127,25 @@ h2 { font-size: clamp(38px, 5.6vw, 66px); }
   .nav__links { order: 0; width: auto; flex-wrap: nowrap; gap: 8px; }
   .nav__links a { padding-inline: 13px; }
 }
+/* Todas as páginas: o botão da barra abre o painel com o site inteiro, por grupo. Menu não tem sombra */
+.nav__mapa { display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 44px; padding: 4px 14px; border: 0; border-radius: 999px; background: none; color: var(--ink); font: 600 17px var(--font); white-space: nowrap; cursor: pointer; transition: background-color .15s ease; }
+.nav__mapa:hover, .nav__mapa[aria-expanded="true"] { background: rgb(255 255 255 / .55); }
+.nav__seta { width: 9px; height: 9px; margin-top: -4px; border-right: 3px solid var(--ink); border-bottom: 3px solid var(--ink); transform: rotate(45deg); transition: transform .15s ease; }
+.nav__mapa[aria-expanded="true"] .nav__seta { margin-top: 4px; transform: rotate(225deg); }
+.mapa { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 18px 22px; width: 100%; padding: 18px 20px 20px; background: var(--white); border: var(--line); border-radius: 28px; }
+.mapa[hidden] { display: none; }
+.mapa__titulo { margin: 0 0 8px; padding: 2px 12px; border: var(--line-fina); border-radius: 999px; background: var(--c); font-size: 16px; line-height: 1.6; width: fit-content; }
+.mapa ul { margin: 0; padding: 0; list-style: none; }
+.nav__links .mapa a { display: flex; justify-content: flex-start; min-height: 40px; padding: 4px 10px; border-radius: 12px; font-size: 16px; white-space: normal; text-decoration: none; }
+.nav__links .mapa a:hover { background: var(--sky2); text-decoration: underline; text-decoration-thickness: 2px; text-underline-offset: 3px; }
+@media (max-width: 1023px) {
+  .js .nav__links { flex-wrap: nowrap; max-height: calc(100dvh - 96px); overflow-y: auto; }
+  .nav__mapa { justify-content: flex-start; }
+  .mapa { padding: 12px 4px 4px; border: 0; border-top: var(--line-fina); border-radius: 0; }
+}
+@media (min-width: 1024px) {
+  .mapa { position: absolute; top: calc(100% + 4px); left: 0; right: 0; max-height: calc(100dvh - 110px); overflow-y: auto; animation: menu-in .25s var(--bounce); }
+}
 .footer__link { display: inline-flex; align-items: center; min-height: 44px; font-weight: 700; text-decoration-thickness: 2px; text-underline-offset: 3px; }
 .scrollxp { height: 12px; background: var(--white); border-block: 3px solid var(--ink); overflow: hidden; }
 .scrollxp span { display: block; height: 100%; background: repeating-linear-gradient(90deg, var(--yellow) 0 18px, var(--orange) 18px 22px); transform: translateX(-100%); }

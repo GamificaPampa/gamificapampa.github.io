@@ -27,6 +27,21 @@ document.addEventListener('click', (event) => {
   if (nav.classList.contains('is-open') && !nav.contains(event.target)) setMenu(false);
 });
 nav.querySelectorAll('.nav__links a').forEach((link) => link.addEventListener('click', () => setMenu(false)));
+// Todas as páginas: o botão abre e fecha o painel com o site inteiro. Fecha com Esc, com um toque fora e ao escolher.
+const mapa = $('#mapa');
+const mapaButton = $('#mapa-button');
+const setMapa = (open) => {
+  mapa.hidden = !open;
+  mapaButton.setAttribute('aria-expanded', String(open));
+};
+mapaButton.addEventListener('click', () => setMapa(mapa.hidden));
+document.addEventListener('keydown', (event) => {
+  if (event.key === 'Escape' && !mapa.hidden) { setMapa(false); mapaButton.focus(); }
+});
+document.addEventListener('click', (event) => {
+  if (!mapa.hidden && !nav.contains(event.target)) setMapa(false);
+});
+mapa.querySelectorAll('a').forEach((link) => link.addEventListener('click', () => setMapa(false)));
 
 // On phones and tablets, the prompt scene and the Bit's bubble move below the resources, so the games and the
 // teacher tools are the first thing under the title. On wide screens they go back to the side of the title.

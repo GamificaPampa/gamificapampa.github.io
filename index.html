@@ -16,7 +16,7 @@
   <link rel="stylesheet" href="/identidade-visual/css/botoes.css">
   <link rel="stylesheet" href="/identidade-visual/css/cenario.css">
   <script src="/identidade-visual/js/animacoes.js"></script>
-  <link rel="stylesheet" href="styles.css?v=26">
+  <link rel="stylesheet" href="styles.css?v=28">
 <style>/* tipografia automatica (viuvas, orfas e forcas) */
 p, li, blockquote {
   orphans: 2;
@@ -61,7 +61,66 @@ p, li, blockquote {
         <a href="/recursos-pedagogicos/">Recursos</a>
         <a href="#projetos">Projetos</a>
         <a href="#contato">Contato</a>
+        <button class="nav__mapa" id="mapa-button" type="button" aria-expanded="false" aria-controls="mapa">Todas as páginas<span class="nav__seta" aria-hidden="true"></span></button>
         <a class="nav__menu-cta" href="turma/">Jogos para a turma</a>
+          <div class="mapa" id="mapa" hidden>
+            <section class="mapa__grupo" style="--c: var(--blue)">
+              <h2 class="mapa__titulo">Planejar com IA</h2>
+              <ul>
+                <li><a href="/maquina/">Máquina de prompts</a></li>
+                <li><a href="/recursos-pedagogicos/professores/oficina-prompts/construtor.html">Construtor de prompts</a></li>
+                <li><a href="/recursos-pedagogicos/professores/oficina-prompts/biblioteca.html">Biblioteca de prompts</a></li>
+                <li><a href="/recursos-pedagogicos/professores/oficina-prompts/biblioteca.html?calendario=1">Calendário da escola</a></li>
+                <li><a href="/recursos-pedagogicos/professores/oficina-prompts/adaptar.html">Adaptador de atividades</a></li>
+                <li><a href="/recursos-pedagogicos/professores/oficina-prompts/gems.html">Gems prontos</a></li>
+                <li><a href="/recursos-pedagogicos/professores/oficina-prompts/frases.html">Frases que salvam</a></li>
+              </ul>
+            </section>
+            <section class="mapa__grupo" style="--c: var(--yellow)">
+              <h2 class="mapa__titulo">Aprender a pedir</h2>
+              <ul>
+                <li><a href="/recursos-pedagogicos/professores/oficina-prompts/">Oficina de Prompts</a></li>
+                <li><a href="/recursos-pedagogicos/professores/oficina-prompts/curso.html">Curso online</a></li>
+                <li><a href="/recursos-pedagogicos/professores/oficina-prompts/jogo.html">Jogo do Prompt</a></li>
+                <li><a href="/recursos-pedagogicos/professores/oficina-prompts/jogo.html?grupo">Jogo do Prompt em grupo</a></li>
+                <li><a href="/recursos-pedagogicos/professores/oficina-prompts/passo-a-passo.html">Passo a passo no Gemini</a></li>
+                <li><a href="/recursos-pedagogicos/professores/oficina-prompts/guia.html">Guia do professor</a></li>
+                <li><a href="/recursos-pedagogicos/professores/oficina-prompts/baralho.html">Baralho de prompts</a></li>
+              </ul>
+            </section>
+            <section class="mapa__grupo" style="--c: var(--mint)">
+              <h2 class="mapa__titulo">Aulas prontas</h2>
+              <ul>
+                <li><a href="/recursos-pedagogicos/professores/aula-engenharia-de-software/">Aula com os jogos</a></li>
+                <li><a href="/recursos-pedagogicos/professores/aula-inteligencia-artificial/">Aula sobre IA</a></li>
+                <li><a href="/recursos-pedagogicos/professores/ia-em-casa/">IA em casa, para as famílias</a></li>
+                <li><a href="/recursos-pedagogicos/professores/medalhas/">Medalhas do Bit</a></li>
+                <li><a href="/recursos-pedagogicos/professores/aula-engenharia-de-software/certificado.html">Certificado de Programador(a) Mirim</a></li>
+              </ul>
+            </section>
+            <section class="mapa__grupo" style="--c: var(--pink)">
+              <h2 class="mapa__titulo">Para a turma</h2>
+              <ul>
+                <li><a href="/turma/">Jogos para a turma</a></li>
+                <li><a href="/recursos-pedagogicos/criancas/arcade/estande.html">Telão do Arcade</a></li>
+                <li><a href="/recursos-pedagogicos/criancas/caca-bugs/estande.html">Telão do Caça aos Bugs</a></li>
+                <li><a href="/recursos-pedagogicos/professores/oficina-prompts/galeria.html">Galeria de jogos dos professores</a></li>
+                <li><a href="/publicador/">Publicar meu jogo</a></li>
+                <li><a href="/kit">Kit sem internet (zip)</a></li>
+              </ul>
+            </section>
+            <section class="mapa__grupo" style="--c: var(--purple)">
+              <h2 class="mapa__titulo">Do projeto</h2>
+              <ul>
+                <li><a href="/recursos-pedagogicos/">Todos os recursos</a></li>
+                <li><a href="/novidades/">Novidades</a></li>
+                <li><a href="/atalhos/">Links curtos com QR</a></li>
+                <li><a href="/identidade-visual/">Identidade visual</a></li>
+                <li><a href="#projetos">Projetos</a></li>
+                <li><a href="#contato">Fale com a equipe</a></li>
+              </ul>
+            </section>
+          </div>
       </nav>
       <a class="btn btn--jogar nav__cta" href="turma/"><svg width="20" height="20" aria-hidden="true"><use href="#tri"/></svg>Jogos para a turma</a>
     </div>
@@ -485,7 +544,7 @@ p, li, blockquote {
   </footer>
 
   <script src="/identidade-visual/js/paisagem.js" defer></script>
-  <script src="script.js?v=17" defer></script>
+  <script src="script.js?v=18" defer></script>
 <script src="/identidade-visual/js/objetos.js" defer></script>
 </body>
 </html>
