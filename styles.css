@@ -605,6 +605,11 @@ body:has(dialog[open]) { overflow: hidden; }
 .nav__busca kbd { display: none; }
 .nav__busca-texto { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
 @media (max-width: 1023px) { .nav__busca { order: 1; } }
+/* Compartilhar o site: o botão roxo do topo abre a janela de compartilhar com o QR code e o endereço do hub */
+.nav__partilhar { flex: none; display: inline-grid; place-items: center; width: 46px; height: 46px; padding: 0; background: var(--purple); color: var(--ink); border: var(--line-fina); border-radius: 50%; box-shadow: var(--drop-baixa); cursor: pointer; transition: transform .12s ease, box-shadow .12s ease; }
+.nav__partilhar:hover { transform: translateY(2px); box-shadow: 0 3px 0 var(--ink); }
+.nav__partilhar:active { transform: translateY(5px); box-shadow: none; }
+@media (max-width: 1023px) { .nav__partilhar { order: 1; } }
 .busca { width: min(640px, 100% - 24px); max-height: min(78vh, 640px); margin: 9vh auto auto; padding: 16px; background: var(--white); color: var(--ink); border: var(--line); border-radius: 26px; box-shadow: var(--drop); }
 .busca::backdrop { background: rgb(47 42 74 / .55); }
 .busca[open] { display: flex; flex-direction: column; gap: 10px; animation: menu-in .2s ease; }

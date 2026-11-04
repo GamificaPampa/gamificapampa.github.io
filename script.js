@@ -329,6 +329,7 @@ document.querySelectorAll('[data-contato]').forEach((link) => {
 // Sharing a resource: the dialog shows its QR code, to project for the class, and the link for WhatsApp, Classroom or copying.
 // The QR code is a file of its own, loaded only when the dialog opens.
 const shares = {
+  site: { title: 'GamificaPampa', url: 'https://gamificapampa.github.io', qr: '/atalhos/qr/site.svg' },
   fracoes: { title: 'Pizzaria das Frações', url: 'https://gamificapampa.github.io/fracoes', qr: '/recursos-pedagogicos/criancas/pizzaria-das-fracoes/qr.svg' },
   'ciclo-da-agua': { title: 'Ciclo da Água', url: 'https://gamificapampa.github.io/ciclo-da-agua', qr: '/recursos-pedagogicos/criancas/ciclo-da-agua/qr.svg' },
   silabas: { title: 'Fábrica de Sílabas', url: 'https://gamificapampa.github.io/silabas', qr: '/recursos-pedagogicos/criancas/fabrica-de-silabas/qr.svg' },
