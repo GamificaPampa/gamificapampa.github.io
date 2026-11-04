@@ -17,6 +17,10 @@
 //     links: [['Jogar', '/recursos-pedagogicos/criancas/pasta-do-jogo/', 'jogar']] },
 // Sem dado de aluno, sem detalhe técnico: só o que muda para o professor.
 window.NOVIDADES = [
+  { data: '2026-11-04', titulo: 'Padrão de qualidade para os jogos', texto: 'Quando o pedido é um jogo, a Máquina de prompts dá uma segunda mensagem para mandar ao Gemini: ele revisa o jogo para funcionar no celular e no projetor, sem internet, com letra grande e sem dado de aluno.',
+    icone: 'controle', cor: 'yellow', links: [
+      ['Máquina de prompts', '/maquina/'],
+    ] },
   { data: '2026-11-03', titulo: 'Jogo do Prompt em grupo', texto: 'Na formação ou na reunião da escola, o Jogo do Prompt vai para o projetor e a sala vota levantando a mão. Depois de cada pedido, a turma discute a armadilha do Gemini.',
     icone: 'controle', cor: 'purple', links: [
       ['Jogar em grupo', '/recursos-pedagogicos/professores/oficina-prompts/jogo.html?grupo', 'jogar'],

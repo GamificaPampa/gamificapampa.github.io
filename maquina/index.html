@@ -85,6 +85,14 @@
     .tip img { flex: none; width: 38px; height: auto; }
     .actions { display: flex; flex-wrap: wrap; gap: 12px; }
     .actions .btn[disabled] { opacity: .5; cursor: not-allowed; }
+    /* The quality standard for games in HTML: a second message, sent after the game shows up in the Canvas */
+    .quality { display: grid; justify-items: start; gap: 10px; padding: 14px; border: 3px dashed rgb(255 255 255 / .4); border-radius: 18px; }
+    .quality h3 { display: flex; align-items: center; gap: 10px; font-size: 18px; }
+    .quality h3 b { display: grid; place-items: center; width: 28px; height: 28px; background: var(--yellow); color: var(--ink); border: 2px solid var(--white); border-radius: 50%; font-size: 14px; }
+    .quality p { font-size: 15px; line-height: 1.4; }
+    .quality details { width: 100%; }
+    .quality summary { font-weight: 700; font-size: 15px; cursor: pointer; }
+    .quality ol { display: grid; gap: 6px; margin-top: 8px; padding: 12px 12px 12px 34px; background: var(--white); color: var(--ink); border-radius: 14px; font-size: 15px; line-height: 1.4; }
 
     /* The Bit Gem: the same help as a conversation inside Gemini */
     .gem-bit { display: flex; flex-wrap: wrap; align-items: center; gap: 18px 26px; margin-bottom: 56px; }
@@ -230,6 +238,15 @@
           <a class="btn btn--small" href="https://gemini.google.com/app" target="_blank" rel="noopener">Abrir o Gemini</a>
           <button class="btn btn--small" type="button" id="reset"><svg width="18" height="18" aria-hidden="true"><use href="#i-reset"/></svg>Começar de novo</button>
         </div>
+        <div class="quality" id="quality" hidden>
+          <h3><b>2</b>Padrão de qualidade do HTML</h3>
+          <p>Quando o jogo aparecer no Canvas, mande esta segunda mensagem na mesma conversa. O Gemini revisa o código para ele funcionar bem no celular e no projetor, sem internet e sem dado de aluno.</p>
+          <details>
+            <summary>Ver o padrão</summary>
+            <ol id="quality-list"></ol>
+          </details>
+          <button class="btn btn--small" type="button" id="quality-copy"><svg width="18" height="18" aria-hidden="true"><use href="#i-copy"/></svg>Copiar o padrão</button>
+        </div>
       </section>
     </div>
 
@@ -347,7 +364,7 @@
         tarefa: (theme) => `Crie um jogo em HTML sobre ${theme} para jogar no navegador.`,
         formato: 'Faça tudo num único arquivo HTML, com o CSS e o JavaScript dentro dele e sem nada de fora, que funcione no celular e no computador. Quero botões grandes, 3 fases, som no acerto e estrelas no final.',
         formatoAdulto: 'Faça tudo num único arquivo HTML, com o CSS e o JavaScript dentro dele e sem nada de fora, que funcione no celular e no computador. Quero botões grandes, visual adulto e sem bichinhos, 3 fases, som no acerto e a pontuação no final.',
-        tip: 'Ligue o Canvas em + > Mais ferramentas > Canvas. Se ele recusar o jogo, mande primeiro só a Tarefa e depois o resto. Com o jogo pronto, ganhe um link e um QR Code em gamificapampa.github.io/publicador.',
+        tip: 'Ligue o Canvas em + > Mais ferramentas > Canvas. Se ele recusar o jogo, mande primeiro só a Tarefa e depois o resto. Quando o jogo aparecer, mande o padrão de qualidade. Depois ganhe um link e um QR Code em gamificapampa.github.io/publicador.',
       },
       atividade: {
         name: 'Atividade para imprimir',
@@ -407,6 +424,30 @@
         tipInfantil: 'O registro acompanha cada criança sem nota. Escreva o nome depois, no Google Docs, nunca na conversa com o Gemini.',
       },
     };
+    // O padrão de qualidade do HTML vai numa segunda mensagem, porque o Canvas recusa jogo pedido num prompt longo.
+    // Ele pede o que todo jogo da org já segue: um arquivo só, sem nada de fora, celular e projetor,
+    // teclado e contraste, explicação no erro e nenhum dado de aluno. A turma acrescenta o que muda para ela.
+    const qualityRules = ({ infantil, adult, leitura }) => [
+      'Estrutura: um só arquivo HTML com <!DOCTYPE html>, <html lang="pt-BR">, <meta charset="utf-8">, <meta name="viewport" content="width=device-width, initial-scale=1"> e um <title> com o nome do jogo.',
+      'Sem nada de fora: nenhuma fonte, imagem, biblioteca ou link externo. Desenhos em SVG ou CSS no próprio arquivo e o som feito com a Web Audio API, para o jogo funcionar sem internet.',
+      'Tela: cabe no celular (360 px de largura) e no projetor, sem rolagem para o lado. Botões com pelo menos 48 px de altura e letra de pelo menos 18 px.',
+      'Acessibilidade: use <button> em tudo que se clica, deixe jogar só com o teclado, use texto com bom contraste e mostre certo ou errado com cor, ícone e palavra, nunca só com a cor.',
+      'Jogo: uma tela de início com as instruções em até 3 frases, um botão Jogar de novo no fim e, no erro, uma frase que explica o conceito, não só "errou".',
+      infantil
+        ? 'As crianças ainda não leem: cada instrução e cada pergunta tem um botão Ouvir, que lê o texto com a voz do aparelho em português (speechSynthesis com lang pt-BR), e as respostas são figuras grandes.'
+        : leitura && `Leitura: frases curtas e um botão Ouvir em cada pergunta, que lê o texto com a voz do aparelho em português (speechSynthesis com lang pt-BR), para ${adult ? 'quem' : 'o aluno que'} tem dificuldade de ler.`,
+      adult && 'Visual adulto e respeitoso: nada de bichinhos, tom infantil ou elogio exagerado.',
+      `Cuidado com a turma: não peça nem guarde nome, foto ou dado de ${adult ? 'estudante' : 'aluno'}, e não use alert, prompt ou confirm.`,
+      'Código: HTML, CSS e JavaScript organizados, com comentários curtos em português, sem erros no console e com animações leves, que param quando o aparelho pede menos movimento (prefers-reduced-motion).',
+      'Conteúdo: confira cada resposta e cada conta e escreva tudo em português do Brasil, com acentos.',
+    ].filter(Boolean);
+    const qualityText = (rules) => [
+      'Agora revise o jogo seguindo este padrão de qualidade, sem mudar a ideia nem o conteúdo:',
+      ...rules.map((rule, index) => `${index + 1}. ${rule}`),
+      'No fim, liste em poucas linhas o que você mudou.',
+    ].join('\n');
+    let qualityCurrent = '';
+
     const pieces = [
       { id: 'papel', letter: 'P', name: 'Papel', hint: 'escolha a turma' },
       { id: 'tarefa', letter: 'T', name: 'Tarefa', hint: 'escolha o que criar e escreva o tema' },
@@ -449,7 +490,7 @@
       if (formato) formato += ' Responda em português do Brasil.';
       const text = { papel, tarefa: kind && theme ? kind.tarefa(theme, infantil, adult) : '', contexto, formato };
       const label = [kind && kind.name, group && group.name, theme].filter(Boolean).join(' · ');
-      return { text, kind, turma, subject, label, adult };
+      return { text, kind, turma, subject, label, adult, leitura: extras.includes('leitura') };
     };
 
     // Ideas for the theme follow the chosen subject, and in the EJA they come from adult life.
@@ -487,7 +528,18 @@
 
     let lastIdeas;
     const update = () => {
-      const { text, kind, turma, subject, label, adult } = read();
+      const { text, kind, turma, subject, label, adult, leitura } = read();
+      // O padrão de qualidade aparece só no jogo, que é o pedido que vira HTML
+      const isGame = kind === kinds.jogo;
+      $('#quality').hidden = !isGame;
+      if (isGame) {
+        const rules = qualityRules({ infantil: turma === 'infantil', adult, leitura });
+        const textNow = qualityText(rules);
+        if (textNow !== qualityCurrent) {
+          qualityCurrent = textNow;
+          $('#quality-list').replaceChildren(...rules.map((rule) => Object.assign(document.createElement('li'), { textContent: rule })));
+        }
+      }
       pieces.forEach((piece, index) => {
         const value = text[piece.id];
         if (shown.get(piece.id) === value) return;
@@ -560,6 +612,10 @@
       flash(copyButton, 'Prompt copiado!');
       saveRecent([current, ...loadRecent().filter((item) => item.text !== current.text)].slice(0, 5));
       renderRecent();
+    });
+    $('#quality-copy').addEventListener('click', async () => {
+      const button = $('#quality-copy');
+      flash(button, await copyText(qualityCurrent) ? 'Padrão copiado!' : 'Não deu para copiar');
     });
     $('#recent-clear').addEventListener('click', () => { saveRecent([]); renderRecent(); });
     // O site lembra a última turma, matéria, tipo, tema e ajustes neste aparelho; Começar de novo esquece
