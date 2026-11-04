@@ -205,7 +205,8 @@ h2 { font-size: clamp(38px, 5.6vw, 66px); }
 .hero__inner { display: grid; gap: 48px; align-items: center; }
 @media (min-width: 1024px) { .hero__inner { grid-template-columns: minmax(0, 1fr) minmax(0, 520px); gap: 56px; } }
 .hero__text { display: flex; flex-direction: column; align-items: flex-start; gap: 22px; }
-.start { padding: 6px 22px 6px 8px; font-size: 20px; letter-spacing: 0; }
+.start { padding: 6px 22px 6px 8px; font-size: 20px; letter-spacing: 0; text-decoration: none; transition: background-color .15s ease; }
+.start:hover { background: var(--yellow-claro); }
 .start b { color: var(--pink); }
 .title-hop span { display: inline-block; animation: hop 3.6s ease-in-out infinite; }
 .title-hop span:nth-child(2) { animation-delay: .1s; }
@@ -351,7 +352,6 @@ h2 { font-size: clamp(38px, 5.6vw, 66px); }
 .projects { display: grid; gap: 36px; }
 @media (min-width: 900px) {
   .projects { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  .project--locked { grid-column: 1 / -1; }
 }
 .project { display: flex; flex-direction: column; overflow: hidden; }
 .project__banner { display: flex; flex-direction: column; align-items: flex-start; gap: 16px; padding: clamp(20px, 3vw, 32px); background: var(--c); border-bottom: var(--line); }
@@ -371,10 +371,6 @@ h2 { font-size: clamp(38px, 5.6vw, 66px); }
 .meta div { display: flex; flex-wrap: wrap; gap: 2px 12px; }
 .meta dt { min-width: 112px; padding-top: 2px; color: var(--soft); font-weight: 700; font-size: 13px; letter-spacing: .05em; text-transform: uppercase; }
 .meta dd { font-weight: 600; }
-.project--locked { flex-flow: row wrap; align-items: center; gap: 20px 28px; padding: clamp(22px, 3vw, 32px); background: rgb(255 255 255 / .55); border: 5px dashed var(--ink); border-radius: var(--radius); }
-.project--locked div { display: flex; flex: 1 1 240px; flex-direction: column; align-items: flex-start; gap: 8px; }
-.project--locked h3 { font-size: clamp(24px, 2.6vw, 30px); }
-.project--locked:hover .lock { animation: shake .4s ease-in-out; }
 
 /* Players: what teachers, managers and students get */
 
@@ -598,3 +594,59 @@ body:has(dialog[open]) { overflow: hidden; }
   .js .reveal:not(.is-visible) { opacity: 1; }
   .js .hudrow:not(.is-visible) .xp__bar i { transform: translateX(calc(var(--xp) - 100%)); }
 }
+
+/* Busca no topo: o botão abre um quadro com o campo e a lista. Ctrl K ou / abre de qualquer lugar da página */
+.nav__busca { display: inline-flex; align-items: center; gap: 8px; min-height: 44px; padding: 4px 8px 4px 14px; background: rgb(255 255 255 / .82); color: var(--ink); border: var(--line-fina); border-radius: 999px; font: 600 16px var(--font); cursor: pointer; transition: background-color .15s ease; }
+.nav__busca:hover { background: var(--white); }
+.nav__busca kbd { padding: 1px 8px; background: var(--cream); border: 2px solid var(--ink); border-radius: 8px; font: 600 13px var(--font); }
+.nav__busca kbd { white-space: nowrap; }
+/* O topo é apertado: a busca é só a lupa, redonda como o botão de parar animações. O nome fica para o leitor de tela */
+.nav__busca { flex: none; width: 46px; height: 46px; padding: 0; justify-content: center; }
+.nav__busca kbd { display: none; }
+.nav__busca-texto { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
+@media (max-width: 1023px) { .nav__busca { order: 1; } }
+.busca { width: min(640px, 100% - 24px); max-height: min(78vh, 640px); margin: 9vh auto auto; padding: 16px; background: var(--white); color: var(--ink); border: var(--line); border-radius: 26px; box-shadow: var(--drop); }
+.busca::backdrop { background: rgb(47 42 74 / .55); }
+.busca[open] { display: flex; flex-direction: column; gap: 10px; animation: menu-in .2s ease; }
+.busca__caixa { display: flex; align-items: center; gap: 10px; padding: 4px 6px 4px 14px; border: var(--line-fina); border-radius: 999px; }
+.busca__caixa input { flex: 1; min-width: 0; min-height: 48px; padding: 0; background: none; border: 0; color: var(--ink); font: 600 19px var(--font); outline: none; }
+.busca__caixa input::-webkit-search-cancel-button { display: none; }
+.busca__caixa:focus-within { outline: 4px solid var(--pink); outline-offset: 2px; }
+.busca__fechar { display: grid; place-items: center; width: 40px; height: 40px; padding: 0; background: var(--cream); border: 2px solid var(--ink); border-radius: 50%; cursor: pointer; }
+.busca__dica { margin: 0 6px; color: var(--soft); font-size: 15px; font-weight: 600; }
+.busca__lista { display: grid; gap: 6px; min-height: 0; margin: 0; padding: 0 2px 2px; overflow-y: auto; list-style: none; }
+.busca__item { display: flex; align-items: center; gap: 12px; padding: 8px 12px; border: 3px solid transparent; border-radius: 16px; color: var(--ink); text-decoration: none; }
+.busca__item[aria-selected="true"], .busca__item:hover { background: var(--yellow-claro); border-color: var(--ink); }
+.busca__item i { display: grid; flex: none; place-items: center; width: 40px; height: 40px; background: var(--c, var(--blue-claro)); border: 2px solid var(--ink); border-radius: 12px; }
+.busca__item i svg { width: 26px; height: 26px; }
+.busca__item b { display: block; font-size: 17px; line-height: 1.2; }
+.busca__item small { display: block; color: var(--soft); font-size: 14px; font-weight: 600; }
+.busca__vazio { padding: 10px 12px; font-weight: 600; }
+
+/* A novidade mais recente, numa faixa curta acima do título. Some depois que a pessoa abre as novidades */
+.novidade { display: inline-flex; align-items: center; gap: 10px; max-width: 100%; padding: 4px 6px 4px 4px; background: var(--white); color: var(--ink); border: var(--line-fina); border-radius: 999px; font-weight: 600; font-size: 16px; text-decoration: none; }
+.novidade[hidden] { display: none; }
+.novidade b { padding: 2px 12px; background: var(--pink); color: var(--white); border-radius: 999px; font-size: 14px; letter-spacing: .02em; }
+.novidade span:not(.novidade__ver) { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.novidade__ver { flex: none; padding: 2px 12px; background: var(--yellow); border: 2px solid var(--ink); border-radius: 999px; font-size: 14px; font-weight: 700; }
+.novidade:hover .novidade__ver { background: var(--yellow-claro); }
+
+/* Recursos: abas para o professor e para a turma */
+.recursos-lado { min-width: 0; }
+.abas-recursos { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 18px; }
+.aba-recursos { min-height: 46px; padding: 4px 20px; background: rgb(255 255 255 / .72); color: var(--ink); border: var(--line-fina); border-radius: 999px; font: 600 17px var(--font); cursor: pointer; }
+.aba-recursos:hover { background: var(--white); }
+.aba-recursos[aria-selected="true"] { background: var(--yellow); }
+.ferramentas { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 250px), 1fr)); gap: 16px; margin: 0; padding: 0; list-style: none; }
+.ferramentas[hidden], .games[hidden] { display: none; }
+.ferramenta { position: relative; display: flex; align-items: flex-start; gap: 12px; height: 100%; padding: 14px; background: var(--white); color: var(--ink); border: var(--line-fina); border-radius: 20px; box-shadow: var(--drop-baixa); text-decoration: none; transition: transform .12s ease, box-shadow .12s ease; }
+.ferramenta:hover { transform: translateY(2px); box-shadow: 0 2px 0 var(--ink); }
+.ferramenta__arte { display: grid; flex: none; place-items: center; width: 52px; height: 52px; background: var(--c); border: 3px solid var(--ink); border-radius: 14px; }
+.ferramenta__arte svg { width: 34px; height: 34px; }
+.ferramenta__texto b { display: block; font-size: 18px; line-height: 1.2; }
+.ferramenta__texto span { display: block; margin-top: 4px; color: var(--soft); font-size: 15px; font-weight: 600; line-height: 1.35; }
+.ferramenta__novo { position: absolute; top: -10px; right: 12px; padding: 1px 10px; background: var(--pink); color: var(--white); border: 2px solid var(--ink); border-radius: 999px; font-size: 12px; font-weight: 700; }
+
+/* A Fase 2 numa linha só */
+.proxima-fase { grid-column: 1 / -1; display: flex; align-items: center; gap: 12px; margin: 0; padding: 12px 18px; background: rgb(255 255 255 / .55); border: 3px dashed var(--ink); border-radius: 999px; font-weight: 600; }
+.proxima-fase svg { flex: none; }

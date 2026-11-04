@@ -367,3 +367,144 @@ copyButton.addEventListener('click', async () => {
 });
 
 moreButton.addEventListener('click', () => navigator.share({ title: shared.title, url: shared.url }).catch(() => {}));
+
+// Busca no topo: procura nas páginas do menu Todas as páginas e nos jogos do jogos.js, sem acento e sem maiúscula.
+// Ctrl K ou / abre; as setas escolhem e o Enter abre
+const BUSCA_EXTRA = {
+  'Máquina de prompts': 'plano de aula atividade quiz prova avaliação rubrica devolutiva eja encceja história',
+  'Construtor de prompts': 'montar prompt passo a passo',
+  'Biblioteca de prompts': 'modelos exemplos prontos calendário datas',
+  'Adaptador de atividades': 'inclusão tea autismo tdah dislexia adaptar acessível',
+  'Gems prontos': 'gem gemini assistente ensino médio',
+  'Frases que salvam': 'armadilhas erros consertar resposta',
+  'Curso online': 'módulos certificado comprovante à distância',
+  'Jogo do Prompt': 'aprender quatro partes papel tarefa contexto formato',
+  'Jogo do Prompt em grupo': 'projetor formação reunião votar',
+  'Passo a passo no Gemini': 'canvas gem como usar tutorial',
+  'Baralho de prompts': 'cartas imprimir sortear',
+  'Aula com os jogos': 'engenharia de software programação crianças 50 minutos',
+  'Aula sobre IA': 'inteligência artificial 9º ano ensino médio',
+  'IA em casa, para as famílias': 'pais responsáveis família',
+  'Medalhas do Bit': 'premiar imprimir recompensa',
+  'Certificado de Programador(a) Mirim': 'diploma',
+  'Jogos para a turma': 'projetor celular qr crianças',
+  'Publicar meu jogo': 'canvas link qr github hospedar',
+  'Kit sem internet (zip)': 'offline sem rede baixar zip notebook',
+  'Novidades': 'o que mudou novo',
+  'Links curtos com QR': 'atalhos endereço curto',
+  'Fale com a equipe': 'contato levar escola formação',
+};
+const tirarAcento = (texto) => texto.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
+const CORES_GRUPO = { 'Planejar com IA': 'var(--blue-claro)', 'Aprender a pedir': 'var(--yellow-claro)', 'Aulas prontas': 'var(--mint-claro)', 'Para a turma': 'var(--pink-claro)', 'Do projeto': 'var(--purple-claro)' };
+const indiceBusca = [
+  ...[...document.querySelectorAll('.mapa__grupo')].flatMap((grupo) => {
+    const nome = grupo.querySelector('.mapa__titulo').textContent.trim();
+    return [...grupo.querySelectorAll('a')].map((link) => ({ titulo: link.textContent.trim(), onde: nome, href: link.getAttribute('href'), icone: 'lupa', cor: CORES_GRUPO[nome] }));
+  }),
+  ...(window.JOGOS || []).map((jogo) => ({ titulo: jogo.nome, onde: `Jogo de ${jogo.materia}${jogo.idade ? ' · ' + jogo.idade : ''}`, href: `/recursos-pedagogicos/criancas/${jogo.pasta}/`, icone: 'controle', cor: `var(--${jogo.cor}-claro, var(--mint-claro))`, extra: [jogo.materia, jogo.conceito, jogo.frase].join(' ') })),
+].map((item) => ({ ...item, palavras: tirarAcento(`${item.titulo} ${item.onde} ${item.extra || ''} ${BUSCA_EXTRA[item.titulo] || ''}`).split(/[^a-z0-9º]+/).filter(Boolean), nome: tirarAcento(item.titulo) }));
+const SUGESTOES = ['Máquina de prompts', 'Jogo do Prompt', 'Jogos para a turma', 'Biblioteca de prompts', 'Gems prontos', 'Kit sem internet (zip)'];
+
+const busca = $('#busca');
+if (busca) {
+  const campo = $('#busca-campo');
+  const lista = $('#busca-lista');
+  const dica = $('#busca-dica');
+  let achados = [];
+  let escolhido = 0;
+  const desenharBusca = () => {
+    const palavras = tirarAcento(campo.value.trim()).split(/\s+/).filter(Boolean);
+    achados = palavras.length
+      // Cada palavra digitada tem de começar uma palavra da página: "gem" acha Gems, mas não "imagem"
+      ? indiceBusca.filter((item) => palavras.every((p) => item.palavras.some((w) => w.startsWith(p))))
+        .map((item) => ({ item, nota: (item.nome.startsWith(palavras[0]) ? 3 : 0) + (palavras.every((p) => item.nome.includes(p)) ? 2 : 0) }))
+        .sort((a, b) => b.nota - a.nota).slice(0, 8).map(({ item }) => item)
+      : SUGESTOES.map((titulo) => indiceBusca.find((item) => item.titulo === titulo)).filter(Boolean);
+    escolhido = 0;
+    dica.textContent = palavras.length ? '' : 'Experimente: frações, Gem, EJA, certificado, sem internet.';
+    dica.hidden = Boolean(palavras.length);
+    lista.replaceChildren(...achados.map((item, i) => {
+      const li = document.createElement('li');
+      const link = Object.assign(document.createElement('a'), { className: 'busca__item', href: item.href, id: `busca-${i}` });
+      link.setAttribute('role', 'option');
+      link.setAttribute('aria-selected', String(i === escolhido));
+      link.innerHTML = `<i style="--c: ${item.cor}"><svg aria-hidden="true"><use href="#icone-${item.icone}"/></svg></i><span><b></b><small></small></span>`;
+      link.querySelector('b').textContent = item.titulo;
+      link.querySelector('small').textContent = item.onde;
+      link.addEventListener('click', () => busca.close());
+      li.append(link);
+      return li;
+    }));
+    if (!achados.length) {
+      const vazio = Object.assign(document.createElement('li'), { className: 'busca__vazio', textContent: 'Nada com essas palavras. Tente outra, ou abra Todas as páginas no topo.' });
+      lista.append(vazio);
+    }
+  };
+  const marcar = (i) => {
+    escolhido = (i + achados.length) % achados.length;
+    lista.querySelectorAll('.busca__item').forEach((link, k) => link.setAttribute('aria-selected', String(k === escolhido)));
+    lista.querySelector(`#busca-${escolhido}`)?.scrollIntoView({ block: 'nearest' });
+  };
+  const abrirBusca = () => {
+    if (busca.open) return;
+    campo.value = '';
+    desenharBusca();
+    busca.showModal();
+    campo.focus();
+  };
+  $('#busca-botao').addEventListener('click', abrirBusca);
+  $('#busca-fechar').addEventListener('click', () => busca.close());
+  busca.addEventListener('click', (evento) => { if (evento.target === busca) busca.close(); });
+  campo.addEventListener('input', desenharBusca);
+  campo.addEventListener('keydown', (evento) => {
+    if (!achados.length) return;
+    if (evento.key === 'ArrowDown') { evento.preventDefault(); marcar(escolhido + 1); }
+    if (evento.key === 'ArrowUp') { evento.preventDefault(); marcar(escolhido - 1); }
+    if (evento.key === 'Enter') { evento.preventDefault(); location.href = achados[escolhido].href; }
+  });
+  addEventListener('keydown', (evento) => {
+    const digitando = evento.target.closest?.('input, textarea, select, [contenteditable]');
+    if ((evento.key === 'k' || evento.key === 'K') && (evento.ctrlKey || evento.metaKey)) { evento.preventDefault(); abrirBusca(); }
+    else if (evento.key === '/' && !digitando) { evento.preventDefault(); abrirBusca(); }
+  });
+}
+
+// A novidade mais recente aparece acima do título por 45 dias, até a pessoa abrir a página de novidades
+const novidade = $('#novidade');
+const ultimas = [...(window.NOVIDADES || [])].sort((a, b) => b.data.localeCompare(a.data));
+if (novidade && ultimas.length) {
+  const nova = ultimas[0];
+  let vista = '';
+  try { vista = localStorage.getItem('gp-lembrar:novidade-vista') || ''; } catch {}
+  const dias = (Date.now() - new Date(nova.data + 'T12:00:00').getTime()) / 864e5;
+  if (vista < nova.data && dias <= 45) {
+    $('#novidade-titulo').textContent = nova.titulo;
+    novidade.hidden = false;
+  }
+}
+
+// Recursos: as abas Para você planejar e Para a turma. A escolha fica lembrada neste aparelho
+const abasRecursos = [...document.querySelectorAll('.aba-recursos')];
+const mostrarAba = (aba, foco = false) => {
+  abasRecursos.forEach((outra) => {
+    const ativa = outra === aba;
+    outra.setAttribute('aria-selected', String(ativa));
+    outra.tabIndex = ativa ? 0 : -1;
+    $('#' + outra.getAttribute('aria-controls')).hidden = !ativa;
+  });
+  if (foco) aba.focus();
+  try { localStorage.setItem('gp-lembrar:aba-recursos', aba.id); } catch {}
+};
+abasRecursos.forEach((aba, i) => {
+  aba.addEventListener('click', () => mostrarAba(aba));
+  aba.addEventListener('keydown', (evento) => {
+    if (evento.key === 'ArrowRight' || evento.key === 'ArrowLeft') mostrarAba(abasRecursos[(i + (evento.key === 'ArrowRight' ? 1 : -1) + abasRecursos.length) % abasRecursos.length], true);
+  });
+});
+try { const salva = $('#' + localStorage.getItem('gp-lembrar:aba-recursos')); if (salva && abasRecursos.includes(salva)) mostrarAba(salva); } catch {}
+// O que entrou nas novidades nos últimos 14 dias ganha a etiqueta Novo
+document.querySelectorAll('.ferramenta').forEach((cartao) => {
+  const caminho = cartao.getAttribute('href');
+  const recente = (window.NOVIDADES || []).some((n) => (Date.now() - new Date(n.data + 'T12:00:00').getTime()) / 864e5 <= 14 && (n.links || []).some(([, href]) => href.split('?')[0] === caminho));
+  if (recente) cartao.append(Object.assign(document.createElement('span'), { className: 'ferramenta__novo', textContent: 'Novo' }));
+});
