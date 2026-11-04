@@ -65,6 +65,34 @@ if (bitGame && bitHello) {
   small.addEventListener('change', place);
 }
 
+// Os três níveis: cada um fica Feito quando o professor passa pela página dele. A barra.js marca o Jogo do Prompt e
+// a Máquina, o menu da turma marca a turma, e o clique no botão daqui também marca. Fica só neste aparelho
+const PASSOS = 'gp-lembrar:passos';
+const passosFeitos = () => { try { return JSON.parse(localStorage.getItem(PASSOS)) || {}; } catch { return {}; } };
+const marcarPasso = (passo) => { try { localStorage.setItem(PASSOS, JSON.stringify({ ...passosFeitos(), [passo]: true })); } catch {} };
+const niveis = [...document.querySelectorAll('.level[data-passo]')];
+const mostrarPassos = () => {
+  const feitos = passosFeitos();
+  let total = 0;
+  niveis.forEach((nivel) => {
+    const feito = Boolean(feitos[nivel.dataset.passo]);
+    nivel.classList.toggle('is-feito', feito);
+    nivel.dataset.progress = feito ? 3 : 0;
+    if (feito) total += 1;
+  });
+  $('#passos-xp')?.style.setProperty('--xp', `${Math.round((total / 3) * 100)}%`);
+  const placar = $('#passos-placar');
+  if (placar) {
+    if (total === 3) placar.innerHTML = 'Os três níveis feitos. Próxima fase: <a href="/recursos-pedagogicos/professores/oficina-prompts/">a Oficina de Prompts completa</a>.';
+    else placar.textContent = total ? `${total} de 3 níveis feitos neste aparelho.` : 'Nenhum nível feito ainda.';
+    placar.classList.toggle('is-completo', total === 3);
+  }
+};
+niveis.forEach((nivel) => nivel.querySelectorAll('.level__acoes a').forEach((link) => link.addEventListener('click', () => marcarPasso(nivel.dataset.passo))));
+mostrarPassos();
+addEventListener('pageshow', mostrarPassos);
+addEventListener('storage', (evento) => { if (evento.key === PASSOS) mostrarPassos(); });
+
 // Revealing sections and filling the level blocks as they enter the screen.
 const revealObserver = new IntersectionObserver((entries) => {
   for (const entry of entries) {
@@ -74,9 +102,11 @@ const revealObserver = new IntersectionObserver((entries) => {
     if (element.matches('.level')) {
       const progress = Number(element.dataset.progress);
       element.querySelectorAll('.blocks span').forEach((block, index) => block.classList.toggle('on', index < progress));
-      const plus = Object.assign(document.createElement('span'), { className: 'plus', textContent: `+${progress * 10} XP` });
-      setTimeout(() => element.append(plus), 900);
-      setTimeout(() => plus.remove(), 2000);
+      if (progress) {
+        const plus = Object.assign(document.createElement('span'), { className: 'plus', textContent: '+10 XP' });
+        setTimeout(() => element.append(plus), 900);
+        setTimeout(() => plus.remove(), 2000);
+      }
     }
     revealObserver.unobserve(element);
   }

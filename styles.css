@@ -323,6 +323,14 @@ h2 { font-size: clamp(38px, 5.6vw, 66px); }
 .level--orange { --c: var(--orange); --delay: .36s; }
 .level h3 { font-size: clamp(30px, 3vw, 40px); }
 .level p { flex: 1; font-weight: 600; }
+/* Passos com XP de verdade: o botão leva à página, e o nível fica Feito quando o professor passa por ela */
+.level__acoes { display: grid; gap: 10px; align-self: stretch; }
+.level__acoes .btn { width: 100%; padding-inline: 12px; }
+.level__feito { position: absolute; top: clamp(18px, 2.2vw, 26px); right: clamp(18px, 2.2vw, 26px); display: none; align-items: center; gap: 4px; padding: 2px 12px 2px 8px; background: var(--white); border: var(--line-fina); border-radius: 999px; font-weight: 700; font-size: 14px; }
+.level.is-feito .level__feito { display: inline-flex; animation: pop .4s var(--bounce); }
+.passos__placar { display: inline-flex; padding: 6px 16px; background: rgb(255 255 255 / .75); border: var(--line-fina); border-radius: 999px; font-weight: 700; font-size: 16px; }
+.passos__placar.is-completo { background: var(--yellow); }
+.passos__placar a { font-weight: 700; text-decoration-thickness: 2px; text-underline-offset: 3px; }
 .level .plus { right: 22px; bottom: 44px; }
 .blocks { display: flex; align-self: stretch; gap: 6px; }
 .blocks span { flex: 1; height: 16px; background: var(--white); border: 3px solid var(--ink); border-radius: 6px; }
@@ -333,9 +341,9 @@ h2 { font-size: clamp(38px, 5.6vw, 66px); }
 .token { animation: spin-y 2.4s linear infinite; }
 @media (min-width: 640px) {
   .stairs { grid-template-columns: repeat(3, minmax(0, 1fr)); align-items: end; padding-top: 104px; }
-  .level--mint { min-height: 290px; }
-  .level--blue { min-height: 370px; }
-  .level--orange { min-height: 450px; }
+  .level--mint { min-height: 330px; }
+  .level--blue { min-height: 400px; }
+  .level--orange { min-height: 470px; }
   .stairs__bot { position: absolute; bottom: calc(100% + 4px); left: 50%; display: flex; align-items: flex-end; gap: 6px; translate: -50% 0; }
 }
 

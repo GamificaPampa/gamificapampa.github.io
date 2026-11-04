@@ -16,7 +16,7 @@
   <link rel="stylesheet" href="/identidade-visual/css/botoes.css">
   <link rel="stylesheet" href="/identidade-visual/css/cenario.css">
   <script src="/identidade-visual/js/animacoes.js"></script>
-  <link rel="stylesheet" href="styles.css?v=28">
+  <link rel="stylesheet" href="styles.css?v=29">
 <style>/* tipografia automatica (viuvas, orfas e forcas) */
 p, li, blockquote {
   orphans: 2;
@@ -252,35 +252,39 @@ p, li, blockquote {
         <div class="container">
           <div class="hudrow reveal">
             <span class="pill pill--blue">COMO FUNCIONA</span>
-            <span class="xp" style="--xp: 35%"><b>XP</b><span class="xp__bar"><i></i></span></span>
+            <span class="xp" id="passos-xp" style="--xp: 0%"><b>XP</b><span class="xp__bar"><i></i></span></span>
           </div>
           <div class="journey">
             <header class="section__head reveal">
-              <h2 class="loud">Sua jornada em <span class="yellow">três níveis</span></h2>
-              <p>Cada nível junta teoria e prática, do primeiro contato com a IA e a gamificação até o material pronto para a turma.</p>
+              <h2 class="loud">Comece em <span class="yellow">três níveis</span></h2>
+              <p>Três passos de poucos minutos, para fazer hoje. O site marca neste aparelho o que você já fez, e a barra de XP enche.</p>
+              <p class="passos__placar" id="passos-placar" aria-live="polite">Nenhum nível feito ainda.</p>
             </header>
             <div class="stairs">
-              <article class="card level level--mint reveal" data-tilt data-progress="1">
-                <span class="tag">NÍVEL 1</span>
+              <article class="card level level--mint reveal" data-tilt data-passo="jogo-do-prompt">
+                <span class="tag">NÍVEL 1</span><span class="level__feito"><svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7" fill="none" stroke="#2f2a4a" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round"/></svg>Feito</span>
                 <h3>Descobrir</h3>
-                <p>O que a IA e a gamificação fazem na sala de aula, com exemplos de várias matérias e etapas.</p>
-                <div class="blocks" aria-label="Progresso 1 de 3"><span></span><span></span><span></span></div>
+                <p>Jogue o Jogo do Prompt e aprenda, em 5 minutos, as quatro partes de um bom pedido para a IA.</p>
+                <div class="level__acoes"><a class="btn btn--jogar btn--small" href="/recursos-pedagogicos/professores/oficina-prompts/jogo.html"><svg width="18" height="18" aria-hidden="true"><use href="#tri"/></svg>Jogo do Prompt</a></div>
+                <div class="blocks" aria-hidden="true"><span></span><span></span><span></span></div>
               </article>
-              <article class="card level level--blue reveal" data-tilt data-progress="2">
-                <span class="tag">NÍVEL 2</span>
+              <article class="card level level--blue reveal" data-tilt data-passo="maquina">
+                <span class="tag">NÍVEL 2</span><span class="level__feito"><svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7" fill="none" stroke="#2f2a4a" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round"/></svg>Feito</span>
                 <h3 class="loud">Criar</h3>
-                <p>Prompts para planejar aulas e criar atividades, avaliações, textos e jogos, conferindo o que a IA entrega.</p>
-                <div class="blocks" aria-label="Progresso 2 de 3"><span></span><span></span><span></span></div>
+                <p>Monte o seu primeiro prompt na Máquina: escolha a turma, a matéria e o que criar, copie e cole no Gemini.</p>
+                <div class="level__acoes"><a class="btn btn--conhecer btn--small" href="maquina/"><svg width="18" height="18" aria-hidden="true"><use href="#i-lupa"/></svg>Abrir a Máquina</a></div>
+                <div class="blocks" aria-hidden="true"><span></span><span></span><span></span></div>
               </article>
-              <article class="card level level--orange reveal" data-tilt data-progress="3">
+              <article class="card level level--orange reveal" data-tilt data-passo="turma">
                 <div class="stairs__bot" aria-hidden="true">
                   <svg class="bot" width="84" height="84"><use href="#bot"/></svg>
                   <svg class="token" width="54" height="54"><use href="#coin"/></svg>
                 </div>
-                <span class="tag">NÍVEL 3</span>
+                <span class="tag">NÍVEL 3</span><span class="level__feito"><svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7" fill="none" stroke="#2f2a4a" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round"/></svg>Feito</span>
                 <h3 class="loud">Aplicar</h3>
-                <p>O material na sua turma, com a estrutura que a escola já tem, e o retorno dos alunos para ajustar.</p>
-                <div class="blocks" aria-label="Progresso 3 de 3"><span></span><span></span><span></span></div>
+                <p>Leve para a turma: projete um jogo do menu ou publique o jogo que você criou com a IA, com link e QR.</p>
+                <div class="level__acoes"><a class="btn btn--jogar btn--small" href="turma/"><svg width="18" height="18" aria-hidden="true"><use href="#tri"/></svg>Jogos da turma</a><a class="btn btn--compartilhar btn--small" href="/publicador/"><svg width="18" height="18" aria-hidden="true"><use href="#i-enviar"/></svg>Publicar meu jogo</a></div>
+                <div class="blocks" aria-hidden="true"><span></span><span></span><span></span></div>
               </article>
             </div>
           </div>
@@ -544,7 +548,7 @@ p, li, blockquote {
   </footer>
 
   <script src="/identidade-visual/js/paisagem.js" defer></script>
-  <script src="script.js?v=18" defer></script>
+  <script src="script.js?v=19" defer></script>
 <script src="/identidade-visual/js/objetos.js" defer></script>
 </body>
 </html>
