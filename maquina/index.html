@@ -255,7 +255,7 @@
         </div>
         <div class="quality" id="quality" hidden>
           <h3><b>2</b>Padrão de qualidade do HTML</h3>
-          <p>Quando o jogo aparecer no Canvas, mande esta segunda mensagem na mesma conversa. O Gemini revisa o código para ele funcionar bem no celular e no projetor, sem internet e sem dado de aluno.</p>
+          <p>Quando o jogo aparecer no Canvas, mande esta segunda mensagem na mesma conversa. O Gemini revisa o código para ele funcionar bem no celular e no projetor, sem internet e sem dado de aluno. Se ele recusar, toque em Refazer.</p>
           <details>
             <summary>Ver o padrão</summary>
             <ol id="quality-list"></ol>
@@ -303,7 +303,7 @@
 
     <section class="how">
       <h2 class="loud">Como a máquina <span class="yellow">pensa</span></h2>
-      <p>Um bom prompt tem quatro peças. É o mesmo método da Oficina de Prompts, e a máquina já escreve do jeito que deu certo nos testes com o Gemini.</p>
+      <p>Um bom prompt tem quatro peças. É o mesmo método da Oficina de Prompts, e a máquina já escreve do jeito que deu certo nos testes com o Gemini: com o objetivo no topo, os erros comuns da turma e um pedido para ele conferir tudo antes de entregar.</p>
       <div class="how__grid">
         <article class="how__card how__card--papel"><h3><b>P</b>Papel</h3><p>Quem o Gemini deve ser. Com a matéria e o ano, ele fala do jeito certo para a turma.</p></article>
         <article class="how__card how__card--tarefa"><h3><b>T</b>Tarefa</h3><p>O que ele deve fazer, com um verbo claro e um tema concreto.</p></article>
@@ -381,66 +381,89 @@
       biologia: ['a pressão alta', 'a alimentação no dia a dia', 'a vacinação de adultos'],
       sociologia: ['trabalho e tecnologia', 'os direitos trabalhistas', 'desigualdade social'],
     };
+    // Fase 1 da spec das respostas mais profundas (equipe/notas/spec-profundidade-maquina.md). Cada tipo tem:
+    //   papel     o saber de quem ensina, que entra no Papel ("professor(a) experiente ..., <papel>")
+    //   objetivo  false quando a Tarefa não pede o objetivo (adaptar e rubrica já têm o deles)
+    //   erros     false quando o Contexto não pede os erros comuns
+    //   formato   a forma e os critérios de qualidade, terminando com o que o Gemini confere antes de entregar.
+    // A Fase 0 mostrou que o problema maior era a correção (bicho inventado, rima errada, gabarito faltando),
+    // por isso todo formato termina com "Antes de entregar, confira ...".
     const kinds = {
       historia: {
         name: 'História',
+        papel: 'que escreve histórias que ensinam e fazem pensar',
         tarefa: (theme) => `Escreva uma história curta sobre ${theme}.`,
-        formato: 'Use até 6 parágrafos curtos, nomes brasileiros e, no fim, 3 perguntas para conversar com a turma.',
-        tip: 'Se o Gemini desenhar com letras e símbolos, peça de novo: "descreva as imagens entre parênteses".',
+        formato: 'Use até 6 parágrafos curtos, nomes brasileiros e um problema que o personagem resolve usando o que a turma vai aprender. No fim, 3 perguntas para conversar com a turma: uma sobre o que aconteceu, uma para pensar por quê e uma de opinião. Use só animais, plantas, lugares e fatos que existem de verdade, e descreva as imagens entre parênteses. Antes de entregar, confira se a história ensina o objetivo e se nada foi inventado.',
+        tip: 'Confira os nomes de bichos e plantas: o modelo rápido às vezes inventa um. Se ele desenhar com letras e símbolos, peça "descreva as imagens entre parênteses".',
       },
       quiz: {
         name: 'Quiz',
+        papel: 'que conhece os erros mais comuns da turma e faz perguntas que fazem pensar',
         tarefa: (theme) => `Crie um quiz de 8 perguntas sobre ${theme}.`,
-        formato: 'Use múltipla escolha com 3 alternativas, sem usar o teste interativo, e explique o gabarito no fim.',
-        tip: 'O Gemini às vezes abre um teste interativo no lugar do texto. O prompt já pede para não abrir.',
+        formato: 'Use múltipla escolha com 3 alternativas, sem usar o teste interativo: 2 perguntas para lembrar, 4 para aplicar numa situação do dia a dia e 2 para explicar o raciocínio. As alternativas erradas devem vir de erros comuns de verdade, e a letra da resposta certa muda de uma pergunta para a outra. No gabarito, diga por que a certa está certa e que erro leva a cada errada. Escreva frações e contas como texto, como 1/2 e 3 × 4. Antes de entregar, confira cada conta e se cada pergunta tem uma só resposta certa.',
+        tip: 'O prompt pede perguntas de lembrar, de aplicar e de explicar, e alternativas que vêm de erros de verdade. Confira as contas antes de aplicar.',
       },
       jogo: {
         name: 'Jogo',
-        tarefa: (theme) => `Crie um jogo em HTML sobre ${theme} para jogar no navegador.`,
-        formato: 'Faça tudo num único arquivo HTML, com o CSS e o JavaScript dentro dele e sem nada de fora, que funcione no celular e no computador. Quero botões grandes, 3 fases, som no acerto e estrelas no final.',
-        formatoAdulto: 'Faça tudo num único arquivo HTML, com o CSS e o JavaScript dentro dele e sem nada de fora, que funcione no celular e no computador. Quero botões grandes, visual adulto e sem bichinhos, 3 fases, som no acerto e a pontuação no final.',
-        tip: 'Ligue o Canvas em + > Mais ferramentas > Canvas. Se ele recusar o jogo, mande primeiro só a Tarefa e depois o resto. Quando o jogo aparecer, mande o padrão de qualidade. Depois ganhe um link e um QR Code em gamificapampa.github.io/publicador.',
+        papel: 'que cria jogos educativos para o navegador',
+        objetivo: false,
+        tarefa: (theme) => `Crie um jogo em HTML sobre ${theme} para jogar no navegador, em que cada fase treine uma parte do tema, da mais fácil à mais difícil.`,
+        formato: 'Faça tudo num único arquivo HTML, com o CSS e o JavaScript dentro dele e sem nada de fora, que funcione no celular e no computador. Quero botões grandes, 3 fases, som no acerto, estrelas no final e, no erro, uma frase que explica o conceito.',
+        formatoAdulto: 'Faça tudo num único arquivo HTML, com o CSS e o JavaScript dentro dele e sem nada de fora, que funcione no celular e no computador. Quero botões grandes, visual adulto e sem bichinhos, 3 fases, som no acerto, a pontuação no final e, no erro, uma frase que explica o conceito.',
+        tip: 'Ligue o Canvas em + > Mais ferramentas > Canvas. Se ele recusar o jogo, toque em Refazer ou mande primeiro só a Tarefa. Quando o jogo aparecer, mande o padrão de qualidade. Depois ganhe um link e um QR Code em gamificapampa.github.io/publicador.',
       },
       atividade: {
         name: 'Atividade para imprimir',
+        papel: 'que cria atividades impressas claras, do fácil ao difícil',
         tarefa: (theme) => `Crie uma atividade para imprimir sobre ${theme}.`,
-        formato: 'Monte uma folha A4 com 5 exercícios, do fácil ao difícil, e o gabarito separado no fim. Escreva fora de bloco de código e descreva as imagens entre parênteses.',
-        tip: 'O Gemini às vezes põe a folha inteira num bloco de código. O prompt já pede para escrever fora dele.',
+        formato: 'Monte uma folha A4 com um exemplo resolvido no início, 5 exercícios do fácil ao difícil (um deles com uma situação do dia a dia) e um desafio extra para quem terminar antes. O gabarito vem separado no fim. Escreva fora de bloco de código, descreva as imagens entre parênteses e escreva frações e contas como texto, como 1/2. Antes de entregar, confira se cada exercício tem uma só resposta certa, se a resposta não aparece no próprio enunciado e se o gabarito bate com ele.',
+        formatoInfantil: 'Monte uma folha A4 com 3 ou 4 atividades quase sem texto (ligar, circular, contar ou pintar), cada uma com uma instrução curta para eu ler em voz alta, e desenhos de contorno simples, descritos entre parênteses. No fim, uma dica para o professor. Escreva fora de bloco de código. Antes de entregar, confira se cada atividade tem uma só resposta certa.',
+        tip: 'O prompt pede um exemplo resolvido, um desafio extra e que o Gemini confira o gabarito. Mesmo assim, resolva a folha antes de imprimir.',
       },
       plano: {
         name: 'Plano de aula',
+        papel: 'que planeja aulas ativas, em que a turma faz e não só escuta',
         tarefa: (theme) => `Monte um plano de aula sobre ${theme}.`,
-        formato: 'Divida em objetivo, materiais, passo a passo com o tempo de cada parte e uma forma de avaliar, para uma aula de 50 minutos. Não cite códigos da BNCC.',
+        formato: 'Divida em objetivo, materiais, passo a passo com o tempo de cada parte e uma forma de avaliar com critério, para uma aula de 50 minutos. Comece com uma pergunta ou um problema, tenha uma parte em que a turma faz e termine com um fechamento. Diga que erro comum observar e como ajudar quem errar. Antes de entregar, confira se os tempos somam 50 minutos e se a avaliação mede o objetivo.',
         tip: 'O modelo rápido do Gemini às vezes inventa códigos da BNCC. Por isso o prompt pede para não citar.',
       },
       adaptar: {
         name: 'Adaptar um texto',
+        papel: 'que adapta textos sem perder o conteúdo',
+        objetivo: false,
+        erros: false,
         tarefa: (theme) => `Adapte o texto sobre ${theme} que vou colar no fim, sem mudar o conteúdo.`,
-        formato: 'Use frases curtas, instruções numeradas e, no fim, uma lista do que mudou.',
+        formato: 'Mantenha o conteúdo e o objetivo do texto. Use frases curtas, instruções numeradas e palavras do dia a dia, e explique entre parênteses as palavras difíceis que não dá para trocar. No fim, uma lista do que mudou e por quê e uma pergunta para conferir se a turma entendeu. Antes de entregar, confira se nenhuma informação do texto se perdeu.',
         tip: 'Cole o texto depois do prompt. Descreva o que o aluno precisa sem escrever o nome dele.',
       },
       enem: {
         name: 'Questões do Enem',
+        papel: 'que prepara estudantes para o Enem e conhece os erros mais comuns',
         tarefa: (theme) => `Crie 5 questões no estilo do Enem sobre ${theme}.`,
-        formato: 'Cada questão com um texto-base curto, um comando claro e 5 alternativas, de A a E, sem usar o teste interativo. No fim, o gabarito explicado, com o motivo de cada alternativa errada. Não diga que as questões são de provas reais.',
+        formato: 'Cada questão com um texto-base que seja preciso ler para responder, um comando claro e 5 alternativas, de A a E, sem usar o teste interativo. As alternativas erradas devem ser plausíveis e vir de erros comuns, e a letra da resposta certa muda de uma questão para a outra. Descreva gráficos, mapas e heredogramas em palavras, entre parênteses, sem desenhar com caracteres. No fim, o gabarito explicado, com o motivo de cada alternativa errada e a habilidade que cada questão mede, em palavras. Escreva fórmulas, genótipos e contas como texto simples, como 3/16 e Aa × Aa, sem fórmulas em LaTeX. Não diga que as questões são de provas reais. Antes de entregar, confira cada conta, cada dado e a grafia.',
         tip: 'Funciona melhor com o Ensino Médio. Confira as contas e os dados de cada questão antes de aplicar.',
       },
       encceja: {
         name: 'Questões do Encceja',
+        papel: 'que prepara jovens e adultos para o Encceja e conhece os erros mais comuns',
         tarefa: (theme) => `Crie 5 questões no estilo do Encceja sobre ${theme}.`,
-        formato: 'Cada questão com uma situação do trabalho ou da vida adulta, um comando claro e 4 alternativas, de A a D, sem usar o teste interativo. No fim, o gabarito explicado em linguagem simples. Não diga que as questões são de provas reais e não invente o ano de uma prova.',
+        formato: 'Cada questão com uma situação do trabalho ou da vida adulta, um comando claro e 4 alternativas, de A a D, sem usar o teste interativo. As alternativas erradas devem vir de erros comuns, e a letra da resposta certa muda de uma questão para a outra. No fim, o gabarito explicado em linguagem simples, com o erro que leva a cada alternativa errada. Escreva contas como texto, sem fórmulas. Não diga que as questões são de provas reais e não invente o ano de uma prova. Antes de entregar, confira cada conta.',
         tip: 'Pensado para a EJA. Confira as contas e os dados de cada questão antes de aplicar.',
       },
       sequencia: {
         name: 'Sequência didática',
+        papel: 'que planeja aulas ativas e encadeadas',
         tarefa: (theme) => `Crie uma sequência didática de 3 aulas sobre ${theme}, com o material de cada aula.`,
-        formato: 'Para cada aula: objetivo, passo a passo com o tempo de cada parte e o material. Aula 1: uma atividade para imprimir, escrita fora de bloco de código. Aula 2: um quiz de 8 perguntas com gabarito, sem usar o teste interativo. Aula 3: a ideia de um jogo em uma frase, para eu pedir depois no Canvas. Descreva as imagens entre parênteses e não cite códigos da BNCC.',
+        formato: 'Para cada aula: objetivo, passo a passo com o tempo de cada parte, o material e o que observar para saber se a turma aprendeu. As aulas avançam: a 1 apresenta, a 2 pratica e a 3 aplica. Aula 1: uma atividade para imprimir com gabarito, fora de bloco de código. Aula 2: um quiz de 8 perguntas com gabarito, sem usar o teste interativo, com perguntas de lembrar e de explicar. Aula 3: a ideia de um jogo em uma frase, para eu pedir depois no Canvas. Descreva as imagens entre parênteses. Antes de entregar, confira se cada pergunta tem uma só resposta certa.',
         tip: 'Para o jogo da aula 3, abra uma conversa nova com o Canvas ligado e mande primeiro só a ideia curta.',
       },
       // O tema é o trabalho que vai ser avaliado. Na Educação Infantil a rubrica vira registro de observação, sem nota,
       // e a devolutiva vai para a família; na EJA, o Contexto já pede linguagem adulta
       rubrica: {
         name: 'Rubrica e devolutiva',
+        papel: 'que avalia com critérios claros e devolutivas respeitosas',
+        objetivo: false,
+        erros: false,
         tarefa: (theme, infantil, adult) => infantil
           ? `Crie um registro de observação para acompanhar ${theme}, com uma devolutiva para as famílias.`
           : `Crie uma rubrica para avaliar ${theme}, com uma versão para ${adult ? 'o estudante' : 'a turma'} se autoavaliar e uma devolutiva modelo para cada nível.`,
@@ -467,7 +490,8 @@
       'Sem nada de fora: nenhuma fonte, imagem, biblioteca ou link externo. Desenhos em SVG ou CSS no próprio arquivo e o som feito com a Web Audio API, para o jogo funcionar sem internet.',
       'Tela: cabe no celular (360 px de largura) e no projetor, sem rolagem para o lado. Botões com pelo menos 48 px de altura e letra de pelo menos 18 px.',
       'Acessibilidade: use <button> em tudo que se clica, deixe jogar só com o teclado, use texto com bom contraste e mostre certo ou errado com cor, ícone e palavra, nunca só com a cor.',
-      'Jogo: uma tela de início com as instruções em até 3 frases, um botão Jogar de novo no fim e, no erro, uma frase que explica o conceito, não só "errou".',
+      'Jogo: uma tela de início com as instruções em até 3 frases, um botão Jogar de novo no fim e, no erro, uma frase que explica por que a resposta escolhida está errada, não só "errou".',
+      'Pensamento: pelo menos metade das perguntas pede para usar o tema numa situação, não só lembrar um nome, e as respostas erradas vêm de erros comuns.',
       infantil
         ? 'As crianças ainda não leem: cada instrução e cada pergunta tem um botão Ouvir, que lê o texto com a voz do aparelho em português (speechSynthesis com lang pt-BR), e as respostas são figuras grandes.'
         : leitura && `Leitura: frases curtas e um botão Ouvir em cada pergunta, que lê o texto com a voz do aparelho em português (speechSynthesis com lang pt-BR), para ${adult ? 'quem' : 'o aluno que'} tem dificuldade de ler.`,
@@ -476,7 +500,7 @@
       'Código: HTML, CSS e JavaScript organizados, com comentários curtos em português, sem erros no console e com animações leves, que param quando o aparelho pede menos movimento (prefers-reduced-motion).',
       'Conteúdo: confira cada resposta e cada conta e escreva tudo em português do Brasil, com acentos.',
     ].filter(Boolean);
-    const qualityText = (rules, inicio = 'Agora revise o jogo seguindo este padrão de qualidade, sem mudar a ideia nem o conteúdo:', fim = 'No fim, liste em poucas linhas o que você mudou.') => [
+    const qualityText = (rules, inicio = 'Agora revise o jogo seguindo este padrão de qualidade, sem mudar o tema:', fim = 'No fim, liste em poucas linhas o que você mudou.') => [
       inicio,
       ...rules.map((rule, index) => `${index + 1}. ${rule}`),
       fim,
@@ -518,18 +542,37 @@
       const kind = kinds[data.get('tipo')];
       const theme = String(data.get('tema') || '').trim().replace(/[.!?]+$/, '');
       const extras = data.getAll('extra');
-      let papel = '';
-      if (group) papel = group.papel || `Você é professor(a)${subject ? ` de ${subject.name}` : ''} ${group.year} e cria materiais para a sala de aula.`;
+      const infantil = turma === 'infantil';
       const adult = Boolean(group && group.adult);
+      // O Papel ganha o saber de quem ensina quando o tipo já foi escolhido
+      let papel = '';
+      if (group && kind) {
+        papel = infantil
+          ? `Você é professor(a) experiente da Educação Infantil, ${kind.papel}, para crianças pequenas.`
+          : `Você é professor(a) experiente${subject ? ` de ${subject.name}` : ''} ${group.year.replace(/,$/, '')}, ${kind.papel}.`;
+      } else if (group) {
+        papel = group.papel || `Você é professor(a)${subject ? ` de ${subject.name}` : ''} ${group.year} e cria materiais para a sala de aula.`;
+      }
       let contexto = group ? `É para ${group.age}.` : '';
       if (adult) contexto += adultContext;
       if (contexto && extras.includes('leitura')) contexto += adult ? ' Alguns estudantes têm dificuldade de leitura.' : ' Alguns alunos têm dificuldade de leitura.';
       if (contexto && extras.includes('local')) contexto += ' Use exemplos do dia a dia de Alegrete e do Pampa gaúcho.';
-      const infantil = turma === 'infantil';
+      // Os erros comuns entram como conteúdo, mesmo que o professor não saiba quais são
+      if (contexto && kind && kind.erros !== false) {
+        contexto += infantil ? ' Considere o que as crianças dessa idade costumam confundir sobre o tema.'
+          : adult ? ' Considere os erros mais comuns de quem estuda esse tema.'
+          : ' Considere os erros mais comuns dessa idade sobre o tema.';
+      }
       let formato = kind ? (infantil && kind.formatoInfantil) || (adult && kind.formatoAdulto) || kind.formato : '';
       if (formato && extras.includes('curto')) formato += ' Seja breve: a resposta deve caber numa página.';
+      if (formato && kind !== kinds.jogo && !formato.includes('BNCC')) formato += ' Não cite códigos da BNCC.';
       if (formato) formato += ' Responda em português do Brasil.';
-      const text = { papel, tarefa: kind && theme ? kind.tarefa(theme, infantil, adult) : '', contexto, formato };
+      // A Tarefa pede o objetivo no topo: o que a turma vai conseguir fazer depois
+      let tarefa = kind && theme ? kind.tarefa(theme, infantil, adult) : '';
+      if (tarefa && kind.objetivo !== false) {
+        tarefa += ` No topo, escreva numa frase o objetivo: o que ${infantil ? 'as crianças vão' : adult ? 'os estudantes vão' : 'a turma vai'} conseguir fazer depois.`;
+      }
+      const text = { papel, tarefa, contexto, formato };
       const label = [kind && kind.name, group && group.name, theme].filter(Boolean).join(' · ');
       return { text, kind, turma, subject, label, adult, theme, leitura: extras.includes('leitura') };
     };
@@ -559,7 +602,7 @@
     // Cheering when the four pieces are in place, the first time they are.
     const celebrate = () => {
       $('#bit').src = '/identidade-visual/mascote/bit-comemorando.svg';
-      bubble.textContent = 'Prompt pronto! Copie e cole no Gemini. Se a resposta não vier do seu jeito, peça ajustes na mesma conversa.';
+      bubble.textContent = 'Prompt pronto! Copie e cole no Gemini. Se ele recusar, toque em Refazer ou abra uma conversa nova. Se a resposta não vier do seu jeito, peça ajustes na mesma conversa.';
       replay(consoleBox, 'is-ready');
       if (!reducedMotion) replay($('#bit'), 'anima-saltar');
     };
