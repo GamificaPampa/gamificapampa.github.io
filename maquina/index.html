@@ -92,6 +92,11 @@
     .quality p { font-size: 15px; line-height: 1.4; }
     .quality details { width: 100%; }
     .quality summary { font-weight: 700; font-size: 15px; cursor: pointer; }
+    .mais { display: grid; gap: 8px; width: 100%; margin: 0; padding: 0; list-style: none; }
+    .mais li { display: flex; flex-wrap: wrap; align-items: flex-start; gap: 8px 10px; padding: 10px 12px; background: rgb(255 255 255 / .1); border-radius: 14px; }
+    .mais details { flex: 1 1 180px; min-width: 0; }
+    .mais summary { font-weight: 700; font-size: 15px; cursor: pointer; }
+    .mais details p { margin-top: 8px; padding: 10px 12px; background: var(--white); color: var(--ink); border-radius: 12px; font-size: 15px; line-height: 1.4; }
     .quality ol { display: grid; gap: 6px; margin-top: 8px; padding: 12px 12px 12px 34px; background: var(--white); color: var(--ink); border-radius: 14px; font-size: 15px; line-height: 1.4; }
 
     /* Testar aqui: a quick answer from the Gemini API, through the team's Worker. Off while TESTAR_AQUI.url is empty */
@@ -261,6 +266,11 @@
             <ol id="quality-list"></ol>
           </details>
           <button class="btn btn--small" type="button" id="quality-copy"><svg width="18" height="18" aria-hidden="true"><use href="#i-copy"/></svg>Copiar o padrão</button>
+        </div>
+        <div class="quality" id="mais" hidden>
+          <h3><b>2</b>Peça mais</h3>
+          <p>Depois da primeira resposta, mande uma destas na mesma conversa. A primeira confere e corrige o material; as outras fazem versões novas.</p>
+          <ul class="mais" id="mais-lista"></ul>
         </div>
       </section>
     </div>
@@ -508,6 +518,38 @@
     let qualityCurrent = '';
     let qualityRulesNow = [];
 
+    // Peça mais (Fase 2 da spec): mensagens para mandar na mesma conversa depois da primeira resposta.
+    // A revisão diz o que conferir, porque na Fase 0 "revise como especialista" sozinho não melhorou a nota.
+    const comAlternativas = ['quiz', 'enem', 'encceja', 'sequencia'];
+    const pedidosMais = {
+      revisar: (tipo) => ({ nome: 'Revisar como especialista', texto: `Agora revise o material como um(a) coordenador(a) pedagógico(a) exigente. Confira o objetivo, os erros comuns, cada conta e cada fato${comAlternativas.includes(tipo) ? ', e se a resposta certa muda de letra entre as questões' : ''}. Aponte os 3 pontos mais fracos e entregue a versão corrigida inteira, sem citar códigos da BNCC.` }),
+      desafio: { nome: 'Mais desafio', texto: 'Faça uma versão mais desafiadora do mesmo material, com mais perguntas que peçam para explicar, comparar ou resolver um problema novo. Mantenha o mesmo formato.' },
+      dificuldade: { nome: 'Para quem tem dificuldade', texto: 'Faça uma versão para quem ainda tem dificuldade com o tema, com passos menores, um exemplo resolvido antes de cada parte e frases curtas. Mantenha o mesmo objetivo.' },
+      lugar: { nome: 'Ligar ao lugar', texto: 'Troque os exemplos por situações de Alegrete e do Pampa gaúcho, sem inventar lugares nem dados.' },
+      embaralhar: { nome: 'Embaralhar as alternativas', texto: 'Embaralhe as alternativas para que a resposta certa mude de letra entre as questões e atualize o gabarito.' },
+      abertas: { nome: 'Perguntas abertas', texto: 'Agora crie 3 perguntas abertas sobre o mesmo objetivo, com o que esperar de uma boa resposta.' },
+      material: { nome: 'Material da atividade', texto: 'Agora crie o material da atividade principal, pronto para imprimir, escrito fora de bloco de código.' },
+      atividadeHistoria: { nome: 'Atividade da história', texto: 'Agora crie uma atividade para imprimir com base nessa história, para a mesma turma, escrita fora de bloco de código.' },
+      versaoB: { nome: 'Versão B da folha', texto: 'Faça uma versão B da folha, com exercícios parecidos e números ou palavras diferentes, e o gabarito dela.' },
+      resumo: { nome: 'Resumo em tópicos', texto: 'Agora transforme o texto adaptado num resumo em tópicos para o caderno, com até 6 itens.' },
+      lista: { nome: 'Lista para conferir', texto: 'Agora transforme a rubrica numa lista curta para a turma conferir o trabalho antes de entregar, escrita na primeira pessoa.' },
+    };
+    // O jogo não entra: a segunda mensagem dele é o padrão de qualidade
+    const maisPorTipo = {
+      historia: ['atividadeHistoria', 'desafio', 'dificuldade', 'lugar'],
+      quiz: ['embaralhar', 'abertas', 'desafio', 'dificuldade'],
+      atividade: ['versaoB', 'desafio', 'dificuldade', 'lugar'],
+      plano: ['material', 'dificuldade', 'lugar'],
+      adaptar: ['resumo', 'lugar'],
+      enem: ['embaralhar', 'abertas', 'desafio'],
+      encceja: ['embaralhar', 'abertas', 'dificuldade'],
+      sequencia: ['material', 'dificuldade', 'lugar'],
+      rubrica: ['lista'],
+    };
+    const pedidosPara = (tipo, local) => [pedidosMais.revisar(tipo), ...(maisPorTipo[tipo] || [])
+      .filter((id) => !(id === 'lugar' && local)).map((id) => pedidosMais[id])];
+    let maisAgora = '';
+
     // Testar aqui: manda o prompt pronto para a API do Gemini, pelo Worker da equipe (equipe/ferramentas/testar-aqui),
     // que guarda a chave. Enquanto o endereço do Worker estiver vazio, o botão nem aparece.
     const TESTAR_AQUI = { url: '' };
@@ -574,7 +616,7 @@
       }
       const text = { papel, tarefa, contexto, formato };
       const label = [kind && kind.name, group && group.name, theme].filter(Boolean).join(' · ');
-      return { text, kind, turma, subject, label, adult, theme, leitura: extras.includes('leitura') };
+      return { text, kind, turma, subject, label, adult, theme, leitura: extras.includes('leitura'), local: extras.includes('local') };
     };
 
     // Ideas for the theme follow the chosen subject, and in the EJA they come from adult life.
@@ -612,7 +654,7 @@
 
     let lastIdeas;
     const update = () => {
-      const { text, kind, turma, subject, label, adult, theme, leitura } = read();
+      const { text, kind, turma, subject, label, adult, theme, leitura, local } = read();
       // O padrão de qualidade aparece só no jogo, que é o pedido que vira HTML
       const isGame = kind === kinds.jogo;
       $('#quality').hidden = !isGame;
@@ -639,6 +681,25 @@
       const wasReady = Boolean(current.text);
       current = done === 4 ? { text: pieces.map((piece) => text[piece.id]).join(' '), label, jogo: isGame, theme } : { text: '', label: '' };
       copyButton.disabled = done < 4;
+      // Peça mais aparece com o prompt pronto, para todo tipo menos o jogo
+      const tipo = kind ? Object.keys(kinds).find((id) => kinds[id] === kind) : '';
+      const mostrarMais = done === 4 && tipo && tipo !== 'jogo';
+      $('#mais').hidden = !mostrarMais;
+      const chaveMais = mostrarMais ? `${tipo}|${local}` : '';
+      if (mostrarMais && chaveMais !== maisAgora) {
+        $('#mais-lista').replaceChildren(...pedidosPara(tipo, local).map((pedido) => {
+          const item = document.createElement('li');
+          const detalhes = document.createElement('details');
+          detalhes.append(Object.assign(document.createElement('summary'), { textContent: pedido.nome }), Object.assign(document.createElement('p'), { textContent: pedido.texto }));
+          const botao = Object.assign(document.createElement('button'), { type: 'button', className: 'btn btn--small' });
+          botao.setAttribute('aria-label', `Copiar: ${pedido.nome}`);
+          botao.append('Copiar');
+          botao.addEventListener('click', async () => { flash(botao, await copyText(pedido.texto) ? 'Copiado!' : 'Não copiou'); });
+          item.append(detalhes, botao);
+          return item;
+        }));
+      }
+      maisAgora = chaveMais;
       $('#testar').hidden = !TESTAR_AQUI.url;
       $('#testar').disabled = done < 4 || testando;
       $('#count').textContent = done === 4 ? 'Prompt pronto! As 4 peças estão no lugar.' : `${done} de 4 peças prontas`;
