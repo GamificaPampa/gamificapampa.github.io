@@ -60,6 +60,15 @@
     .ideas button:hover { background: var(--white); border-style: solid; }
     .privacy { display: flex; align-items: flex-start; gap: 10px; width: 100%; padding: 12px 14px; background: #ffe3ec; border: 3px solid var(--pink); border-radius: 16px; font-weight: 600; font-size: 15px; }
     .privacy svg { flex: none; }
+    /* Step 6, optional and closed: the details that make the answer fit the class */
+    .completo { min-width: 0; }
+    .completo summary { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 10px; font-weight: 700; font-size: 20px; cursor: pointer; }
+    .completo summary::-webkit-details-marker { display: none; }
+    .completo summary::after { content: "+"; display: grid; place-items: center; width: 30px; height: 30px; margin-left: auto; border: 3px solid var(--ink); border-radius: 50%; font-size: 20px; line-height: 1; }
+    .completo[open] summary::after { content: "−"; }
+    .completo__corpo { display: grid; gap: 20px; margin-top: 16px; padding-left: 14px; border-left: 4px dashed #c6b3f0; }
+    .completo .step legend, .completo .step__title { font-size: 17px; }
+    .completo textarea.theme { resize: vertical; line-height: 1.4; }
 
     /* The console, dark like the screen on the hub, with the four lights and the prompt on paper */
     .console { display: grid; gap: 16px; padding: 20px; background: var(--ink); color: var(--white); border: var(--line); border-radius: var(--radius); box-shadow: var(--drop); }
@@ -242,6 +251,45 @@
           <label class="chip"><input type="checkbox" name="extra" value="leitura"><span>Alunos com dificuldade de leitura</span></label>
           <label class="chip"><input type="checkbox" name="extra" value="curto"><span>Resposta curta</span></label>
         </fieldset>
+
+        <details class="completo" id="completo">
+          <summary><span class="step__num" style="background: #e3d4ff">6</span>Deixar mais completo <span class="step__note">Se quiser</span></summary>
+          <div class="completo__corpo">
+            <div class="step">
+              <label class="step__title" for="objetivo">O que a turma deve conseguir fazer no fim?</label>
+              <input class="theme" id="objetivo" name="objetivo" maxlength="120" autocomplete="off" placeholder="Por exemplo: comparar frações com o mesmo denominador">
+              <div class="ideas" id="verbos"><span>Comece com:</span><button type="button">identificar</button><button type="button">comparar</button><button type="button">explicar</button><button type="button">resolver</button><button type="button">criar</button></div>
+            </div>
+            <div class="step">
+              <label class="step__title" for="sabe">O que a turma já sabe e onde costuma errar?</label>
+              <textarea class="theme" id="sabe" name="sabe" maxlength="240" rows="2" placeholder="Por exemplo: já dividem em partes iguais, mas acham que 1/4 é maior que 1/3"></textarea>
+              <p class="privacy"><svg width="24" height="24" aria-hidden="true"><use href="#i-lock"/></svg>Descreva o grupo, nunca uma pessoa. Nada de nome, laudo ou dado de aluno.</p>
+            </div>
+            <fieldset class="step">
+              <legend>Como vai usar?</legend>
+              <label class="chip"><input type="radio" name="uso" value="projetado"><span>Projetado no quadro</span></label>
+              <label class="chip"><input type="radio" name="uso" value="impresso"><span>Impresso</span></label>
+              <label class="chip"><input type="radio" name="uso" value="celular"><span>No celular, em duplas</span></label>
+              <label class="chip"><input type="radio" name="uso" value="grupos"><span>Em grupos</span></label>
+            </fieldset>
+            <fieldset class="step" id="tempo-step">
+              <legend>Quanto tempo?</legend>
+              <label class="chip"><input type="radio" name="tempo" value="15"><span>15 minutos</span></label>
+              <label class="chip"><input type="radio" name="tempo" value="50"><span>1 aula</span></label>
+              <label class="chip"><input type="radio" name="tempo" value="100"><span>2 aulas</span></label>
+            </fieldset>
+            <fieldset class="step" id="nivel-step">
+              <legend>Profundidade</legend>
+              <label class="chip"><input type="radio" name="nivel" value="comecar"><span>Para começar</span></label>
+              <label class="chip"><input type="radio" name="nivel" value="praticar"><span>Para praticar</span></label>
+              <label class="chip"><input type="radio" name="nivel" value="desafiar"><span>Para desafiar</span></label>
+            </fieldset>
+            <fieldset class="step" id="perguntar-step">
+              <legend>Conversa</legend>
+              <label class="chip"><input type="checkbox" name="perguntar" value="sim"><span>O Gemini me pergunta antes de criar</span></label>
+            </fieldset>
+          </div>
+        </details>
       </form>
 
       <section class="console" id="console" aria-labelledby="console-name">
@@ -605,14 +653,43 @@
           : adult ? ' Considere os erros mais comuns de quem estuda esse tema.'
           : ' Considere os erros mais comuns dessa idade sobre o tema.';
       }
+      // Passo 6 (Fase 3): o que o professor contou sobre a turma, o uso, o tempo e a profundidade
+      const limpo = (campo) => String(data.get(campo) || '').trim().replace(/\s+/g, ' ').replace(/[.!?;]+$/, '');
+      const objetivo = limpo('objetivo');
+      const sabe = limpo('sabe');
+      const tipoId = kind ? Object.keys(kinds).find((id) => kinds[id] === kind) : '';
+      const tempo = data.get('tempo');
+      const usos = { projetado: 'projetado no quadro, para a turma toda', impresso: `impresso, uma folha por ${adult ? 'estudante' : 'aluno'}`, celular: 'no celular, em duplas', grupos: 'em grupos de 4' };
+      const tempos = { 15: 'em 15 minutos', 50: 'numa aula de 50 minutos', 100: 'em duas aulas de 50 minutos' };
+      const usoFrase = usos[data.get('uso')] || '';
+      // No plano, o tempo troca os 50 minutos do Formato; na sequência, as 3 aulas já dizem o tempo
+      const tempoNoContexto = tempo && !['plano', 'sequencia', 'rubrica'].includes(tipoId) ? tempos[tempo] : '';
+      if (contexto && sabe) contexto += ` Sobre a turma: ${sabe}.`;
+      if (contexto && (usoFrase || tempoNoContexto)) contexto += ` O material vai ser usado ${[usoFrase, tempoNoContexto].filter(Boolean).join(', ')}.`;
       let formato = kind ? (infantil && kind.formatoInfantil) || (adult && kind.formatoAdulto) || kind.formato : '';
+      if (formato && tipoId === 'plano' && tempo) {
+        const tempoPlano = { 15: 'uma atividade de 15 minutos', 50: 'uma aula de 50 minutos', 100: 'duas aulas de 50 minutos' }[tempo];
+        formato = formato.replace('uma aula de 50 minutos', tempoPlano).replace('somam 50 minutos', `somam ${tempo} minutos`);
+      }
+      const nivel = data.get('nivel');
+      const nivelFrase = { comecar: ' A turma está começando no tema: prefira perguntas de lembrar e de aplicar, com exemplos.', desafiar: ' A turma já domina o básico: inclua mais perguntas de explicar, comparar e resolver problemas novos.' }[nivel];
+      if (formato && nivelFrase && !['adaptar', 'rubrica', 'jogo'].includes(tipoId)) {
+        // A profundidade entra antes da conferência final, que fecha o Formato
+        formato = formato.includes(' Antes de entregar,') ? formato.replace(' Antes de entregar,', `${nivelFrase} Antes de entregar,`) : formato + nivelFrase;
+      }
       if (formato && extras.includes('curto')) formato += ' Seja breve: a resposta deve caber numa página.';
       if (formato && kind !== kinds.jogo && !formato.includes('BNCC')) formato += ' Não cite códigos da BNCC.';
       if (formato) formato += ' Responda em português do Brasil.';
       // A Tarefa pede o objetivo no topo: o que a turma vai conseguir fazer depois
       let tarefa = kind && theme ? kind.tarefa(theme, infantil, adult) : '';
       if (tarefa && kind.objetivo !== false) {
-        tarefa += ` No topo, escreva numa frase o objetivo: o que ${infantil ? 'as crianças vão' : adult ? 'os estudantes vão' : 'a turma vai'} conseguir fazer depois.`;
+        tarefa += objetivo
+          ? ` O objetivo é que ${infantil ? 'as crianças consigam' : adult ? 'os estudantes consigam' : 'a turma consiga'} ${objetivo}; escreva esse objetivo no topo.`
+          : ` No topo, escreva numa frase o objetivo: o que ${infantil ? 'as crianças vão' : adult ? 'os estudantes vão' : 'a turma vai'} conseguir fazer depois.`;
+      }
+      // "O Gemini me pergunta antes" (Fase 3): na Fase 0 ele perguntou e esperou nas 3 vezes. Fica fora do jogo, por causa do Canvas
+      if (formato && tipoId !== 'jogo' && data.get('perguntar')) {
+        formato += ' Antes de criar, faça até 3 perguntas sobre a minha turma, o objetivo e onde a turma costuma errar, e espere as minhas respostas.';
       }
       const text = { papel, tarefa, contexto, formato };
       const label = [kind && kind.name, group && group.name, theme].filter(Boolean).join(' · ');
@@ -700,6 +777,10 @@
         }));
       }
       maisAgora = chaveMais;
+      // No passo 6, o que não muda nada para o tipo escolhido fica apagado
+      $('#perguntar-step').disabled = tipo === 'jogo';
+      $('#nivel-step').disabled = ['adaptar', 'rubrica', 'jogo'].includes(tipo);
+      $('#tempo-step').disabled = ['sequencia', 'rubrica'].includes(tipo);
       $('#testar').hidden = !TESTAR_AQUI.url;
       $('#testar').disabled = done < 4 || testando;
       $('#count').textContent = done === 4 ? 'Prompt pronto! As 4 peças estão no lugar.' : `${done} de 4 peças prontas`;
@@ -761,6 +842,15 @@
       saveRecent([current, ...loadRecent().filter((item) => item.text !== current.text)].slice(0, 5));
       renderRecent();
     });
+    // Os verbos começam o objetivo; o professor completa
+    for (const verbo of document.querySelectorAll('#verbos button')) {
+      verbo.addEventListener('click', () => {
+        const campo = form.elements.objetivo;
+        campo.value = `${verbo.textContent} `;
+        campo.focus();
+        update();
+      });
+    }
     $('#quality-copy').addEventListener('click', async () => {
       const button = $('#quality-copy');
       flash(button, await copyText(qualityCurrent) ? 'Padrão copiado!' : 'Não deu para copiar');
@@ -836,6 +926,8 @@
     $('#recent-clear').addEventListener('click', () => { saveRecent([]); renderRecent(); });
     // O site lembra a última turma, matéria, tipo, tema e ajustes neste aparelho; Começar de novo esquece
     Lembrar.campos('maquina', form.elements);
+    // Quem já preencheu o passo 6 numa visita anterior encontra ele aberto
+    if (['objetivo', 'sabe'].some((nome) => form.elements[nome].value.trim()) || ['uso', 'tempo', 'nivel', 'perguntar'].some((nome) => new FormData(form).get(nome))) $('#completo').open = true;
     // No celular, o console com o Copiar fica depois das perguntas: uma barra no pé da tela traz o Copiar e as peças prontas
     Copiar.barraFixa({ observar: document.querySelector('#console .actions'), copiar: copyButton, contador: $('#count') });
     $('#reset').addEventListener('click', () => { form.reset(); Lembrar.guardar('maquina', {}); update(); form.querySelector('input').focus(); });
