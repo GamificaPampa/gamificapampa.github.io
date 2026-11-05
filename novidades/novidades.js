@@ -17,6 +17,10 @@
 //     links: [['Jogar', '/recursos-pedagogicos/criancas/pasta-do-jogo/', 'jogar']] },
 // Sem dado de aluno, sem detalhe técnico: só o que muda para o professor.
 window.NOVIDADES = [
+  { data: '2026-11-05', titulo: 'Peça mais e Deixar mais completo', texto: 'Com o prompt pronto, a Máquina dá mensagens para pedir mais ao Gemini: revisar como especialista, mais desafio, versão para quem tem dificuldade e outras. No passo 6, você conta o objetivo, o que a turma já sabe e quanto tempo tem.',
+    icone: 'livros', cor: 'purple', links: [
+      ['Máquina de prompts', '/maquina/'],
+    ] },
   { data: '2026-11-05', titulo: 'Prompts mais completos na Máquina', texto: 'A Máquina de prompts agora pede ao Gemini o objetivo da aula, os erros mais comuns da turma e uma conferência antes de entregar. Quizzes, planos e histórias saem mais pensados e prontos para usar.',
     icone: 'estrela', cor: 'blue', links: [
       ['Máquina de prompts', '/maquina/'],
