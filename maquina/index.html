@@ -108,7 +108,7 @@
     .mais details p { margin-top: 8px; padding: 10px 12px; background: var(--white); color: var(--ink); border-radius: 12px; font-size: 15px; line-height: 1.4; }
     .quality ol { display: grid; gap: 6px; margin-top: 8px; padding: 12px 12px 12px 34px; background: var(--white); color: var(--ink); border-radius: 14px; font-size: 15px; line-height: 1.4; }
 
-    /* Testar aqui: a quick answer from the Gemini API, through the team's Worker. Off while TESTAR_AQUI.url is empty */
+    /* Criar aqui: a resposta da IA na própria página, pelo Worker da equipe. Desligado enquanto CRIAR_AQUI.url estiver vazio */
     .teste { display: grid; gap: 16px; margin-bottom: 56px; }
     .teste__top { display: flex; align-items: center; gap: 16px; }
     .teste__top img { flex: none; width: clamp(64px, 8vw, 84px); height: auto; }
@@ -117,6 +117,13 @@
     .teste__aviso { display: flex; align-items: flex-start; gap: 10px; padding: 12px 14px; background: #ffe3ec; border: 3px solid var(--pink); border-radius: 16px; font-weight: 600; font-size: 15px; }
     .teste__aviso svg { flex: none; }
     .teste__texto { max-height: 520px; overflow: auto; padding: 16px; background: var(--white); border: 3px solid var(--ink); border-radius: 16px; font-size: 16px; line-height: 1.5; white-space: pre-wrap; overflow-wrap: anywhere; }
+    .teste__texto b.titulo { display: block; margin-top: 6px; font-size: 18px; }
+    .ajuste { display: grid; gap: 10px; padding: 14px; background: var(--sky2, #e8f4ff); border: 3px solid var(--ink); border-radius: 18px; }
+    .ajuste h3 { font-size: 20px; }
+    .ajuste h3 small { color: var(--soft); font-size: 15px; font-weight: 600; }
+    .ajuste__linha { display: flex; flex-wrap: wrap; gap: 10px; align-items: flex-end; }
+    .ajuste__linha textarea { flex: 1 1 260px; min-height: 64px; padding: 10px 14px; border: 3px solid var(--ink); border-radius: 14px; font: 600 16px var(--font); resize: vertical; }
+    .ajuste .ideas button:disabled, .ajuste__linha button:disabled { opacity: .5; cursor: not-allowed; }
     .teste__jogo { width: 100%; height: min(640px, 80vh); background: var(--white); border: 4px solid var(--ink); border-radius: 16px; }
 
     /* The Bit Gem: the same help as a conversation inside Gemini */
@@ -301,9 +308,9 @@
         <div class="prompt" id="prompt"></div>
         <p class="tip"><img src="/identidade-visual/mascote/bit-pensando.svg" width="38" height="38" alt=""><span id="tip">Comece pela turma. O Papel e o Contexto saem dela.</span></p>
         <div class="actions">
+          <button class="btn btn--jogar btn--small" type="button" id="criar" hidden disabled><svg width="18" height="18" aria-hidden="true"><use href="#i-testar"/></svg>Criar aqui</button>
           <button class="btn btn--jogar btn--small" type="button" id="copy" disabled><svg width="18" height="18" aria-hidden="true"><use href="#i-copy"/></svg>Copiar o prompt</button>
           <a class="btn btn--small" href="https://gemini.google.com/app" target="_blank" rel="noopener">Abrir o Gemini</a>
-          <button class="btn btn--small" type="button" id="testar" hidden disabled><svg width="18" height="18" aria-hidden="true"><use href="#i-testar"/></svg>Testar aqui</button>
           <button class="btn btn--small" type="button" id="reset"><svg width="18" height="18" aria-hidden="true"><use href="#i-reset"/></svg>Começar de novo</button>
         </div>
         <div class="quality" id="quality" hidden>
@@ -327,19 +334,28 @@
       <div class="teste__top">
         <img id="teste-bit" src="/identidade-visual/mascote/bit-pensando.svg" width="84" height="84" alt="">
         <div>
-          <h2 class="loud" id="teste-titulo">Teste <span class="yellow">rápido</span></h2>
+          <h2 class="loud" id="teste-titulo">Criado <span class="yellow">aqui</span></h2>
           <p class="teste__status" id="teste-status" role="status"></p>
         </div>
       </div>
-      <p class="teste__aviso"><svg width="24" height="24" aria-hidden="true"><use href="#i-lock"/></svg>O prompt vai para a API do Gemini, com o modelo rápido. É só para ver se ele funciona: para usar na aula, cole o prompt no Gemini, onde você continua a conversa e guarda o que fez.</p>
+      <p class="teste__aviso"><svg width="24" height="24" aria-hidden="true"><use href="#i-lock"/></svg>O pedido vai para a IA (Gemini ou ChatGPT) pelo servidor da equipe. Nunca escreva nome ou dado de aluno, nem nos ajustes, e confira tudo antes de usar com a turma.</p>
       <iframe class="teste__jogo" id="teste-jogo" title="Prévia do jogo" sandbox="allow-scripts" hidden></iframe>
       <div class="teste__texto" id="teste-texto" hidden></div>
       <div class="actions">
         <button class="btn btn--baixar btn--small" type="button" id="teste-baixar" hidden><svg width="18" height="18" aria-hidden="true"><use href="#i-baixar"/></svg>Baixar o jogo</button>
-        <a class="btn btn--compartilhar btn--small" id="teste-publicar" href="/publicador/" hidden><svg width="18" height="18" aria-hidden="true"><use href="#i-enviar"/></svg>Publicar meu jogo</a>
+        <button class="btn btn--compartilhar btn--small" type="button" id="teste-publicar" hidden><svg width="18" height="18" aria-hidden="true"><use href="#i-enviar"/></svg>Publicar meu jogo</button>
         <button class="btn btn--small" type="button" id="teste-copiar" hidden><svg width="18" height="18" aria-hidden="true"><use href="#i-copy"/></svg>Copiar a resposta</button>
         <a class="btn btn--small" href="https://gemini.google.com/app" target="_blank" rel="noopener">Abrir o Gemini</a>
-        <button class="btn btn--small" type="button" id="teste-fechar">Fechar o teste</button>
+        <button class="btn btn--small" type="button" id="teste-fechar">Fechar</button>
+      </div>
+      <div class="ajuste" id="ajuste" hidden>
+        <h3>Pedir ajuste <small id="ajuste-conta"></small></h3>
+        <div class="ideas" id="ajuste-ideias"></div>
+        <div class="ajuste__linha">
+          <textarea id="ajuste-texto" maxlength="400" aria-label="O que mudar" placeholder="Por exemplo: deixe os botões maiores e acrescente uma fase"></textarea>
+          <button class="btn btn--jogar btn--small" type="button" id="ajuste-enviar">Pedir ajuste</button>
+        </div>
+        <p class="privacy"><svg width="24" height="24" aria-hidden="true"><use href="#i-lock"/></svg>Descreva a turma, nunca uma pessoa.</p>
       </div>
     </section>
 
@@ -598,10 +614,23 @@
       .filter((id) => !(id === 'lugar' && local)).map((id) => pedidosMais[id])];
     let maisAgora = '';
 
-    // Testar aqui: manda o prompt pronto para a API do Gemini, pelo Worker da equipe (equipe/ferramentas/testar-aqui),
-    // que guarda a chave. Enquanto o endereço do Worker estiver vazio, o botão nem aparece.
-    const TESTAR_AQUI = { url: '' };
-    let testando = false;
+    // Criar aqui (item 2.4 da spec da retrospectiva de 06/11): manda o pedido pronto para a IA, pelo Worker da equipe
+    // (equipe/ferramentas/testar-aqui), que guarda as chaves do Gemini e da OpenAI. A resposta aparece aqui mesmo, e o
+    // professor pede ajustes na mesma conversa. Enquanto o endereço do Worker estiver vazio, o botão nem aparece.
+    const CRIAR_AQUI = { url: '' };
+    const MAX_AJUSTES = 5;
+    let criando = false;
+    // O código da oficina chega pelo QR do slide (?codigo=...), fica guardado neste aparelho e sai do endereço
+    const codigoOficina = (() => {
+      const daUrl = new URLSearchParams(location.search).get('codigo') || '';
+      try {
+        if (daUrl) {
+          localStorage.setItem('gp-criar:codigo', daUrl);
+          history.replaceState(null, '', location.pathname + location.hash);
+        }
+        return daUrl || localStorage.getItem('gp-criar:codigo') || '';
+      } catch { return daUrl; }
+    })();
 
     const pieces = [
       { id: 'papel', letter: 'P', name: 'Papel', hint: 'escolha a turma' },
@@ -781,8 +810,8 @@
       $('#perguntar-step').disabled = tipo === 'jogo';
       $('#nivel-step').disabled = ['adaptar', 'rubrica', 'jogo'].includes(tipo);
       $('#tempo-step').disabled = ['sequencia', 'rubrica'].includes(tipo);
-      $('#testar').hidden = !TESTAR_AQUI.url;
-      $('#testar').disabled = done < 4 || testando;
+      $('#criar').hidden = !CRIAR_AQUI.url;
+      $('#criar').disabled = done < 4 || criando;
       $('#count').textContent = done === 4 ? 'Prompt pronto! As 4 peças estão no lugar.' : `${done} de 4 peças prontas`;
       $('#count').classList.toggle('is-ready', done === 4);
       $('#tip').textContent = kind ? (turma === 'infantil' && kind.tipInfantil) || kind.tip : turma ? 'Agora escolha o que criar. A Tarefa e o Formato saem daí.' : 'Comece pela turma. O Papel e o Contexto saem dela.';
@@ -864,65 +893,168 @@
       return inicio >= 0 && fim > inicio ? html.slice(inicio, fim + 7) : '';
     };
     const nomeDoArquivo = (tema) => `jogo-${String(tema || 'novo').normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '').slice(0, 40) || 'novo'}.html`;
-    let testeResposta = { texto: '', html: '', arquivo: '' };
-    const mostrarTeste = ({ pose, status, texto = '', html = '' }) => {
+    // O nome do jogo vem do <title> que a IA escreveu; sem ele, do tema
+    const nomeDoJogo = (html, tema) => ((html.match(/<title>([^<]{2,80})<\/title>/i) || [])[1] || `Jogo sobre ${tema || 'o tema'}`).trim();
+    // Um markdown pequeno: negrito, títulos e o resto como veio. O texto é escapado antes, então nada vira HTML de verdade
+    const formatar = (texto) => texto
+      .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+      .replace(/^#{1,4} +(.+)$/gm, '<b class="titulo">$1</b>')
+      .replace(/\*\*([^*\n]+)\*\*/g, '<b>$1</b>');
+
+    // A conversa com a IA: o pedido, as respostas e os ajustes, só nesta página
+    let conversa = { jogo: false, tema: '', tipo: '', local: false, historico: [], ajustes: 0, texto: '', html: '' };
+    const mostrarResposta = ({ pose, status, texto = '', html = '', pronto = false }) => {
       $('#teste').hidden = false;
       $('#teste-bit').src = `/identidade-visual/mascote/${pose}.svg`;
       $('#teste-status').textContent = status;
-      $('#teste-texto').hidden = !texto || Boolean(html);
-      $('#teste-texto').textContent = html ? '' : texto;
+      const caixa = $('#teste-texto');
+      caixa.hidden = !texto || Boolean(html) || conversa.jogo;
+      if (!caixa.hidden) {
+        const embaixo = caixa.scrollHeight - caixa.scrollTop - caixa.clientHeight < 40;
+        caixa.innerHTML = formatar(texto);
+        if (embaixo) caixa.scrollTop = caixa.scrollHeight;
+      }
       // A prévia roda numa moldura isolada: o jogo não alcança a página nem o que ela guarda
       $('#teste-jogo').hidden = !html;
-      if (html) $('#teste-jogo').srcdoc = html; else $('#teste-jogo').removeAttribute('srcdoc');
+      if (html && $('#teste-jogo').srcdoc !== html) $('#teste-jogo').srcdoc = html;
+      if (!html) $('#teste-jogo').removeAttribute('srcdoc');
       $('#teste-baixar').hidden = !html;
       $('#teste-publicar').hidden = !html;
-      $('#teste-copiar').hidden = !texto;
+      $('#teste-copiar').hidden = !pronto || !texto;
+      mostrarAjuste(pronto);
     };
-    $('#testar').addEventListener('click', async () => {
-      if (!current.text || testando || !TESTAR_AQUI.url) return;
-      const pedido = { ...current };
-      // Pela API não há Canvas nem limite de tamanho do pedido: o jogo já vai com o padrão de qualidade
-      const prompt = pedido.jogo
-        ? `${pedido.text}\n\n${qualityText(qualityRulesNow, 'Siga este padrão de qualidade:', 'Responda só com o arquivo HTML completo, sem nenhuma explicação antes ou depois.')}`
-        : pedido.text;
-      testando = true;
-      update();
-      testeResposta = { texto: '', html: '', arquivo: nomeDoArquivo(pedido.theme) };
-      mostrarTeste({ pose: 'bit-pensando', status: pedido.jogo ? 'O Gemini está montando o jogo. Pode levar até um minuto.' : 'O Gemini está escrevendo a resposta.' });
-      $('#teste').scrollIntoView({ behavior: reducedMotion ? 'auto' : 'smooth', block: 'start' });
+    // Pedir ajuste: os pedidos prontos do Peça mais (no jogo, os mais comuns) e uma caixa para escrever
+    const PEDIDOS_DO_JOGO = [
+      { nome: 'Botões maiores', texto: 'Deixe os botões e as letras maiores, para jogar no projetor e no celular.' },
+      { nome: 'Mais uma fase', texto: 'Acrescente mais uma fase, um pouco mais difícil que a última.' },
+      { nome: 'Mais fácil', texto: 'Deixe o jogo mais fácil, com dicas antes de cada pergunta.' },
+      { nome: 'Explicar o erro', texto: 'Quando a criança errar, explique melhor por que a resposta escolhida está errada.' },
+    ];
+    const mostrarAjuste = (pronto) => {
+      const caixa = $('#ajuste');
+      caixa.hidden = !pronto;
+      if (!pronto) return;
+      const restam = MAX_AJUSTES - conversa.ajustes;
+      $('#ajuste-conta').textContent = restam > 0 ? `até ${restam} ${restam === 1 ? 'ajuste' : 'ajustes'}` : 'acabaram os ajustes: copie o prompt e siga no Gemini';
+      const pedidos = conversa.jogo ? PEDIDOS_DO_JOGO : pedidosPara(conversa.tipo, conversa.local);
+      $('#ajuste-ideias').replaceChildren(...pedidos.map((pedido) => {
+        const botao = Object.assign(document.createElement('button'), { type: 'button', textContent: pedido.nome, title: pedido.texto, disabled: restam <= 0 });
+        botao.addEventListener('click', () => ajustar(pedido.texto));
+        return botao;
+      }));
+      $('#ajuste-texto').disabled = restam <= 0;
+      $('#ajuste-enviar').disabled = restam <= 0;
+    };
+
+    // Manda a conversa para o Worker e lê a resposta aos poucos (eventos parte, fim e erro)
+    const pedirIA = async (prompt, aoChegar) => {
       const controle = new AbortController();
-      const relogio = setTimeout(() => controle.abort(), 100000);
+      const relogio = setTimeout(() => controle.abort(), 150000);
       try {
-        const resposta = await fetch(TESTAR_AQUI.url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ prompt }), signal: controle.signal });
-        const dados = await resposta.json().catch(() => ({}));
-        if (!resposta.ok || !dados.texto) throw new Error(dados.erro || 'Não deu para testar agora. Cole o prompt no Gemini.');
-        const cortado = dados.cortado ? ' A resposta foi cortada no meio; no Gemini ela sai inteira.' : '';
-        const html = pedido.jogo ? extrairHTML(dados.texto) : '';
-        testeResposta.texto = dados.texto;
-        testeResposta.html = html;
-        if (pedido.jogo && !html) {
-          mostrarTeste({ pose: 'bit-ops', status: `O Gemini não mandou o jogo inteiro. Veja a resposta abaixo ou peça no Gemini, com o Canvas ligado.${cortado}`, texto: dados.texto });
-        } else if (html) {
-          mostrarTeste({ pose: 'bit-feliz', status: 'Pronto! Jogue até o fim antes de usar com a turma. Para ganhar um link e um QR Code, baixe o jogo e envie em Publicar meu jogo.', texto: dados.texto, html });
-        } else {
-          mostrarTeste({ pose: 'bit-feliz', status: `Pronto! Leia com atenção: confira as contas e os fatos e veja se não há código da BNCC inventado.${cortado}`, texto: dados.texto });
+        const resposta = await fetch(CRIAR_AQUI.url, {
+          method: 'POST', headers: { 'Content-Type': 'application/json' }, signal: controle.signal,
+          body: JSON.stringify({ prompt, historico: conversa.historico, fluxo: true, ...(codigoOficina ? { codigo: codigoOficina } : {}) }),
+        });
+        if (!(resposta.headers.get('Content-Type') || '').startsWith('text/event-stream')) {
+          const dados = await resposta.json().catch(() => ({}));
+          throw new Error(dados.erro || 'Não deu para criar agora. Cole o prompt no Gemini.');
         }
+        const leitor = resposta.body.getReader();
+        const decodificador = new TextDecoder();
+        let resto = '';
+        let texto = '';
+        let fim = null;
+        for (;;) {
+          const { done, value } = await leitor.read();
+          resto += decodificador.decode(value || new Uint8Array(), { stream: !done });
+          const blocos = resto.split('\n\n');
+          resto = done ? '' : blocos.pop();
+          for (const bloco of blocos) {
+            const linha = bloco.split('\n').find((l) => l.startsWith('data:'));
+            if (!linha) continue;
+            const evento = JSON.parse(linha.slice(5));
+            if (evento.erro) throw new Error(evento.erro);
+            if (evento.parte) { texto += evento.parte; aoChegar(texto); }
+            if (evento.fim) fim = evento;
+          }
+          if (done) break;
+        }
+        if (!fim) throw new Error('A resposta caiu no meio. Tente de novo.');
+        return { texto, cortado: fim.cortado };
       } catch (erro) {
-        const mensagem = erro.name === 'AbortError' ? 'O Gemini demorou demais. Cole o prompt no Gemini.' : erro.message === 'Failed to fetch' ? 'Sem conexão com o teste agora. Cole o prompt no Gemini.' : erro.message;
-        mostrarTeste({ pose: 'bit-ops', status: mensagem });
+        if (erro.name === 'AbortError') throw new Error('A IA demorou demais. Cole o prompt no Gemini.');
+        if (erro.message === 'Failed to fetch') throw new Error('Sem conexão com o Criar aqui agora. Cole o prompt no Gemini.');
+        throw erro;
       } finally {
         clearTimeout(relogio);
-        testando = false;
+      }
+    };
+
+    // Uma rodada da conversa: o pedido inicial ou um ajuste
+    const rodada = async (prompt) => {
+      criando = true;
+      update();
+      const nome = conversa.jogo ? 'o jogo' : 'a resposta';
+      mostrarResposta({ pose: 'bit-pensando', status: conversa.jogo ? 'A IA está montando o jogo. Pode levar um minuto.' : 'A IA está escrevendo.', texto: conversa.jogo ? '' : conversa.texto, html: conversa.html });
+      try {
+        const { texto, cortado } = await pedirIA(prompt, (parcial) => {
+          if (conversa.jogo) mostrarResposta({ pose: 'bit-pensando', status: `Escrevendo ${nome}: ${parcial.split('\n').length} linhas até agora.`, html: conversa.html });
+          else mostrarResposta({ pose: 'bit-pensando', status: 'A IA está escrevendo.', texto: parcial });
+        });
+        const html = conversa.jogo ? extrairHTML(texto) : '';
+        if (conversa.jogo && !html) {
+          mostrarResposta({ pose: 'bit-ops', status: `A IA não mandou o jogo inteiro.${cortado ? ' A resposta foi cortada no meio.' : ''} Peça de novo, ou cole o prompt no Gemini com o Canvas ligado.`, html: conversa.html, pronto: Boolean(conversa.html) });
+          return;
+        }
+        conversa.historico.push({ papel: 'professor', texto: prompt }, { papel: 'ia', texto });
+        conversa.texto = texto;
+        if (html) conversa.html = html;
+        const aviso = cortado ? ' A resposta foi cortada no meio; peça "continue de onde parou".' : '';
+        mostrarResposta(html
+          ? { pose: 'bit-feliz', status: 'Pronto! Jogue até o fim antes de usar com a turma. Se quiser mudar algo, peça um ajuste.', html, texto, pronto: true }
+          : { pose: 'bit-feliz', status: `Pronto! Leia com atenção: confira as contas e os fatos.${aviso}`, texto, pronto: true });
+      } catch (erro) {
+        mostrarResposta({ pose: 'bit-ops', status: erro.message, texto: conversa.jogo ? '' : conversa.texto, html: conversa.html, pronto: conversa.historico.length > 0 });
+      } finally {
+        criando = false;
         update();
       }
+    };
+
+    $('#criar').addEventListener('click', () => {
+      if (!current.text || criando || !CRIAR_AQUI.url) return;
+      const { kind, local } = read();
+      const tipo = kind ? Object.keys(kinds).find((id) => kinds[id] === kind) : '';
+      conversa = { jogo: Boolean(current.jogo), tema: current.theme, tipo, local, historico: [], ajustes: 0, texto: '', html: '' };
+      // Pela API não há Canvas nem limite de tamanho do pedido: o jogo já vai com o padrão de qualidade
+      const prompt = current.jogo
+        ? `${current.text}\n\n${qualityText(qualityRulesNow, 'Siga este padrão de qualidade:', 'Responda só com o arquivo HTML completo, sem nenhuma explicação antes ou depois.')}`
+        : current.text;
+      $('#teste').hidden = false;
+      $('#teste').scrollIntoView({ behavior: reducedMotion ? 'auto' : 'smooth', block: 'start' });
+      rodada(prompt);
     });
-    $('#teste-copiar').addEventListener('click', async () => { flash($('#teste-copiar'), await copyText(testeResposta.texto) ? 'Resposta copiada!' : 'Não deu para copiar'); });
+    const ajustar = (pedido) => {
+      const texto = String(pedido || '').trim();
+      if (!texto || criando || conversa.ajustes >= MAX_AJUSTES || !conversa.historico.length) return;
+      conversa.ajustes += 1;
+      $('#ajuste-texto').value = '';
+      rodada(conversa.jogo ? `${texto}\n\nResponda só com o arquivo HTML completo do jogo, já com a mudança, sem explicação antes ou depois.` : texto);
+    };
+    $('#ajuste-enviar').addEventListener('click', () => ajustar($('#ajuste-texto').value));
+    $('#ajuste-texto').addEventListener('keydown', (evento) => { if (evento.key === 'Enter' && !evento.shiftKey) { evento.preventDefault(); ajustar($('#ajuste-texto').value); } });
+    $('#teste-copiar').addEventListener('click', async () => { flash($('#teste-copiar'), await copyText(conversa.html || conversa.texto) ? 'Copiado!' : 'Não deu para copiar'); });
     $('#teste-baixar').addEventListener('click', () => {
-      const link = Object.assign(document.createElement('a'), { href: URL.createObjectURL(new Blob([testeResposta.html], { type: 'text/html' })), download: testeResposta.arquivo });
+      const link = Object.assign(document.createElement('a'), { href: URL.createObjectURL(new Blob([conversa.html], { type: 'text/html' })), download: nomeDoArquivo(conversa.tema) });
       link.click();
       setTimeout(() => URL.revokeObjectURL(link.href), 1000);
     });
-    $('#teste-fechar').addEventListener('click', () => { mostrarTeste({ pose: 'bit-pensando', status: '' }); $('#teste').hidden = true; });
+    // Publicar: o jogo vai para o publicador nesta aba, que já abre com ele carregado
+    $('#teste-publicar').addEventListener('click', () => {
+      try { sessionStorage.setItem('gp-publicador:jogo', JSON.stringify({ nome: nomeDoJogo(conversa.html, conversa.tema), html: conversa.html })); } catch {}
+      location.href = '/publicador/?origem=maquina';
+    });
+    $('#teste-fechar').addEventListener('click', () => { $('#teste').hidden = true; });
     $('#recent-clear').addEventListener('click', () => { saveRecent([]); renderRecent(); });
     // O site lembra a última turma, matéria, tipo, tema e ajustes neste aparelho; Começar de novo esquece
     Lembrar.campos('maquina', form.elements);
