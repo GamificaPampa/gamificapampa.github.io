@@ -33,6 +33,7 @@ const mapaButton = $('#mapa-button');
 const setMapa = (open) => {
   mapa.hidden = !open;
   mapaButton.setAttribute('aria-expanded', String(open));
+  if (!open) mapa.dispatchEvent(new Event('fechou'));
 };
 mapaButton.addEventListener('click', () => setMapa(mapa.hidden));
 document.addEventListener('keydown', (event) => {
@@ -43,21 +44,20 @@ document.addEventListener('click', (event) => {
 });
 mapa.querySelectorAll('a').forEach((link) => link.addEventListener('click', () => setMapa(false)));
 
-// On phones and tablets, the prompt scene and the Bit's bubble move below the resources, so the games and the
-// teacher tools are the first thing under the title. On wide screens they go back to the side of the title.
+// No celular e no tablet, a cena do pedido desce para depois dos recursos, para os jogos e as ferramentas virem logo
+// abaixo do título. Na tela larga, ela volta para o lado do título.
 const bitGame = $('#estudio');
-const bitHello = $('.hero .hello');
-if (bitGame && bitHello) {
-  const homes = [[bitHello, bitHello.parentElement, bitHello.nextSibling], [bitGame, bitGame.parentElement, bitGame.nextSibling]];
+if (bitGame) {
+  const home = [bitGame.parentElement, bitGame.nextSibling];
   const phoneSpot = Object.assign(document.createElement('section'), { className: 'container bit-celular' });
   phoneSpot.setAttribute('aria-label', 'Do pedido ao material');
   const small = matchMedia('(max-width: 1023px)');
   const place = () => {
     if (small.matches) {
       if (!phoneSpot.isConnected) $('#recursos').after(phoneSpot);
-      phoneSpot.append(bitHello, bitGame);
+      phoneSpot.append(bitGame);
     } else {
-      homes.forEach(([element, parent, next]) => parent.insertBefore(element, next));
+      home[0].insertBefore(bitGame, home[1]);
       phoneSpot.remove();
     }
   };
@@ -123,119 +123,73 @@ const updateScrollBar = () => {
 addEventListener('scroll', updateScrollBar, { passive: true });
 updateScrollBar();
 
-const heroBot = $('#hero-bot');
-
 // Every Bit jumps when clicked, and goes back to its idle bobbing once the jump ends.
 document.querySelectorAll('.bot').forEach((bot) => {
   bot.addEventListener('click', () => { if (!reducedMotion) replay(bot, 'jump'); });
   bot.addEventListener('animationend', () => bot.classList.remove('jump'));
 });
 
-// Cena do topo: o pedido se escreve no notebook, parte por parte (Papel, Tarefa, Contexto e Formato), a IA pensa
-// e os materiais saem voando. Cada exemplo termina num jogo de verdade do site. A cena passa sozinha pelos três
-// exemplos; tocar numa aba mostra aquele e para a troca automática
-const EXEMPLOS = [
-  {
-    partes: [['p', 'Você é professora do 4º ano.'], ['t', 'Crie uma atividade de frações'], ['c', 'para crianças de 9 anos, com pizza e chocolate.'], ['f', 'Uma folha A4 com 5 exercícios e o gabarito.']],
-    saidas: [['Plano de aula', 'Frações na pizzaria, 50 minutos', 'prancheta', 'var(--yellow-claro)'], ['Folha de exercícios', '5 questões e o gabarito', 'folha', 'var(--blue-claro)']],
-    jogo: ['Pizzaria das Frações', 'pizzaria-das-fracoes', '/fracoes'],
-    legenda: 'Um pedido com as quatro partes vira o plano, a folha e o jogo da aula de frações.',
-  },
-  {
-    partes: [['p', 'Você é professor de Ciências do 5º ano.'], ['t', 'Explique o ciclo da água'], ['c', 'para crianças de 10 anos, com o rio Ibirapuitã.'], ['f', 'Uma história curta e 4 perguntas.']],
-    saidas: [['História', 'A viagem da Gotinha pelo Ibirapuitã', 'livro', 'var(--mint-claro)'], ['Quiz', '4 perguntas para a turma', 'balao', 'var(--purple-claro)']],
-    jogo: ['Ciclo da Água', 'ciclo-da-agua', '/ciclo-da-agua'],
-    legenda: 'O rio da cidade entra no pedido, e a explicação chega mais perto da turma.',
-  },
-  {
-    partes: [['p', 'Você é professora de alfabetização.'], ['t', 'Crie um jogo de sílabas'], ['c', 'para o 1º ano, com os bichos do Pampa.'], ['f', 'Cartas para recortar e as regras em 4 passos.']],
-    saidas: [['Cartas para recortar', 'QUE-RO, QUE-RO e outras sílabas', 'tesoura', 'var(--pink-claro)'], ['Regras do jogo', '4 passos para a roda', 'lista', 'var(--orange-claro)']],
-    jogo: ['Fábrica de Sílabas', 'fabrica-de-silabas', '/silabas'],
-    legenda: 'Até um jogo de mesa sai do pedido. E a turma ainda pode jogar a versão no projetor.',
-  },
-];
-const I = '#2f2a4a';
-const ARTES = {
-  prancheta: `<svg width="34" height="34" viewBox="0 0 32 32"><rect x="7" y="5" width="18" height="23" rx="3" fill="#fff" stroke="${I}" stroke-width="2.4"/><rect x="11" y="3" width="10" height="5" rx="2" fill="#ffd23f" stroke="${I}" stroke-width="2"/><path d="M11 14h10M11 19h10M11 24h6" stroke="${I}" stroke-width="2.2" stroke-linecap="round"/></svg>`,
-  folha: `<svg width="34" height="34" viewBox="0 0 32 32"><path d="M8 4h12l5 5v19H8z" fill="#fff" stroke="${I}" stroke-width="2.4" stroke-linejoin="round"/><path d="M12 14h9M12 19h9M12 24h5" stroke="#4da3ff" stroke-width="2.4" stroke-linecap="round"/><path d="M20 4v5h5" fill="none" stroke="${I}" stroke-width="2.2"/></svg>`,
-  livro: `<svg width="34" height="34" viewBox="0 0 32 32"><path d="M16 8C12 5 7 5 4 6v19c3-1 8-1 12 2 4-3 9-3 12-2V6c-3-1-8-1-12 2z" fill="#fff" stroke="${I}" stroke-width="2.4" stroke-linejoin="round"/><path d="M16 8v19" stroke="${I}" stroke-width="2.2"/></svg>`,
-  balao: `<svg width="34" height="34" viewBox="0 0 32 32"><path d="M5 6h22a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H14l-6 5v-5H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2z" fill="#fff" stroke="${I}" stroke-width="2.4" stroke-linejoin="round"/><text x="16" y="19" text-anchor="middle" font-family="Fredoka, sans-serif" font-weight="700" font-size="11" fill="${I}">?</text></svg>`,
-  tesoura: `<svg width="34" height="34" viewBox="0 0 32 32"><rect x="5" y="6" width="12" height="16" rx="3" fill="#fff" stroke="${I}" stroke-width="2.4" transform="rotate(-8 11 14)"/><rect x="15" y="9" width="12" height="16" rx="3" fill="#ffd23f" stroke="${I}" stroke-width="2.4" transform="rotate(8 21 17)"/><text x="21" y="21" text-anchor="middle" font-family="Fredoka, sans-serif" font-weight="700" font-size="8" fill="${I}">BA</text></svg>`,
-  lista: `<svg width="34" height="34" viewBox="0 0 32 32"><rect x="6" y="5" width="20" height="23" rx="3" fill="#fff" stroke="${I}" stroke-width="2.4"/><path d="M10 12l2 2 3-4M10 20l2 2 3-4" fill="none" stroke="#4fd6a6" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/><path d="M18 12h5M18 20h5" stroke="${I}" stroke-width="2.2" stroke-linecap="round"/></svg>`,
+// Cena do topo: o pedido aparece no notebook, uma parte de cada vez (Papel, Tarefa, Contexto e Formato), a IA pensa
+// e saem dois materiais: a folha e o jogo de verdade do site. Roda uma vez quando aparece na tela e para no resultado;
+// Ver de novo repete. Com as animações paradas, a cena já aparece pronta
+const EXEMPLO = {
+  partes: [['p', 'Você é professora do 4º ano.'], ['t', 'Crie uma atividade de frações'], ['c', 'para crianças de 9 anos, com pizza e chocolate.'], ['f', 'Uma folha A4 com 5 exercícios e o gabarito.']],
+  folha: ['Folha de exercícios', '5 questões e o gabarito'],
+  jogo: ['Pizzaria das Frações', 'pizzaria-das-fracoes', '/fracoes'],
 };
+const I = '#2f2a4a';
+const FOLHA = `<svg width="34" height="34" viewBox="0 0 32 32"><path d="M8 4h12l5 5v19H8z" fill="#fff" stroke="${I}" stroke-width="2.4" stroke-linejoin="round"/><path d="M12 14h9M12 19h9M12 24h5" stroke="#4da3ff" stroke-width="2.4" stroke-linecap="round"/><path d="M20 4v5h5" fill="none" stroke="${I}" stroke-width="2.2"/></svg>`;
 const estudio = $('#estudio');
 if (estudio) {
   const prompt = $('#estudio-prompt');
   const saidas = $('#estudio-saidas');
-  const bit = $('#estudio-bit');
-  const legenda = $('#estudio-legenda');
-  const abas = [...estudio.querySelectorAll('.estudio__aba')];
-  const pose = (nome) => { bit.src = `/identidade-visual/mascote/bit-${nome}.svg`; };
+  const deNovo = $('#estudio-de-novo');
+  saidas.innerHTML = `<li class="saida"><span class="saida__arte" style="--c: var(--blue-claro)">${FOLHA}</span><span><b>${EXEMPLO.folha[0]}</b><small>${EXEMPLO.folha[1]}</small></span></li>`
+    + `<li class="saida saida--jogo"><span class="saida__arte" style="--c: var(--white)"><img src="/recursos-pedagogicos/criancas/${EXEMPLO.jogo[1]}/capa.svg" alt="" width="54" height="54"></span><span><b><a href="${EXEMPLO.jogo[2]}">${EXEMPLO.jogo[0]}</a></b><small>O jogo já está pronto no site</small><span class="saida__jogar"><svg width="12" height="12" viewBox="0 0 24 24"><path d="M6 4l14 8-14 8z" fill="#fff" stroke="#2f2a4a" stroke-width="3" stroke-linejoin="round"/></svg>Jogar</span></span></li>`;
+  const cartoes = [...saidas.children];
+  const pecas = EXEMPLO.partes.map(([tipo, texto]) => {
+    const parte = Object.assign(document.createElement('span'), { className: `parte parte--${tipo}` });
+    parte.innerHTML = `<b>${tipo.toUpperCase()}</b>`;
+    parte.append(texto);
+    return parte;
+  });
   let relogios = [];
-  let atual = 0;
-  let sozinho = true;
   const depois = (ms, f) => relogios.push(setTimeout(f, ms));
-  const limpar = () => { relogios.forEach(clearTimeout); relogios = []; };
-
-  const mostrar = (n) => {
-    limpar();
-    atual = n;
-    const exemplo = EXEMPLOS[n];
-    abas.forEach((aba, i) => aba.setAttribute('aria-pressed', String(i === n)));
-    estudio.classList.remove('is-pensando', 'is-enviando');
-    legenda.textContent = '';
-    prompt.textContent = '';
-    saidas.innerHTML = [...exemplo.saidas.map(([titulo, texto, arte, cor]) => `<li class="saida"><span class="saida__arte" style="--c: ${cor}">${ARTES[arte]}</span><span><b>${titulo}</b><small>${texto}</small></span></li>`),
-      `<li class="saida saida--jogo"><span class="saida__arte" style="--c: var(--white)"><img src="/recursos-pedagogicos/criancas/${exemplo.jogo[1]}/capa.svg" alt="" width="54" height="54"></span><span><b><a href="${exemplo.jogo[2]}">${exemplo.jogo[0]}</a></b><small>O jogo já está pronto no site</small><span class="saida__jogar"><svg width="12" height="12" viewBox="0 0 24 24"><path d="M6 4l14 8-14 8z" fill="#fff" stroke="#2f2a4a" stroke-width="3" stroke-linejoin="round"/></svg>Jogar</span></span></li>`].join('');
-    const pecas = exemplo.partes.map(([tipo, texto]) => {
-      const parte = Object.assign(document.createElement('span'), { className: `parte parte--${tipo}` });
-      parte.innerHTML = `<b>${tipo.toUpperCase()}</b>`;
-      parte.append(Object.assign(document.createElement('span'), { textContent: '' }));
-      return [parte, texto];
-    });
-    const cartoes = [...saidas.children];
-    // Parado, a cena aparece pronta
+  const mostrar = () => {
+    relogios.forEach(clearTimeout);
+    relogios = [];
+    estudio.classList.remove('is-pensando', 'is-enviando', 'is-pronto');
+    prompt.replaceChildren();
+    cartoes.forEach((cartao) => cartao.classList.remove('is-fora'));
+    const escrever = (parte, i) => prompt.append(parte, i < pecas.length - 1 ? ' ' : '');
     if (reducedMotion || window.Animacoes?.paradas) {
-      pecas.forEach(([parte, texto], i) => { parte.lastChild.textContent = texto; prompt.append(parte, i < pecas.length - 1 ? ' ' : ''); });
+      pecas.forEach(escrever);
       cartoes.forEach((cartao) => cartao.classList.add('is-fora'));
-      pose('comemorando');
-      legenda.textContent = exemplo.legenda;
       return;
     }
-    pose('pensando');
-    // O pedido se escreve letra por letra, uma parte de cada vez
-    let tempo = 400;
-    pecas.forEach(([parte, texto], i) => {
-      depois(tempo, () => prompt.append(parte, i < pecas.length - 1 ? ' ' : ''));
-      [...texto].forEach((_, k) => { depois(tempo + 30 + k * 28, () => { parte.lastChild.textContent = texto.slice(0, k + 1); }); });
-      tempo += texto.length * 28 + 260;
-    });
-    depois(tempo, () => { estudio.classList.add('is-enviando'); pose('acenando'); });
-    depois(tempo + 450, () => estudio.classList.add('is-pensando'));
-    depois(tempo + 1700, () => { estudio.classList.remove('is-pensando', 'is-enviando'); pose('comemorando'); legenda.textContent = exemplo.legenda; });
-    cartoes.forEach((cartao, i) => depois(tempo + 1800 + i * 380, () => cartao.classList.add('is-fora')));
-    depois(tempo + 1800 + 3 * 380 + 4200, () => { if (sozinho) mostrar((atual + 1) % EXEMPLOS.length); });
+    pecas.forEach((parte, i) => depois(300 + i * 650, () => escrever(parte, i)));
+    const enviou = 300 + pecas.length * 650;
+    depois(enviou, () => estudio.classList.add('is-enviando'));
+    depois(enviou + 400, () => estudio.classList.add('is-pensando'));
+    depois(enviou + 1400, () => estudio.classList.remove('is-pensando', 'is-enviando'));
+    cartoes.forEach((cartao, i) => depois(enviou + 1500 + i * 400, () => cartao.classList.add('is-fora')));
+    depois(enviou + 1500 + cartoes.length * 400 + 300, () => estudio.classList.add('is-pronto'));
   };
-
-  abas.forEach((aba, i) => aba.addEventListener('click', () => { sozinho = false; mostrar(i); }));
-  // Só anima quando a cena está na tela
+  deNovo.addEventListener('click', mostrar);
+  // Só começa quando a cena está na tela
   let comecou = false;
-  const comecar = () => { if (!comecou) { comecou = true; mostrar(0); } };
+  const comecar = () => { if (!comecou) { comecou = true; mostrar(); } };
   const aVista = () => { const caixa = estudio.getBoundingClientRect(); return caixa.top < innerHeight * .8 && caixa.bottom > 0; };
   if (aVista()) comecar();
   else {
     const olho = new IntersectionObserver(([item]) => { if (item.isIntersecting) { comecar(); olho.disconnect(); } }, { threshold: .3 });
     olho.observe(estudio);
-    addEventListener('scroll', () => { if (aVista()) comecar(); }, { passive: true });
   }
-  window.Animacoes?.aoMudar?.(() => { if (comecou) mostrar(atual); });
+  window.Animacoes?.aoMudar?.(() => { if (comecou) mostrar(); });
 }
 
-// O botão de parar as animações fica no topo, antes do Jogos para a turma; no celular, dentro do Menu
-if (window.Animacoes) {
-  $('.nav__cta').before(Animacoes.botao());
-  $('#menu').append(Animacoes.botao({ texto: true }));
-}
+// O botão de parar as animações fica no fim do painel Todas as páginas, no computador e no celular
+if (window.Animacoes) $('#mapa-rodape').append(Animacoes.botao({ texto: true }));
 
 if (!reducedMotion && matchMedia('(pointer: fine)').matches) {
 
@@ -256,17 +210,6 @@ if (!reducedMotion && matchMedia('(pointer: fine)').matches) {
       ['--rx', '--ry', '--gx', '--gy'].forEach((name) => card.style.removeProperty(name));
     });
   });
-
-  // Bit in the hero follows the mouse with its eyes.
-  const eyes = $('#hero-eyes');
-  addEventListener('pointermove', (event) => {
-    const box = heroBot.getBoundingClientRect();
-    const dx = event.clientX - (box.left + box.width / 2);
-    const dy = event.clientY - (box.top + box.height * 0.45);
-    const length = Math.hypot(dx, dy) || 1;
-    const reach = Math.min(1, length / 200) * 3;
-    eyes.setAttribute('transform', `translate(${(dx / length) * reach} ${(dy / length) * reach})`);
-  }, { passive: true });
 }
 
 // The whole resource card opens its game, not only the button.
@@ -369,8 +312,9 @@ copyButton.addEventListener('click', async () => {
 
 moreButton.addEventListener('click', () => navigator.share({ title: shared.title, url: shared.url }).catch(() => {}));
 
-// Busca no topo: procura nas páginas do menu Todas as páginas e nos jogos do jogos.js, sem acento e sem maiúscula.
-// Ctrl K ou / abre; as setas escolhem e o Enter abre
+// Busca dentro de Todas as páginas: procura nas páginas do painel e nos jogos do jogos.js, sem acento e sem maiúscula.
+// Com o campo vazio, o painel mostra os grupos; ao digitar, mostra os resultados no lugar deles.
+// Ctrl K ou / abre o painel com o cursor no campo; as setas escolhem e o Enter abre
 const BUSCA_EXTRA = {
   'Máquina de prompts': 'plano de aula atividade quiz prova avaliação rubrica devolutiva eja encceja história',
   'Construtor de prompts': 'montar prompt passo a passo',
@@ -397,33 +341,32 @@ const BUSCA_EXTRA = {
 };
 const tirarAcento = (texto) => texto.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
 const CORES_GRUPO = { 'Planejar com IA': 'var(--blue-claro)', 'Aprender a pedir': 'var(--yellow-claro)', 'Aulas prontas': 'var(--mint-claro)', 'Para a turma': 'var(--pink-claro)', 'Do projeto': 'var(--purple-claro)' };
+const grupos = [...document.querySelectorAll('.mapa__grupo')];
 const indiceBusca = [
-  ...[...document.querySelectorAll('.mapa__grupo')].flatMap((grupo) => {
+  ...grupos.flatMap((grupo) => {
     const nome = grupo.querySelector('.mapa__titulo').textContent.trim();
     return [...grupo.querySelectorAll('a')].map((link) => ({ titulo: link.textContent.trim(), onde: nome, href: link.getAttribute('href'), icone: 'lupa', cor: CORES_GRUPO[nome] }));
   }),
   ...(window.JOGOS || []).map((jogo) => ({ titulo: jogo.nome, onde: `Jogo de ${jogo.materia}${jogo.idade ? ' · ' + jogo.idade : ''}`, href: `/recursos-pedagogicos/criancas/${jogo.pasta}/`, icone: 'controle', cor: `var(--${jogo.cor}-claro, var(--mint-claro))`, extra: [jogo.materia, jogo.conceito, jogo.frase].join(' ') })),
 ].map((item) => ({ ...item, palavras: tirarAcento(`${item.titulo} ${item.onde} ${item.extra || ''} ${BUSCA_EXTRA[item.titulo] || ''}`).split(/[^a-z0-9º]+/).filter(Boolean), nome: tirarAcento(item.titulo) }));
-const SUGESTOES = ['Máquina de prompts', 'Jogo do Prompt', 'Jogos para a turma', 'Biblioteca de prompts', 'Gems prontos', 'Kit sem internet (zip)'];
 
-const busca = $('#busca');
-if (busca) {
-  const campo = $('#busca-campo');
-  const lista = $('#busca-lista');
-  const dica = $('#busca-dica');
+const campo = $('#busca-campo');
+const lista = $('#busca-lista');
+if (campo && lista) {
   let achados = [];
   let escolhido = 0;
   const desenharBusca = () => {
     const palavras = tirarAcento(campo.value.trim()).split(/\s+/).filter(Boolean);
-    achados = palavras.length
-      // Cada palavra digitada tem de começar uma palavra da página: "gem" acha Gems, mas não "imagem"
-      ? indiceBusca.filter((item) => palavras.every((p) => item.palavras.some((w) => w.startsWith(p))))
-        .map((item) => ({ item, nota: (item.nome.startsWith(palavras[0]) ? 3 : 0) + (palavras.every((p) => item.nome.includes(p)) ? 2 : 0) }))
-        .sort((a, b) => b.nota - a.nota).slice(0, 8).map(({ item }) => item)
-      : SUGESTOES.map((titulo) => indiceBusca.find((item) => item.titulo === titulo)).filter(Boolean);
+    const buscando = palavras.length > 0;
+    grupos.forEach((grupo) => { grupo.hidden = buscando; });
+    lista.hidden = !buscando;
+    achados = [];
     escolhido = 0;
-    dica.textContent = palavras.length ? '' : 'Experimente: frações, Gem, EJA, certificado, sem internet.';
-    dica.hidden = Boolean(palavras.length);
+    if (!buscando) { lista.replaceChildren(); return; }
+    // Cada palavra digitada tem de começar uma palavra da página: "gem" acha Gems, mas não "imagem"
+    achados = indiceBusca.filter((item) => palavras.every((p) => item.palavras.some((w) => w.startsWith(p))))
+      .map((item) => ({ item, nota: (item.nome.startsWith(palavras[0]) ? 3 : 0) + (palavras.every((p) => item.nome.includes(p)) ? 2 : 0) }))
+      .sort((a, b) => b.nota - a.nota).slice(0, 8).map(({ item }) => item);
     lista.replaceChildren(...achados.map((item, i) => {
       const li = document.createElement('li');
       const link = Object.assign(document.createElement('a'), { className: 'busca__item', href: item.href, id: `busca-${i}` });
@@ -432,14 +375,11 @@ if (busca) {
       link.innerHTML = `<i style="--c: ${item.cor}"><svg aria-hidden="true"><use href="#icone-${item.icone}"/></svg></i><span><b></b><small></small></span>`;
       link.querySelector('b').textContent = item.titulo;
       link.querySelector('small').textContent = item.onde;
-      link.addEventListener('click', () => busca.close());
+      link.addEventListener('click', () => { setMapa(false); setMenu(false); });
       li.append(link);
       return li;
     }));
-    if (!achados.length) {
-      const vazio = Object.assign(document.createElement('li'), { className: 'busca__vazio', textContent: 'Nada com essas palavras. Tente outra, ou abra Todas as páginas no topo.' });
-      lista.append(vazio);
-    }
+    if (!achados.length) lista.append(Object.assign(document.createElement('li'), { className: 'busca__vazio', textContent: 'Nada com essas palavras. Tente outra, ou apague para ver todas as páginas.' }));
   };
   const marcar = (i) => {
     escolhido = (i + achados.length) % achados.length;
@@ -447,16 +387,14 @@ if (busca) {
     lista.querySelector(`#busca-${escolhido}`)?.scrollIntoView({ block: 'nearest' });
   };
   const abrirBusca = () => {
-    if (busca.open) return;
-    campo.value = '';
-    desenharBusca();
-    busca.showModal();
+    if (matchMedia('(max-width: 1023px)').matches) setMenu(true);
+    setMapa(true);
     campo.focus();
+    campo.select();
   };
-  $('#busca-botao').addEventListener('click', abrirBusca);
-  $('#busca-fechar').addEventListener('click', () => busca.close());
-  busca.addEventListener('click', (evento) => { if (evento.target === busca) busca.close(); });
   campo.addEventListener('input', desenharBusca);
+  // Ao fechar o painel, a busca volta vazia
+  mapa.addEventListener('fechou', () => { campo.value = ''; desenharBusca(); });
   campo.addEventListener('keydown', (evento) => {
     if (!achados.length) return;
     if (evento.key === 'ArrowDown') { evento.preventDefault(); marcar(escolhido + 1); }
@@ -468,20 +406,6 @@ if (busca) {
     if ((evento.key === 'k' || evento.key === 'K') && (evento.ctrlKey || evento.metaKey)) { evento.preventDefault(); abrirBusca(); }
     else if (evento.key === '/' && !digitando) { evento.preventDefault(); abrirBusca(); }
   });
-}
-
-// A novidade mais recente aparece acima do título por 45 dias, até a pessoa abrir a página de novidades
-const novidade = $('#novidade');
-const ultimas = [...(window.NOVIDADES || [])].sort((a, b) => b.data.localeCompare(a.data));
-if (novidade && ultimas.length) {
-  const nova = ultimas[0];
-  let vista = '';
-  try { vista = localStorage.getItem('gp-lembrar:novidade-vista') || ''; } catch {}
-  const dias = (Date.now() - new Date(nova.data + 'T12:00:00').getTime()) / 864e5;
-  if (vista < nova.data && dias <= 45) {
-    $('#novidade-titulo').textContent = nova.titulo;
-    novidade.hidden = false;
-  }
 }
 
 // Recursos: as abas Para você planejar e Para a turma. A escolha fica lembrada neste aparelho
