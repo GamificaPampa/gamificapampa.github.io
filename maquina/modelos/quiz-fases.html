@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Pizzaria das Frações</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;700&display=swap">
+<style>
+/* Estilo GamificaPampa, do GamificaPampa: use sem mudar */
+:root {
+  --fundo: #4fadf2; --fundo-2: #bfe5ff; --cartao: #ffffff; --texto: #2f2a4a; --destaque: #ffd23f;
+  --botao: #4fd6a6; --botao-texto: #2f2a4a; --borda: #2f2a4a;
+  --certo: #c9f5e3; --certo-texto: #14532d; --errado: #ffd6e0; --errado-texto: #7a1530;
+  --fonte: "Fredoka", "Trebuchet MS", "Segoe UI", system-ui, sans-serif; --raio: 18px; --linha: 4px solid var(--borda); --sombra: 0 6px 0 var(--borda);
+}
+body { margin: 0; background: var(--fundo); color: var(--texto); font: 600 20px/1.4 var(--fonte); }
+button { min-height: 48px; padding: 8px 20px; background: var(--botao); color: var(--botao-texto); border: var(--linha); border-radius: var(--raio); box-shadow: var(--sombra); font: 700 20px var(--fonte); cursor: pointer; }
+.cartao { background: var(--cartao); color: var(--texto); border: var(--linha); border-radius: var(--raio); padding: 20px; }
+.certo { background: var(--certo); color: var(--certo-texto); } .errado { background: var(--errado); color: var(--errado-texto); }
+body { background: linear-gradient(var(--fundo), var(--fundo-2)) fixed; }
+/* Do jogo: uma coluna, a pergunta grande e as opções do mesmo tamanho */
+* { box-sizing: border-box; }
+main { width: min(720px, 100% - 32px); margin: 24px auto; }
+h1 { margin: 0 0 8px; font-size: clamp(30px, 6vw, 44px); line-height: 1.1; }
+.tela { display: grid; gap: 16px; }
+.tela[hidden] { display: none; }
+.progresso { font-size: 18px; }
+.pergunta { margin: 0; font-size: 26px; line-height: 1.3; }
+.opcoes { display: grid; gap: 12px; }
+.opcoes button { width: 100%; text-align: left; }
+.opcoes button:disabled { cursor: default; }
+.retorno { min-height: 64px; margin: 0; padding: 12px 16px; border-radius: var(--raio); }
+.retorno:empty { visibility: hidden; }
+.estrelas { font-size: 40px; letter-spacing: 6px; }
+button:focus-visible { outline: 4px solid var(--destaque); outline-offset: 3px; }
+@media (prefers-reduced-motion: no-preference) { .certo, .errado { animation: pulo .3s ease; } }
+@keyframes pulo { 50% { transform: scale(1.03); } }
+</style>
+</head>
+<body>
+<main>
+  <!-- Tela de início: o nome, o objetivo e as instruções em até 3 frases -->
+  <section class="tela cartao" id="inicio">
+    <h1>Pizzaria das Frações</h1>
+    <p><b>Objetivo:</b> comparar frações e achar metade, terço e quarto de uma pizza.</p>
+    <p>Leia o pedido e toque na resposta certa. São 3 fases, da mais fácil à mais difícil. Se errar, o jogo explica por quê.</p>
+    <button id="jogar">Jogar</button>
+  </section>
+
+  <!-- Uma pergunta por tela, com o progresso sempre visível -->
+  <section class="tela cartao" id="jogo" hidden>
+    <p class="progresso" id="progresso"></p>
+    <p class="pergunta" id="pergunta"></p>
+    <div class="opcoes" id="opcoes"></div>
+    <p class="retorno" id="retorno" role="status" aria-live="polite"></p>
+    <button id="proxima" hidden>Próxima</button>
+  </section>
+
+  <!-- Fim: estrelas, o que aprendeu e Jogar de novo -->
+  <section class="tela cartao" id="fim" hidden>
+    <h1>Fim de jogo!</h1>
+    <p class="estrelas" id="estrelas" aria-label=""></p>
+    <p id="resumo"></p>
+    <p>Você aprendeu que, quanto mais pedaços iguais, menor é cada pedaço.</p>
+    <button id="denovo">Jogar de novo</button>
+  </section>
+</main>
+<script>
+// As fases vão do fácil ao difícil. Cada opção errada vem de um erro comum e tem a explicação dela
+const FASES = [
+  { nome: 'Metade', perguntas: [
+    { texto: 'A pizza tem 8 pedaços. Quantos pedaços são a metade?', opcoes: [
+      { t: '4 pedaços', certa: true, porque: 'Metade é dividir em 2 partes iguais: 8 ÷ 2 = 4.' },
+      { t: '2 pedaços', porque: '2 é o número de partes, não o tamanho de cada uma. 8 ÷ 2 = 4.' },
+      { t: '6 pedaços', porque: '6 é mais que a metade de 8. Metade é 8 ÷ 2 = 4.' } ] },
+    { texto: 'Qual fração é a metade de uma pizza?', opcoes: [
+      { t: '1/2', certa: true, porque: 'Metade é 1 de 2 partes iguais: 1/2.' },
+      { t: '2/1', porque: '2/1 são duas pizzas inteiras. Metade é 1/2.' },
+      { t: '1/4', porque: '1/4 é um quarto, a metade da metade.' } ] } ] },
+  { nome: 'Terço e quarto', perguntas: [
+    { texto: 'Uma pizza dividida em 3 partes iguais. Cada parte é...', opcoes: [
+      { t: '1/3', certa: true, porque: '3 partes iguais: cada uma é 1/3, um terço.' },
+      { t: '3/1', porque: '3/1 seriam 3 pizzas inteiras.' },
+      { t: '1/4', porque: '1/4 é quando a pizza é dividida em 4 partes.' } ] },
+    { texto: 'Quantos quartos cabem numa pizza inteira?', opcoes: [
+      { t: '4', certa: true, porque: '4 quartos formam 1 inteiro: 4/4 = 1.' },
+      { t: '2', porque: '2 quartos são só a metade da pizza.' },
+      { t: '8', porque: '8 seria o número de oitavos.' } ] } ] },
+  { nome: 'Comparar', perguntas: [
+    { texto: 'Qual pedaço é maior: 1/3 ou 1/4 da mesma pizza?', opcoes: [
+      { t: '1/3', certa: true, porque: 'Com menos partes, cada parte é maior. 1/3 é maior que 1/4.' },
+      { t: '1/4', porque: 'O 4 é maior que o 3, mas 4 partes deixam cada pedaço menor.' },
+      { t: 'São iguais', porque: 'Dividir em 3 ou em 4 dá pedaços de tamanhos diferentes.' } ] },
+    { texto: 'A mesa 1 comeu 2/4 da pizza e a mesa 2 comeu 1/2. Qual mesa comeu mais?', opcoes: [
+      { t: 'As duas comeram igual', certa: true, porque: '2/4 é a mesma coisa que 1/2: metade da pizza.' },
+      { t: 'A mesa 1', porque: '2/4 parece mais, mas é a metade, igual a 1/2.' },
+      { t: 'A mesa 2', porque: '1/2 é metade, e 2/4 também é metade.' } ] } ] },
+];
+
+const $ = (id) => document.getElementById(id);
+const menosMovimento = matchMedia('(prefers-reduced-motion: reduce)').matches;
+let fase = 0, pergunta = 0, acertos = 0, total = 0;
+
+// O som do acerto e do erro, feito no próprio navegador (Web Audio), sem arquivo de fora
+let audio;
+const som = (certo) => {
+  try {
+    audio = audio || new AudioContext();
+    const osc = audio.createOscillator(), vol = audio.createGain();
+    osc.frequency.value = certo ? 660 : 220;
+    vol.gain.setValueAtTime(0.15, audio.currentTime);
+    vol.gain.exponentialRampToValueAtTime(0.001, audio.currentTime + 0.3);
+    osc.connect(vol).connect(audio.destination);
+    osc.start(); osc.stop(audio.currentTime + 0.3);
+  } catch (e) { /* sem som, o jogo continua */ }
+};
+
+const mostrar = (id) => { for (const tela of ['inicio', 'jogo', 'fim']) $(tela).hidden = tela !== id; };
+
+const desenhar = () => {
+  const p = FASES[fase].perguntas[pergunta];
+  $('progresso').textContent = `Fase ${fase + 1} de ${FASES.length}: ${FASES[fase].nome}`;
+  $('pergunta').textContent = p.texto;
+  $('retorno').textContent = '';
+  $('retorno').className = 'retorno';
+  $('proxima').hidden = true;
+  $('opcoes').replaceChildren(...p.opcoes.map((op) => {
+    const b = document.createElement('button');
+    b.textContent = op.t;
+    b.addEventListener('click', () => responder(op, b));
+    return b;
+  }));
+  $('opcoes').querySelector('button').focus();
+};
+
+// Certo e errado com cor, ícone e palavra; no erro, a explicação daquela opção
+const responder = (op, botao) => {
+  total += 1;
+  if (op.certa) acertos += 1;
+  for (const b of $('opcoes').querySelectorAll('button')) b.disabled = true;
+  botao.classList.add(op.certa ? 'certo' : 'errado');
+  $('retorno').className = `retorno ${op.certa ? 'certo' : 'errado'}`;
+  $('retorno').textContent = `${op.certa ? '✓ Certo!' : '✗ Ainda não.'} ${op.porque}`;
+  som(op.certa);
+  $('proxima').hidden = false;
+  $('proxima').focus();
+};
+
+const avancar = () => {
+  pergunta += 1;
+  if (pergunta >= FASES[fase].perguntas.length) { fase += 1; pergunta = 0; }
+  if (fase >= FASES.length) return terminar();
+  desenhar();
+};
+
+const terminar = () => {
+  const n = acertos === total ? 3 : acertos >= total / 2 ? 2 : 1;
+  $('estrelas').textContent = '★'.repeat(n) + '☆'.repeat(3 - n);
+  $('estrelas').setAttribute('aria-label', `${n} de 3 estrelas`);
+  $('resumo').textContent = `Você acertou ${acertos} de ${total}.`;
+  mostrar('fim');
+  $('denovo').focus();
+};
+
+$('jogar').addEventListener('click', () => { fase = pergunta = acertos = total = 0; mostrar('jogo'); desenhar(); });
+$('proxima').addEventListener('click', avancar);
+$('denovo').addEventListener('click', () => { mostrar('inicio'); $('jogar').focus(); });
+</script>
+</body>
+</html>

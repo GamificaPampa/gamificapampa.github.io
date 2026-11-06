@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Cores e Formas do Pampa</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;700&display=swap">
+<style>
+/* Estilo GamificaPampa, do GamificaPampa: use sem mudar */
+:root {
+  --fundo: #4fadf2; --fundo-2: #bfe5ff; --cartao: #ffffff; --texto: #2f2a4a; --destaque: #ffd23f;
+  --botao: #4fd6a6; --botao-texto: #2f2a4a; --borda: #2f2a4a;
+  --certo: #c9f5e3; --certo-texto: #14532d; --errado: #ffd6e0; --errado-texto: #7a1530;
+  --fonte: "Fredoka", "Trebuchet MS", "Segoe UI", system-ui, sans-serif; --raio: 18px; --linha: 4px solid var(--borda); --sombra: 0 6px 0 var(--borda);
+}
+body { margin: 0; background: var(--fundo); color: var(--texto); font: 600 20px/1.4 var(--fonte); }
+button { min-height: 48px; padding: 8px 20px; background: var(--botao); color: var(--botao-texto); border: var(--linha); border-radius: var(--raio); box-shadow: var(--sombra); font: 700 20px var(--fonte); cursor: pointer; }
+.cartao { background: var(--cartao); color: var(--texto); border: var(--linha); border-radius: var(--raio); padding: 20px; }
+.certo { background: var(--certo); color: var(--certo-texto); } .errado { background: var(--errado); color: var(--errado-texto); }
+body { background: linear-gradient(var(--fundo), var(--fundo-2)) fixed; }
+/* Do jogo: para quem ainda não lê, a instrução tem o botão Ouvir e as respostas são figuras grandes */
+* { box-sizing: border-box; }
+main { width: min(760px, 100% - 32px); margin: 24px auto; }
+h1 { margin: 0 0 8px; font-size: clamp(30px, 6vw, 44px); line-height: 1.1; }
+.tela { display: grid; gap: 16px; }
+.tela[hidden] { display: none; }
+.progresso { font-size: 18px; }
+.instrucao { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; }
+.pergunta { margin: 0; font-size: 28px; line-height: 1.3; }
+.figuras { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+.figuras button { display: grid; place-items: center; min-height: 130px; padding: 10px; background: var(--cartao); color: var(--texto); }
+.figuras svg { width: 100%; max-width: 110px; height: auto; }
+.retorno { min-height: 64px; margin: 0; padding: 12px 16px; border-radius: var(--raio); font-size: 24px; }
+.retorno:empty { visibility: hidden; }
+.estrelas { font-size: 48px; letter-spacing: 6px; }
+button:focus-visible { outline: 4px solid var(--destaque); outline-offset: 3px; }
+</style>
+</head>
+<body>
+<main>
+  <section class="tela cartao" id="inicio">
+    <h1>Cores e Formas do Pampa</h1>
+    <p><b>Objetivo:</b> reconhecer cores, formas e quantidades até 5.</p>
+    <p>Ouça o pedido e toque na figura certa. São 3 fases.</p>
+    <div class="instrucao"><button id="jogar">Jogar</button><button id="ouvir-inicio" aria-label="Ouvir as instruções"><svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9h4l5-4v14l-5-4H4z" fill="currentColor"/><path d="M16 8a5 5 0 0 1 0 8M19 5a9 9 0 0 1 0 14" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg> Ouvir</button></div>
+  </section>
+
+  <section class="tela cartao" id="jogo" hidden>
+    <p class="progresso" id="progresso"></p>
+    <div class="instrucao"><p class="pergunta" id="pergunta"></p><button id="ouvir" aria-label="Ouvir o pedido"><svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9h4l5-4v14l-5-4H4z" fill="currentColor"/><path d="M16 8a5 5 0 0 1 0 8M19 5a9 9 0 0 1 0 14" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg> Ouvir</button></div>
+    <div class="figuras" id="figuras"></div>
+    <p class="retorno" id="retorno" role="status" aria-live="polite"></p>
+    <button id="proxima" hidden>Próxima</button>
+  </section>
+
+  <section class="tela cartao" id="fim" hidden>
+    <h1>Muito bem!</h1>
+    <p class="estrelas" id="estrelas"></p>
+    <p>Você reconheceu cores, formas e quantidades.</p>
+    <button id="denovo">Jogar de novo</button>
+  </section>
+</main>
+<script>
+// Desenhos em SVG no próprio arquivo, sem imagem de fora
+const forma = (nome, cor) => ({
+  circulo: `<svg viewBox="0 0 100 100" aria-hidden="true"><circle cx="50" cy="50" r="40" fill="${cor}" stroke="#2f2a4a" stroke-width="6"/></svg>`,
+  quadrado: `<svg viewBox="0 0 100 100" aria-hidden="true"><rect x="12" y="12" width="76" height="76" rx="6" fill="${cor}" stroke="#2f2a4a" stroke-width="6"/></svg>`,
+  triangulo: `<svg viewBox="0 0 100 100" aria-hidden="true"><path d="M50 10 90 88H10z" fill="${cor}" stroke="#2f2a4a" stroke-width="6" stroke-linejoin="round"/></svg>`,
+}[nome]);
+const bolinhas = (n) => `<svg viewBox="0 0 100 100" aria-hidden="true">${Array.from({ length: n }, (_, i) => `<circle cx="${20 + (i % 3) * 30}" cy="${30 + Math.floor(i / 3) * 40}" r="11" fill="#ffd23f" stroke="#2f2a4a" stroke-width="4"/>`).join('')}</svg>`;
+
+// Cada opção tem o nome falado, para quem usa leitor de tela, e a explicação do erro
+const FASES = [
+  { nome: 'Cores', perguntas: [
+    { texto: 'Toque na figura amarela.', opcoes: [
+      { fig: forma('circulo', '#ffd23f'), nome: 'círculo amarelo', certa: true, porque: 'Isso! Amarelo como o ipê.' },
+      { fig: forma('circulo', '#4da3ff'), nome: 'círculo azul', porque: 'Esse é azul, como o céu. Procure o amarelo, como o sol.' },
+      { fig: forma('circulo', '#ff5f8f'), nome: 'círculo rosa', porque: 'Esse é rosa. Procure o amarelo, como o sol.' } ] } ] },
+  { nome: 'Formas', perguntas: [
+    { texto: 'Toque no triângulo.', opcoes: [
+      { fig: forma('quadrado', '#4fd6a6'), nome: 'quadrado', porque: 'Esse é o quadrado: tem 4 lados. O triângulo tem 3 pontas.' },
+      { fig: forma('triangulo', '#4fd6a6'), nome: 'triângulo', certa: true, porque: 'Isso! O triângulo tem 3 lados e 3 pontas.' },
+      { fig: forma('circulo', '#4fd6a6'), nome: 'círculo', porque: 'Esse é o círculo: é redondo, sem pontas. O triângulo tem 3 pontas.' } ] } ] },
+  { nome: 'Contar', perguntas: [
+    { texto: 'Toque onde tem 3 bolinhas.', opcoes: [
+      { fig: bolinhas(2), nome: '2 bolinhas', porque: 'Aqui tem 2. Conte apontando: um, dois, três.' },
+      { fig: bolinhas(5), nome: '5 bolinhas', porque: 'Aqui tem 5, mais que 3. Conte apontando: um, dois, três.' },
+      { fig: bolinhas(3), nome: '3 bolinhas', certa: true, porque: 'Isso! Um, dois, três.' } ] } ] },
+];
+
+const $ = (id) => document.getElementById(id);
+let fase = 0, pergunta = 0, acertos = 0, total = 0;
+
+// O botão Ouvir lê o texto com a voz do aparelho, em português
+const falar = (texto) => {
+  if (!('speechSynthesis' in window)) return;
+  speechSynthesis.cancel();
+  const fala = new SpeechSynthesisUtterance(texto);
+  fala.lang = 'pt-BR';
+  speechSynthesis.speak(fala);
+};
+let audio;
+const som = (certo) => {
+  try {
+    audio = audio || new AudioContext();
+    const osc = audio.createOscillator(), vol = audio.createGain();
+    osc.frequency.value = certo ? 660 : 220;
+    vol.gain.setValueAtTime(0.15, audio.currentTime);
+    vol.gain.exponentialRampToValueAtTime(0.001, audio.currentTime + 0.3);
+    osc.connect(vol).connect(audio.destination);
+    osc.start(); osc.stop(audio.currentTime + 0.3);
+  } catch (e) { /* sem som, o jogo continua */ }
+};
+const mostrar = (id) => { for (const tela of ['inicio', 'jogo', 'fim']) $(tela).hidden = tela !== id; };
+
+const desenhar = () => {
+  const p = FASES[fase].perguntas[pergunta];
+  $('progresso').textContent = `Fase ${fase + 1} de ${FASES.length}: ${FASES[fase].nome}`;
+  $('pergunta').textContent = p.texto;
+  $('retorno').textContent = '';
+  $('retorno').className = 'retorno';
+  $('proxima').hidden = true;
+  $('figuras').replaceChildren(...p.opcoes.map((op) => {
+    const b = document.createElement('button');
+    b.innerHTML = op.fig;
+    b.setAttribute('aria-label', op.nome);
+    b.addEventListener('click', () => responder(op, b));
+    return b;
+  }));
+  falar(p.texto);
+};
+
+const responder = (op, botao) => {
+  total += 1;
+  if (op.certa) acertos += 1;
+  for (const b of $('figuras').querySelectorAll('button')) b.disabled = true;
+  botao.classList.add(op.certa ? 'certo' : 'errado');
+  $('retorno').className = `retorno ${op.certa ? 'certo' : 'errado'}`;
+  $('retorno').textContent = `${op.certa ? '✓' : '✗'} ${op.porque}`;
+  falar(op.porque);
+  som(op.certa);
+  $('proxima').hidden = false;
+  $('proxima').focus();
+};
+
+const avancar = () => {
+  pergunta += 1;
+  if (pergunta >= FASES[fase].perguntas.length) { fase += 1; pergunta = 0; }
+  if (fase >= FASES.length) {
+    const n = acertos === total ? 3 : acertos >= 2 ? 2 : 1;
+    $('estrelas').textContent = '★'.repeat(n) + '☆'.repeat(3 - n);
+    $('estrelas').setAttribute('aria-label', `${n} de 3 estrelas`);
+    mostrar('fim');
+    falar('Muito bem!');
+    return $('denovo').focus();
+  }
+  desenhar();
+};
+
+$('jogar').addEventListener('click', () => { fase = pergunta = acertos = total = 0; mostrar('jogo'); desenhar(); });
+$('ouvir-inicio').addEventListener('click', () => falar('Ouça o pedido e toque na figura certa.'));
+$('ouvir').addEventListener('click', () => falar($('pergunta').textContent));
+$('proxima').addEventListener('click', avancar);
+$('denovo').addEventListener('click', () => mostrar('inicio'));
+</script>
+</body>
+</html>

@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Jogos-modelo · GamificaPampa</title>
+  <meta name="description" content="Três jogos de um arquivo só que a Máquina de prompts mostra à IA como exemplo de jogo bem feito: com objetivo, fases do fácil ao difícil, erro explicado e pouca coisa na tela.">
+  <meta name="theme-color" content="#5fbcff">
+  <link rel="icon" type="image/svg+xml" href="/identidade-visual/logos/gamificapampa-icone.svg">
+  <link rel="stylesheet" href="/identidade-visual/css/fontes.css">
+  <link rel="stylesheet" href="/identidade-visual/css/cores.css">
+  <link rel="stylesheet" href="/identidade-visual/css/componentes.css">
+  <link rel="stylesheet" href="/identidade-visual/css/botoes.css">
+  <link rel="stylesheet" href="/identidade-visual/css/cenario.css">
+  <style>
+    p, ul { margin: 0; }
+    ul { padding: 0; list-style: none; }
+    :focus-visible { outline: 4px solid var(--pink); outline-offset: 3px; }
+    .icone { display: inline-block; width: 22px; height: 22px; vertical-align: -.22em; flex: none; }
+    .wrap { width: min(980px, 100% - 32px); margin-inline: auto; display: grid; gap: 24px; padding-bottom: clamp(140px, 18vw, 220px); }
+    .intro { display: grid; justify-items: start; gap: 14px; padding-top: 14px; }
+    .intro h1 { font-size: clamp(40px, 7vw, 72px); }
+    .intro p:not(.pill) { max-width: 680px; font-weight: 600; font-size: clamp(17px, 1.8vw, 20px); }
+    .modelos { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr)); gap: 18px; }
+    .modelos li { display: grid; align-content: start; gap: 10px; }
+    .modelos h2 { font-size: 24px; }
+    .modelos small { color: var(--soft); font-weight: 700; font-size: 14px; letter-spacing: .04em; text-transform: uppercase; }
+    .foot { position: relative; padding: 0 16px 28px; font-weight: 600; text-align: center; }
+  </style>
+<script src="/identidade-visual/js/barra.js" defer></script>
+</head>
+<body class="ceu">
+  <div class="cenario cenario--fixo" aria-hidden="true">
+    <span class="nuvem" style="top: 8%; --w: 180px; --t: 80s; --d: -20s"></span>
+    <span class="morros"></span>
+  </div>
+  <main class="wrap">
+    <section class="intro">
+      <p class="pill" style="--c: var(--mint)">MÁQUINA DE PROMPTS</p>
+      <h1 class="loud">Jogos-<span class="yellow">modelo</span></h1>
+      <p>Quando você pede um jogo, a máquina mostra à IA um destes modelos como exemplo: um arquivo só, com objetivo na tela, fases do fácil ao difícil, o erro explicado e pouca coisa ao mesmo tempo. A IA troca o tema e o estilo.</p>
+    </section>
+    <ul class="modelos">
+      <li class="card"><small>Educação Infantil e 1º e 2º anos</small><h2>Cores e Formas do Pampa</h2><p>Ouvir o pedido e tocar na figura certa.</p><a class="btn btn--jogar btn--small" href="figuras.html"><span data-icone="play"></span>Jogar</a></li>
+      <li class="card"><small>3º ao 7º ano</small><h2>Pizzaria das Frações</h2><p>Um quiz em fases, em que cada erro é explicado.</p><a class="btn btn--jogar btn--small" href="quiz-fases.html"><span data-icone="play"></span>Jogar</a></li>
+      <li class="card"><small>8º e 9º anos, Ensino Médio e EJA</small><h2>Linha do Tempo do Brasil</h2><p>Tocar nos fatos na ordem certa.</p><a class="btn btn--jogar btn--small" href="ordenar.html"><span data-icone="play"></span>Jogar</a></li>
+    </ul>
+    <p><a class="btn btn--conhecer" href="/maquina/"><span data-icone="lupa"></span>Voltar à máquina</a></p>
+  </main>
+  <footer class="foot">GamificaPampa, projeto de extensão da UNIPAMPA, Campus Alegrete</footer>
+<script src="/identidade-visual/js/icones.js"></script>
+<script>
+  document.querySelectorAll('[data-icone]').forEach((lugar) => { lugar.outerHTML = window.Icones ? Icones.svg(lugar.dataset.icone) : ''; });
+</script>
+</body>
+</html>

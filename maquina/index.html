@@ -68,6 +68,13 @@
     .ideas button:hover { background: var(--white); border-style: solid; }
     .privacy { display: flex; align-items: flex-start; gap: 10px; width: 100%; padding: 12px 14px; background: #ffe3ec; border: 3px solid var(--pink); border-radius: 16px; font-weight: 600; font-size: 15px; }
     .privacy svg { flex: none; }
+    /* O estilo visual do jogo: cada botão tem uma miniatura feita com as cores do próprio estilo */
+    .estilos { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 10px; width: 100%; }
+    .estilos .chip > span { display: grid; gap: 8px; width: 100%; height: 100%; padding: 8px 10px 10px; border-radius: 18px; }
+    .estilos .chip input:checked + span::before { position: absolute; top: 6px; right: 10px; }
+    .miniatura { display: grid; gap: 6px; padding: 8px; background: var(--m-fundo); border: 3px solid var(--m-borda); border-radius: var(--m-raio); font-family: var(--m-fonte); }
+    .miniatura i { display: block; height: 14px; background: var(--m-cartao); border: 2px solid var(--m-borda); border-radius: 6px; }
+    .miniatura b { justify-self: start; padding: 2px 10px; background: var(--m-botao); color: var(--m-botao-texto); border: 2px solid var(--m-borda); border-radius: var(--m-raio); font-size: 13px; box-shadow: 0 3px 0 var(--m-borda); }
     /* Step 6, optional and closed: the details that make the answer fit the class */
     .completo { min-width: 0; }
     .completo summary { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 10px; font-weight: 700; font-size: 20px; cursor: pointer; }
@@ -114,6 +121,7 @@
     .mais details { flex: 1 1 180px; min-width: 0; }
     .mais summary { font-weight: 700; font-size: 15px; cursor: pointer; }
     .mais details p { margin-top: 8px; padding: 10px 12px; background: var(--white); color: var(--ink); border-radius: 12px; font-size: 15px; line-height: 1.4; }
+    .quality pre { max-height: 320px; margin: 8px 0 0; overflow: auto; padding: 12px; background: var(--white); color: var(--ink); border-radius: 14px; font: 500 13px/1.45 ui-monospace, Consolas, monospace; white-space: pre-wrap; }
     .quality ol { display: grid; gap: 6px; margin-top: 8px; padding: 12px 12px 12px 34px; background: var(--white); color: var(--ink); border-radius: 14px; font-size: 15px; line-height: 1.4; }
 
     /* Criar aqui: a resposta da IA na própria página, pelo Worker da equipe. Desligado enquanto CRIAR_AQUI.url estiver vazio */
@@ -167,6 +175,8 @@
   </style>
 <script src="/identidade-visual/js/barra.js" defer></script>
 <script src="/identidade-visual/js/copiar.js"></script>
+<script src="estilos.js"></script>
+<script src="modelos.js"></script>
 </head>
 <body class="ceu">
   <svg class="sprite" aria-hidden="true">
@@ -268,6 +278,11 @@
             <label class="chip"><input type="radio" name="aulas" value="3"><span>3 aulas, em sequência</span></label>
           </div>
         </fieldset>
+        <fieldset class="step" id="estilo-step" style="--c: #ffd23f" hidden>
+          <legend>Com qual visual? <span class="step__note">O jogo sai com estas cores e esta letra</span></legend>
+          <div class="estilos" id="estilos"></div>
+        </fieldset>
+
         <div class="step" style="--c: #c9f5e3">
           <label class="step__title" for="tema"><span class="step__num">4</span><span id="tema-pergunta">Sobre qual tema?</span></label>
           <input class="theme" id="tema" name="tema" maxlength="80" autocomplete="off" placeholder="Escreva o tema da aula">
@@ -330,13 +345,13 @@
           <button class="btn btn--small" type="button" id="reset"><svg width="18" height="18" aria-hidden="true"><use href="#i-reset"/></svg>Começar de novo</button>
         </div>
         <div class="quality" id="quality" hidden>
-          <h3><b>2</b>Padrão de qualidade do HTML</h3>
-          <p>Quando o jogo aparecer no Canvas, mande esta segunda mensagem na mesma conversa. O Gemini revisa o código para ele funcionar bem no celular e no projetor, sem internet e sem dado de aluno. Se ele recusar, toque em Refazer.</p>
+          <h3><b>2</b>A segunda mensagem: o padrão do jogo</h3>
+          <p>Quando o jogo aparecer no Canvas, mande esta mensagem na mesma conversa. Ela traz o visual escolhido, o que faz um jogo ensinar bem e um jogo-modelo de exemplo. Se o Gemini recusar, toque em Refazer.</p>
           <details>
-            <summary>Ver o padrão</summary>
-            <ol id="quality-list"></ol>
+            <summary>Ver a segunda mensagem</summary>
+            <pre id="quality-texto"></pre>
           </details>
-          <button class="btn btn--small" type="button" id="quality-copy"><svg width="18" height="18" aria-hidden="true"><use href="#i-copy"/></svg>Copiar o padrão</button>
+          <button class="btn btn--small" type="button" id="quality-copy"><svg width="18" height="18" aria-hidden="true"><use href="#i-copy"/></svg>Copiar a segunda mensagem</button>
         </div>
         <div class="quality" id="mais" hidden>
           <h3><b>2</b>Peça mais</h3>
@@ -500,7 +515,7 @@
         tarefa: (theme) => `Crie um jogo em HTML sobre ${theme} para jogar no navegador, em que cada fase treine uma parte do tema, da mais fácil à mais difícil.`,
         formato: 'Faça tudo num único arquivo HTML, com o CSS e o JavaScript dentro dele e sem nada de fora, que funcione no celular e no computador. Quero botões grandes, 3 fases, som no acerto, estrelas no final e, no erro, uma frase que explica o conceito.',
         formatoAdulto: 'Faça tudo num único arquivo HTML, com o CSS e o JavaScript dentro dele e sem nada de fora, que funcione no celular e no computador. Quero botões grandes, visual adulto e sem bichinhos, 3 fases, som no acerto, a pontuação no final e, no erro, uma frase que explica o conceito.',
-        tip: 'Ligue o Canvas em + > Mais ferramentas > Canvas. Se ele recusar o jogo, toque em Refazer ou mande primeiro só a Tarefa. Quando o jogo aparecer, mande o padrão de qualidade. Depois ganhe um link e um QR Code em gamificapampa.github.io/publicador.',
+        tip: 'Ligue o Canvas em + > Mais ferramentas > Canvas. Se ele recusar o jogo, toque em Refazer ou mande primeiro só a Tarefa. Quando o jogo aparecer, mande a segunda mensagem, com o visual e o padrão do jogo. Depois ganhe um link e um QR Code em gamificapampa.github.io/publicador.',
       },
       atividade: {
         name: 'Atividade para imprimir',
@@ -572,31 +587,63 @@
         tipInfantil: 'O registro acompanha cada criança sem nota. Escreva o nome depois, no Google Docs, nunca na conversa com o Gemini.',
       },
     };
-    // O padrão de qualidade do HTML vai numa segunda mensagem, porque o Canvas recusa jogo pedido num prompt longo.
-    // Ele pede o que todo jogo da org já segue: um arquivo só, sem nada de fora, celular e projetor,
-    // teclado e contraste, explicação no erro e nenhum dado de aluno. A turma acrescenta o que muda para ela.
-    const qualityRules = ({ infantil, adult, leitura }) => [
-      'Estrutura: um só arquivo HTML com <!DOCTYPE html>, <html lang="pt-BR">, <meta charset="utf-8">, <meta name="viewport" content="width=device-width, initial-scale=1"> e um <title> com o nome do jogo.',
-      'Sem nada de fora: nenhuma fonte, imagem, biblioteca ou link externo. Desenhos em SVG ou CSS no próprio arquivo e o som feito com a Web Audio API, para o jogo funcionar sem internet.',
-      'Tela: cabe no celular (360 px de largura) e no projetor, sem rolagem para o lado. Botões com pelo menos 48 px de altura e letra de pelo menos 18 px.',
-      'Acessibilidade: use <button> em tudo que se clica, deixe jogar só com o teclado, use texto com bom contraste e mostre certo ou errado com cor, ícone e palavra, nunca só com a cor.',
-      'Jogo: uma tela de início com as instruções em até 3 frases, um botão Jogar de novo no fim e, no erro, uma frase que explica por que a resposta escolhida está errada, não só "errou".',
-      'Pensamento: pelo menos metade das perguntas pede para usar o tema numa situação, não só lembrar um nome, e as respostas erradas vêm de erros comuns.',
-      infantil
-        ? 'As crianças ainda não leem: cada instrução e cada pergunta tem um botão Ouvir, que lê o texto com a voz do aparelho em português (speechSynthesis com lang pt-BR), e as respostas são figuras grandes.'
-        : leitura && `Leitura: frases curtas e um botão Ouvir em cada pergunta, que lê o texto com a voz do aparelho em português (speechSynthesis com lang pt-BR), para ${adult ? 'quem' : 'o aluno que'} tem dificuldade de ler.`,
-      adult && 'Visual adulto e respeitoso: nada de bichinhos, tom infantil ou elogio exagerado.',
-      `Cuidado com a turma: não peça nem guarde nome, foto ou dado de ${adult ? 'estudante' : 'aluno'}, e não use alert, prompt ou confirm.`,
-      'Código: HTML, CSS e JavaScript organizados, com comentários curtos em português, sem erros no console e com animações leves, que param quando o aparelho pede menos movimento (prefers-reduced-motion).',
-      'Conteúdo: confira cada resposta e cada conta e escreva tudo em português do Brasil, com acentos.',
-    ].filter(Boolean);
-    const qualityText = (rules, inicio = 'Agora revise o jogo seguindo este padrão de qualidade, sem mudar o tema:', fim = 'No fim, liste em poucas linhas o que você mudou.') => [
-      inicio,
-      ...rules.map((rule, index) => `${index + 1}. ${rule}`),
-      fim,
-    ].join('\n');
     let qualityCurrent = '';
-    let qualityRulesNow = [];
+    let baseApi = '';
+
+    // O prompt-base do jogo (itens 2.5.4.1 a 2.5.4.4 da spec da retrospectiva de 06/11): seções com títulos e uma
+    // instrução por linha. No Canvas, ele é a segunda mensagem, porque o Canvas recusa jogo pedido num prompt longo;
+    // no Criar aqui, ele vai como a parte fixa (instrução de sistema), e o pedido do professor vai à parte
+    const secao = (titulo, linhas) => [`## ${titulo}`, ...linhas.filter(Boolean).map((linha) => `- ${linha}`)].join('\n');
+    const promptBase = ({ infantil, adult, leitura, turma, estilo, paraApi }) => {
+      const modelo = window.MODELOS.paraTurma(turma);
+      const outros = window.MODELOS.lista.filter((m) => m !== modelo).map((m) => `${m.nome} (${window.MODELOS.link(m)})`).join(' e ');
+      const pessoa = adult ? 'o estudante' : infantil ? 'a criança' : 'o aluno';
+      return [
+        paraApi ? 'Você cria jogos educativos em HTML para professores usarem na aula. Siga este padrão em todo jogo.' : 'Agora reescreva o jogo seguindo este padrão, sem mudar o tema nem o objetivo.',
+        secao('Como o jogo funciona', [
+          'Tela de início com o nome do jogo, o objetivo numa frase e as instruções em até 3 frases, com o botão Jogar.',
+          '3 fases, da mais fácil à mais difícil; cada fase trabalha um passo do objetivo.',
+          'Uma pergunta ou desafio por tela, com no máximo 4 opções.',
+          'O progresso sempre na tela, como "Fase 1 de 3".',
+          `Tela final com estrelas pelo desempenho, uma frase do que ${pessoa} aprendeu e o botão Jogar de novo.`,
+        ]),
+        secao(`Estilo visual: ${estilo.nome}`, [
+          `O visual é ${estilo.frase}.`,
+          'Use exatamente este bloco no começo do <style>, sem mudar as cores, a fonte nem as regras:',
+          adult && 'Visual adulto e respeitoso: nada de bichinhos, tom infantil ou elogio exagerado.',
+        ]) + '\n```css\n' + window.ESTILOS.css(estilo) + '\n```\n' + secao('Como usar o estilo', [
+          estilo.fonte && `Ponha no <head> o <link rel="stylesheet" href="${estilo.fonte}">. Sem internet, o jogo usa as fontes de reserva do bloco.`,
+          'Use .cartao nas telas, .certo e .errado no retorno, e as variáveis do bloco (var(--destaque), var(--raio)) no resto do CSS.',
+        ]),
+        secao('Qualidade didática', [
+          `No erro, uma frase que explica por que a resposta escolhida está errada, não só "errou".`,
+          'As respostas erradas vêm de erros comuns de verdade sobre o tema.',
+          'Pelo menos metade das perguntas pede para usar o tema numa situação, não só lembrar um nome.',
+          infantil ? 'As crianças ainda não leem: cada instrução e cada pergunta tem um botão Ouvir, que lê o texto com a voz do aparelho (speechSynthesis com lang pt-BR), e as respostas são figuras grandes.'
+            : leitura && `Frases curtas e um botão Ouvir em cada pergunta, que lê o texto com a voz do aparelho (speechSynthesis com lang pt-BR), para ${adult ? 'quem' : 'o aluno que'} tem dificuldade de ler.`,
+          'Pouca coisa na tela ao mesmo tempo: nada pisca nem se mexe enquanto se pensa; animação só no acerto e no erro, de até meio segundo, e nenhuma quando o aparelho pede menos movimento (prefers-reduced-motion).',
+          !adult && 'Sem tempo correndo: cada um responde no seu ritmo.',
+          'Letra de pelo menos 18 px e de 24 px na pergunta, que é o maior texto da tela; botões do mesmo tamanho e sempre no mesmo lugar.',
+          'Certo e errado com cor, ícone e palavra, nunca só com a cor.',
+        ]),
+        secao('Formato da resposta', [
+          'Um só arquivo HTML, com <!DOCTYPE html>, <html lang="pt-BR">, <meta charset="utf-8">, <meta name="viewport" content="width=device-width, initial-scale=1"> e um <title> com o nome do jogo.',
+          'Um <style> que começa pelo bloco do estilo e um <script> no fim do <body>.',
+          'Nada de fora, fora a fonte do estilo: nenhuma imagem, biblioteca ou link externo. Desenhos em SVG ou CSS no próprio arquivo e o som com a Web Audio API.',
+          'Cabe no celular (360 px de largura) e no projetor, sem rolagem para o lado, e dá para jogar só com o teclado: <button> em tudo que se clica.',
+          `Não use alert, prompt nem confirm, e não peça nem guarde nome, foto ou dado de ${adult ? 'estudante' : 'aluno'}.`,
+          'Até cerca de 40 KB, com comentários curtos em português e sem erros no console.',
+        ]),
+        secao('Exemplo de referência', [
+          `Siga a estrutura deste esqueleto do jogo-modelo ${modelo.nome} (${window.MODELOS.link(modelo)}), em que ${modelo.mecanica}. Troque o tema, as perguntas e o visual pelo que foi pedido.`,
+        ]) + '\n```html\n' + modelo.esqueleto + '\n```\n' + secao('Outros jogos-modelo', [`Para ver como ficam prontos: ${outros}.`]),
+        secao('Antes de entregar', [
+          'Jogue de cabeça do começo ao fim: confira cada resposta e cada conta, se todo botão funciona e se não sobrou erro no console.',
+          'Escreva tudo em português do Brasil, com acentos.',
+          paraApi ? 'Responda só com o arquivo HTML completo, num único bloco de código html, sem nada antes ou depois.' : 'No fim, liste em poucas linhas o que você mudou.',
+        ]),
+      ].join('\n\n');
+    };
 
     // Peça mais (Fase 2 da spec): mensagens para mandar na mesma conversa depois da primeira resposta.
     // A revisão diz o que conferir, porque na Fase 0 "revise como especialista" sozinho não melhorou a nota.
@@ -711,6 +758,7 @@
       if (tipoValor === 'quiz' && turma === 'em3') kind = kinds.enem;
       if (tipoValor === 'quiz' && ['eja2', 'eja3'].includes(turma)) kind = kinds.encceja;
       if (tipoValor === 'plano' && data.get('aulas') === '3') kind = kinds.sequencia;
+      const estilo = window.ESTILOS.porId(data.get('estilo') || 'gamificapampa');
       const theme = String(data.get('tema') || '').trim().replace(/[.!?]+$/, '');
       const extras = data.getAll('extra');
       const infantil = turma === 'infantil';
@@ -752,6 +800,7 @@
         const tempoPlano = { 15: 'uma atividade de 15 minutos', 50: 'uma aula de 50 minutos', 100: 'duas aulas de 50 minutos' }[tempo];
         formato = formato.replace('uma aula de 50 minutos', tempoPlano).replace('somam 50 minutos', `somam ${tempo} minutos`);
       }
+      if (formato && kind === kinds.jogo) formato += ` O visual: ${estilo.frase}.`;
       if (formato && extras.includes('curto')) formato += ' Seja breve: a resposta deve caber numa página.';
       if (formato && kind !== kinds.jogo && !formato.includes('BNCC')) formato += ' Não cite códigos da BNCC.';
       if (formato) formato += ' Responda em português do Brasil.';
@@ -768,7 +817,7 @@
       }
       const text = { papel, tarefa, contexto, formato };
       const label = [kind && kind.name, group && group.name, theme].filter(Boolean).join(' · ');
-      return { text, kind, turma, etapa, subject, label, adult, theme, leitura: extras.includes('leitura'), local: extras.includes('local'), tipoValor, materiaValor };
+      return { text, kind, turma, etapa, subject, label, adult, theme, leitura: extras.includes('leitura'), local: extras.includes('local'), tipoValor, materiaValor, estilo };
     };
 
     // Ideas for the theme follow the chosen subject, and in the EJA they come from adult life.
@@ -836,6 +885,9 @@
       const tipo = data.get('tipo') || '';
       $('#tipo-outro').hidden = tipo !== 'outro';
       $('#aulas-linha').hidden = tipo !== 'plano';
+      // O estilo só aparece no jogo; sem escolha, o da turma: Caderno, sóbrio, na EJA, e GamificaPampa nas outras
+      $('#estilo-step').hidden = tipo !== 'jogo';
+      if (tipo === 'jogo' && !data.get('estilo')) marcar('estilo', /^eja/.test(new FormData(form).get('turma') || '') ? 'caderno' : 'gamificapampa');
       // O quiz diz quando vira o do Enem ou o do Encceja
       const quiz = form.querySelector('[name="tipo"][value="quiz"] + span');
       const turmaAgora = new FormData(form).get('turma');
@@ -846,17 +898,17 @@
     let lastIdeas;
     const update = () => {
       const etapaEscolhida = mostrarEscolhas();
-      const { text, kind, turma, subject, label, adult, theme, leitura, local } = read();
-      // O padrão de qualidade aparece só no jogo, que é o pedido que vira HTML
+      const { text, kind, turma, subject, label, adult, theme, leitura, local, estilo } = read();
+      // A segunda mensagem aparece só no jogo, que é o pedido que vira HTML
       const isGame = kind === kinds.jogo;
       $('#quality').hidden = !isGame;
       if (isGame) {
-        const rules = qualityRules({ infantil: turma === 'infantil', adult, leitura });
-        const textNow = qualityText(rules);
-        qualityRulesNow = rules;
+        const opcoes = { infantil: turma === 'infantil', adult, leitura, turma, estilo };
+        const textNow = promptBase(opcoes);
+        baseApi = promptBase({ ...opcoes, paraApi: true });
         if (textNow !== qualityCurrent) {
           qualityCurrent = textNow;
-          $('#quality-list').replaceChildren(...rules.map((rule) => Object.assign(document.createElement('li'), { textContent: rule })));
+          $('#quality-texto').textContent = textNow;
         }
       }
       pieces.forEach((piece, index) => {
@@ -915,6 +967,21 @@
         $('#bit').src = '/identidade-visual/mascote/bit.svg';
       }
     };
+
+    // Os botões do estilo visual, cada um com a miniatura feita das cores dele
+    $('#estilos').replaceChildren(...window.ESTILOS.lista.map((estilo) => {
+      const label = Object.assign(document.createElement('label'), { className: 'chip' });
+      const campo = Object.assign(document.createElement('input'), { type: 'radio', name: 'estilo', value: estilo.id });
+      const caixa = document.createElement('span');
+      const mini = Object.assign(document.createElement('small'), { className: 'miniatura' });
+      const c = estilo.cores;
+      Object.entries({ '--m-fundo': c.fundo, '--m-cartao': c.cartao, '--m-botao': c.botao, '--m-botao-texto': c.botaoTexto, '--m-borda': c.borda, '--m-raio': estilo.raio, '--m-fonte': estilo.familia }).forEach(([nome, valor]) => mini.style.setProperty(nome, valor));
+      mini.setAttribute('aria-hidden', 'true');
+      mini.append(document.createElement('i'), Object.assign(document.createElement('b'), { textContent: 'Jogar' }));
+      caixa.append(mini, estilo.nome);
+      label.append(campo, caixa);
+      return label;
+    }));
 
     // As opções que o professor escreveu ficam neste aparelho e voltam como botões, até 5 por passo, com um x para apagar
     const MINHAS = 'gp-lembrar:maquina-minhas';
@@ -1053,13 +1120,33 @@
       }
       // A prévia roda numa moldura isolada: o jogo não alcança a página nem o que ela guarda
       $('#teste-jogo').hidden = !html;
-      if (html && $('#teste-jogo').srcdoc !== html) $('#teste-jogo').srcdoc = html;
+      const previa = html ? comVigia(html) : '';
+      if (html && $('#teste-jogo').srcdoc !== previa) { $('#teste-jogo').srcdoc = previa; vigiarErros(); }
       if (!html) $('#teste-jogo').removeAttribute('srcdoc');
       $('#teste-baixar').hidden = !html;
       $('#teste-publicar').hidden = !html;
       $('#teste-copiar').hidden = !pronto || !texto;
       mostrarAjuste(pronto);
     };
+    // Se a IA esquecer o bloco do estilo, a página põe de volta no começo do <style>
+    const garantirEstilo = (html) => {
+      if (!html || !conversa.estilo || html.includes(window.ESTILOS.marca(conversa.estilo))) return html;
+      const bloco = window.ESTILOS.css(conversa.estilo);
+      return /<style[^>]*>/i.test(html) ? html.replace(/<style[^>]*>/i, (tag) => `${tag}\n${bloco}\n`) : html.replace(/<\/head>/i, `<style>\n${bloco}\n</style>\n</head>`);
+    };
+    // Na prévia (não no arquivo baixado), um vigia avisa a página se o jogo der erro de JavaScript
+    const VIGIA = '<script>addEventListener("error",function(e){parent.postMessage({gpErro:String(e.message||"erro")},"*")});addEventListener("unhandledrejection",function(e){parent.postMessage({gpErro:String(e.reason)},"*")})<\/script>';
+    const comVigia = (html) => /<head[^>]*>/i.test(html) ? html.replace(/<head[^>]*>/i, (tag) => tag + VIGIA) : VIGIA + html;
+    let vigiando = 0;
+    const vigiarErros = () => { vigiando = Date.now(); };
+    // Um erro nos primeiros segundos vira um pedido de conserto, uma vez por material, sem contar como ajuste
+    addEventListener('message', (evento) => {
+      if (evento.source !== $('#teste-jogo').contentWindow || !evento.data || !evento.data.gpErro) return;
+      if (criando || conversa.consertou || Date.now() - vigiando > 6000 || !conversa.historico.length) return;
+      conversa.consertou = true;
+      rodada(`O jogo deu este erro no navegador: ${String(evento.data.gpErro).slice(0, 300)}. Corrija e mande o arquivo HTML completo, sem explicação antes ou depois.`);
+    });
+
     // Pedir ajuste: os pedidos prontos do Peça mais (no jogo, os mais comuns) e uma caixa para escrever
     const PEDIDOS_DO_JOGO = [
       { nome: 'Botões maiores', texto: 'Deixe os botões e as letras maiores, para jogar no projetor e no celular.' },
@@ -1090,7 +1177,7 @@
       try {
         const resposta = await fetch(CRIAR_AQUI.url, {
           method: 'POST', headers: { 'Content-Type': 'application/json' }, signal: controle.signal,
-          body: JSON.stringify({ prompt, historico: conversa.historico, fluxo: true, ...(codigoOficina ? { codigo: codigoOficina } : {}) }),
+          body: JSON.stringify({ prompt, historico: conversa.historico, fluxo: true, ...(conversa.sistema ? { sistema: conversa.sistema } : {}), ...(codigoOficina ? { codigo: codigoOficina } : {}) }),
         });
         if (!(resposta.headers.get('Content-Type') || '').startsWith('text/event-stream')) {
           const dados = await resposta.json().catch(() => ({}));
@@ -1138,7 +1225,7 @@
           if (conversa.jogo) mostrarResposta({ pose: 'bit-pensando', status: `Escrevendo ${nome}: ${parcial.split('\n').length} linhas até agora.`, html: conversa.html });
           else mostrarResposta({ pose: 'bit-pensando', status: 'A IA está escrevendo.', texto: parcial });
         });
-        const html = conversa.jogo ? extrairHTML(texto) : '';
+        const html = conversa.jogo ? garantirEstilo(extrairHTML(texto)) : '';
         if (conversa.jogo && !html) {
           mostrarResposta({ pose: 'bit-ops', status: `A IA não mandou o jogo inteiro.${cortado ? ' A resposta foi cortada no meio.' : ''} Peça de novo, ou cole o prompt no Gemini com o Canvas ligado.`, html: conversa.html, pronto: Boolean(conversa.html) });
           return;
@@ -1162,11 +1249,10 @@
       if (!current.text || criando || !CRIAR_AQUI.url) return;
       const { kind, local } = read();
       const tipo = kind ? (Object.keys(kinds).find((id) => kinds[id] === kind) || 'proprio') : '';
-      conversa = { jogo: Boolean(current.jogo), tema: current.theme, tipo, local, historico: [], ajustes: 0, texto: '', html: '' };
-      // Pela API não há Canvas nem limite de tamanho do pedido: o jogo já vai com o padrão de qualidade
-      const prompt = current.jogo
-        ? `${current.text}\n\n${qualityText(qualityRulesNow, 'Siga este padrão de qualidade:', 'Responda só com o arquivo HTML completo, sem nenhuma explicação antes ou depois.')}`
-        : current.text;
+      const { estilo } = read();
+      // Pela API não há Canvas: o jogo vai com o prompt-base inteiro como parte fixa, e o pedido do professor à parte
+      conversa = { jogo: Boolean(current.jogo), tema: current.theme, tipo, local, historico: [], ajustes: 0, texto: '', html: '', sistema: current.jogo ? baseApi : '', estilo, consertou: false };
+      const prompt = current.text;
       $('#teste').hidden = false;
       $('#teste').scrollIntoView({ behavior: reducedMotion ? 'auto' : 'smooth', block: 'start' });
       rodada(prompt);

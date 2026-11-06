@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Linha do Tempo do Brasil</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;700&display=swap">
+<style>
+/* Estilo GamificaPampa, do GamificaPampa: use sem mudar */
+:root {
+  --fundo: #4fadf2; --fundo-2: #bfe5ff; --cartao: #ffffff; --texto: #2f2a4a; --destaque: #ffd23f;
+  --botao: #4fd6a6; --botao-texto: #2f2a4a; --borda: #2f2a4a;
+  --certo: #c9f5e3; --certo-texto: #14532d; --errado: #ffd6e0; --errado-texto: #7a1530;
+  --fonte: "Fredoka", "Trebuchet MS", "Segoe UI", system-ui, sans-serif; --raio: 18px; --linha: 4px solid var(--borda); --sombra: 0 6px 0 var(--borda);
+}
+body { margin: 0; background: var(--fundo); color: var(--texto); font: 600 20px/1.4 var(--fonte); }
+button { min-height: 48px; padding: 8px 20px; background: var(--botao); color: var(--botao-texto); border: var(--linha); border-radius: var(--raio); box-shadow: var(--sombra); font: 700 20px var(--fonte); cursor: pointer; }
+.cartao { background: var(--cartao); color: var(--texto); border: var(--linha); border-radius: var(--raio); padding: 20px; }
+.certo { background: var(--certo); color: var(--certo-texto); } .errado { background: var(--errado); color: var(--errado-texto); }
+body { background: linear-gradient(var(--fundo), var(--fundo-2)) fixed; }
+/* Do jogo: toque nos fatos na ordem certa; cada acerto entra na linha do tempo */
+* { box-sizing: border-box; }
+main { width: min(760px, 100% - 32px); margin: 24px auto; }
+h1 { margin: 0 0 8px; font-size: clamp(30px, 6vw, 44px); line-height: 1.1; }
+.tela { display: grid; gap: 16px; }
+.tela[hidden] { display: none; }
+.progresso { font-size: 18px; }
+.pergunta { margin: 0; font-size: 24px; line-height: 1.3; }
+.fatos { display: grid; gap: 10px; }
+.fatos button { width: 100%; text-align: left; }
+.linha { display: grid; gap: 8px; margin: 0; padding: 0 0 0 18px; border-left: var(--linha); list-style: none; }
+.linha li { padding: 8px 14px; border-radius: var(--raio); }
+.linha b { margin-right: 8px; }
+.retorno { min-height: 64px; margin: 0; padding: 12px 16px; border-radius: var(--raio); }
+.retorno:empty { visibility: hidden; }
+.estrelas { font-size: 40px; letter-spacing: 6px; }
+button:focus-visible { outline: 4px solid var(--destaque); outline-offset: 3px; }
+</style>
+</head>
+<body>
+<main>
+  <section class="tela cartao" id="inicio">
+    <h1>Linha do Tempo do Brasil</h1>
+    <p><b>Objetivo:</b> pôr em ordem fatos da história do Brasil e perceber o que veio antes e depois.</p>
+    <p>Toque nos fatos do mais antigo ao mais recente. São 3 fases, cada uma com um fato a mais.</p>
+    <button id="jogar">Jogar</button>
+  </section>
+
+  <section class="tela cartao" id="jogo" hidden>
+    <p class="progresso" id="progresso"></p>
+    <p class="pergunta" id="pergunta">Qual fato veio primeiro?</p>
+    <div class="fatos" id="fatos"></div>
+    <ol class="linha" id="linha" aria-label="A linha do tempo até agora"></ol>
+    <p class="retorno" id="retorno" role="status" aria-live="polite"></p>
+    <button id="proxima" hidden>Próxima fase</button>
+  </section>
+
+  <section class="tela cartao" id="fim" hidden>
+    <h1>Linha completa!</h1>
+    <p class="estrelas" id="estrelas"></p>
+    <p id="resumo"></p>
+    <p>Você aprendeu que a Independência veio antes da Abolição e da República, e a Constituição de hoje é de 1988.</p>
+    <button id="denovo">Jogar de novo</button>
+  </section>
+</main>
+<script>
+// Os fatos, com o ano. Cada fase usa os primeiros N, embaralhados na tela
+const FATOS = [
+  { ano: 1500, t: 'Chegada dos portugueses' },
+  { ano: 1822, t: 'Independência do Brasil' },
+  { ano: 1888, t: 'Abolição da escravatura (Lei Áurea)' },
+  { ano: 1889, t: 'Proclamação da República' },
+  { ano: 1988, t: 'Constituição de 1988' },
+];
+const FASES = [[0, 1, 3], [0, 1, 2, 3], [0, 1, 2, 3, 4]];
+
+const $ = (id) => document.getElementById(id);
+let fase = 0, proximo = 0, erros = 0, errosTotal = 0;
+const embaralhar = (lista) => lista.map((x) => [Math.random(), x]).sort((a, b) => a[0] - b[0]).map(([, x]) => x);
+let audio;
+const som = (certo) => {
+  try {
+    audio = audio || new AudioContext();
+    const osc = audio.createOscillator(), vol = audio.createGain();
+    osc.frequency.value = certo ? 660 : 220;
+    vol.gain.setValueAtTime(0.15, audio.currentTime);
+    vol.gain.exponentialRampToValueAtTime(0.001, audio.currentTime + 0.3);
+    osc.connect(vol).connect(audio.destination);
+    osc.start(); osc.stop(audio.currentTime + 0.3);
+  } catch (e) { /* sem som, o jogo continua */ }
+};
+const mostrar = (id) => { for (const tela of ['inicio', 'jogo', 'fim']) $(tela).hidden = tela !== id; };
+
+const desenhar = () => {
+  const ordem = FASES[fase];
+  proximo = 0; erros = 0;
+  $('progresso').textContent = `Fase ${fase + 1} de ${FASES.length}: ${ordem.length} fatos`;
+  $('pergunta').textContent = 'Qual fato veio primeiro?';
+  $('linha').replaceChildren();
+  $('retorno').textContent = '';
+  $('retorno').className = 'retorno';
+  $('proxima').hidden = true;
+  $('fatos').replaceChildren(...embaralhar(ordem).map((i) => {
+    const b = document.createElement('button');
+    b.textContent = FATOS[i].t;
+    b.addEventListener('click', () => tocar(i, b));
+    return b;
+  }));
+  $('fatos').querySelector('button').focus();
+};
+
+// Acerto: o fato entra na linha com o ano. Erro: o jogo diz quando ele aconteceu e o que vem antes
+const tocar = (i, botao) => {
+  const ordem = FASES[fase];
+  const certo = ordem[proximo];
+  if (i === certo) {
+    som(true);
+    botao.remove();
+    const li = document.createElement('li');
+    li.className = 'certo';
+    li.innerHTML = `<b>${FATOS[i].ano}</b>`;
+    li.append(FATOS[i].t);
+    $('linha').append(li);
+    proximo += 1;
+    $('retorno').className = 'retorno certo';
+    $('retorno').textContent = `✓ Certo! ${FATOS[i].t} foi em ${FATOS[i].ano}.`;
+    if (proximo === ordem.length) {
+      $('pergunta').textContent = 'Linha completa!';
+      $('proxima').hidden = false;
+      $('proxima').textContent = fase === FASES.length - 1 ? 'Ver o resultado' : 'Próxima fase';
+      $('proxima').focus();
+    } else {
+      $('pergunta').textContent = 'E qual veio depois?';
+      $('fatos').querySelector('button').focus();
+    }
+  } else {
+    som(false);
+    erros += 1; errosTotal += 1;
+    $('retorno').className = 'retorno errado';
+    $('retorno').textContent = `✗ Ainda não. ${FATOS[i].t} foi em ${FATOS[i].ano}, depois de ${FATOS[certo].t.toLowerCase()} (${FATOS[certo].ano}).`;
+  }
+};
+
+const avancar = () => {
+  fase += 1;
+  if (fase < FASES.length) return desenhar();
+  const n = errosTotal === 0 ? 3 : errosTotal <= 3 ? 2 : 1;
+  $('estrelas').textContent = '★'.repeat(n) + '☆'.repeat(3 - n);
+  $('estrelas').setAttribute('aria-label', `${n} de 3 estrelas`);
+  $('resumo').textContent = errosTotal ? `Você terminou com ${errosTotal} ${errosTotal === 1 ? 'erro' : 'erros'} no caminho.` : 'Você terminou sem nenhum erro!';
+  mostrar('fim');
+  $('denovo').focus();
+};
+
+$('jogar').addEventListener('click', () => { fase = 0; errosTotal = 0; mostrar('jogo'); desenhar(); });
+$('proxima').addEventListener('click', avancar);
+$('denovo').addEventListener('click', () => mostrar('inicio'));
+</script>
+</body>
+</html>
