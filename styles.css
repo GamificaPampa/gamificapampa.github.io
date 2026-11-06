@@ -286,15 +286,6 @@ h2 { font-size: clamp(38px, 5.6vw, 66px); }
 }
 @media (prefers-reduced-motion: reduce) { .saida { transition: none; } .note, .estudio__bit { animation: none; } }
 
-/* The prompt machine card in the resources, with a small console lighting its four pieces */
-.machine-promo { display: grid; gap: 24px; align-items: center; margin-top: clamp(32px, 5vw, 56px); padding: clamp(18px, 3vw, 28px); box-shadow: inset 0 14px 0 var(--yellow), var(--drop); }
-@media (min-width: 768px) { .machine-promo { grid-template-columns: minmax(0, 300px) minmax(0, 1fr); } }
-.machine-promo__art svg { display: block; width: 100%; height: auto; }
-.machine-promo__text { display: flex; flex-direction: column; align-items: flex-start; gap: 14px; }
-.machine-promo__text h3 { font-size: clamp(34px, 4.4vw, 52px); }
-.machine-promo__text p { max-width: 620px; font-weight: 600; }
-.machine-promo .share { margin-top: 0; }
-.m-light { fill: var(--c); animation: m-light 3.6s ease-in-out var(--d, 0s) infinite; }
 
 /* Como funciona: a staircase of colored levels */
 .journey { display: grid; gap: 32px; }
@@ -362,7 +353,6 @@ h2 { font-size: clamp(38px, 5.6vw, 66px); }
 @media (min-width: 1024px) { .mirim { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); align-items: start; gap: 48px; } }
 .mirim .section__head { margin-bottom: 0; }
 .mirim .section__head p a { font-weight: 700; text-decoration-thickness: 3px; text-underline-offset: 4px; }
-.ver-todos { max-width: 420px; margin-top: -4px; font-weight: 600; font-size: 16px; color: var(--soft); }
 .games { display: grid; gap: 24px; }
 @media (min-width: 560px) { .games { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 .game { display: flex; flex-direction: column; overflow: hidden; cursor: pointer; }
@@ -506,26 +496,9 @@ body:has(dialog[open]) { overflow: hidden; }
 .hero h1.loud { text-shadow: 0 .05em 0 var(--ink), 0 .1em 0 var(--ink), 0 .16em 0 rgb(47 42 74 / .3); }
 .cta__title { text-shadow: 0 5px 0 #e0a800, 0 10px 0 #b98a00, 0 16px 0 rgb(0 0 0 / .35); }
 
-/* Little animated scenes on the resource cards */
+/* A capa de cada jogo no cartão dos recursos */
 .game__art { overflow: hidden; }
-.art-g { transform-box: fill-box; transform-origin: center; }
-.r-walk { animation: r-walk 4.6s ease-in-out infinite; }
-.r-star { animation: r-star 4.6s ease-in-out infinite; }
-.n1 { animation: n-arc 2.6s infinite; }
-.n2 { animation: n-arc2 2.6s infinite; animation-delay: -1.3s; }
-.n-slash { stroke-dasharray: 140; animation: n-slash 2.6s infinite; }
-.a-pad { animation: a-pad 1.2s ease-in-out infinite; }
-.a-coin { animation: a-coin 1.8s ease-out var(--d, 0s) infinite; }
-.c-bug { animation: c-bug .8s ease-in-out var(--d, 0s) infinite; }
-.c-lupa { animation: c-lupa 4.5s ease-in-out infinite; }
-.p-piece { animation: p-join 3.2s var(--bounce) infinite; }
-.p-star { animation: p-star 3.2s var(--bounce) infinite; }
-.l-line { transform-box: fill-box; transform-origin: 0 50%; animation: l-write 3.6s ease-in-out var(--d, 0s) infinite backwards; }
-.l-pencil { animation: l-pencil .9s ease-in-out infinite; }
-.f-fatia { animation: f-fatia 2.6s var(--bounce) infinite; }
-.w-gota { animation: float 2.6s ease-in-out infinite; }
-.w-chuva { animation: w-chuva .8s linear var(--d, 0s) infinite; }
-.s-peca { animation: s-peca 3s var(--bounce) var(--d, 0s) infinite backwards; }
+.game__art img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
 
 /* Clouds drift slower than the page, so the sky gets depth on scroll */
 @supports (animation-timeline: view()) {
@@ -536,39 +509,6 @@ body:has(dialog[open]) { overflow: hidden; }
 @keyframes parallax { from { translate: 0 var(--depth, 50px); } to { translate: 0 calc(var(--depth, 50px) * -1); } }
 @keyframes stripes { to { background-position: 44px 0; } }
 @keyframes shoot { 0% { translate: 0 0; opacity: 0; } 3% { opacity: 1; } 12% { translate: 360px 160px; opacity: 0; } 100% { translate: 360px 160px; opacity: 0; } }
-@keyframes r-walk {
-  0%, 8% { transform: translate(14px, 8px); opacity: 1; }
-  28% { transform: translate(84px, 8px); }
-  48% { transform: translate(84px, 60px); }
-  70%, 88% { transform: translate(110px, 60px); opacity: 1; }
-  93% { transform: translate(110px, 60px); opacity: 0; }
-  94% { transform: translate(14px, 8px); opacity: 0; }
-  100% { transform: translate(14px, 8px); opacity: 1; }
-}
-@keyframes r-star { 0%, 68%, 92%, 100% { transform: scale(1) rotate(0); } 76% { transform: scale(1.4) rotate(25deg); } 84% { transform: scale(.95) rotate(-8deg); } }
-@keyframes n-arc {
-  0% { transform: translate(30px, 130px) rotate(0); animation-timing-function: cubic-bezier(.2, .6, .4, 1); }
-  50% { transform: translate(64px, 18px) rotate(160deg); animation-timing-function: cubic-bezier(.6, 0, .8, .4); }
-  100% { transform: translate(98px, 130px) rotate(320deg); }
-}
-@keyframes n-arc2 {
-  0% { transform: translate(160px, 130px) rotate(0); animation-timing-function: cubic-bezier(.2, .6, .4, 1); }
-  50% { transform: translate(126px, 26px) rotate(-160deg); animation-timing-function: cubic-bezier(.6, 0, .8, .4); }
-  100% { transform: translate(92px, 130px) rotate(-320deg); }
-}
-@keyframes n-slash { 0%, 44% { stroke-dashoffset: 140; opacity: 1; } 52% { stroke-dashoffset: 0; opacity: 1; } 70%, 100% { stroke-dashoffset: 0; opacity: 0; } }
-@keyframes a-pad { 50% { transform: rotate(-4deg) translateY(-3px); } }
-@keyframes a-coin { 0% { transform: translateY(22px) scale(.5); opacity: 0; } 20% { opacity: 1; } 70% { transform: translateY(-12px) scale(1); opacity: 1; } 100% { transform: translateY(-22px) scale(1); opacity: 0; } }
-@keyframes c-bug { 50% { transform: rotate(-9deg) translateY(-3px); } }
-@keyframes c-lupa { 0%, 100% { transform: translate(42px, 76px); } 33% { transform: translate(101px, 37px); } 66% { transform: translate(159px, 81px); } }
-@keyframes p-join { 0%, 100% { transform: translate(var(--px), var(--py)) rotate(var(--pr)); } 40%, 80% { transform: translate(0, 0) rotate(0); } }
-@keyframes p-star { 0%, 45%, 100% { transform: scale(0) rotate(-90deg); } 55%, 80% { transform: scale(1) rotate(0); } }
-@keyframes l-write { 0% { transform: scaleX(0); opacity: 1; } 25%, 85% { transform: scaleX(1); opacity: 1; } 100% { transform: scaleX(1); opacity: 0; } }
-@keyframes m-light { 0%, 100% { opacity: .25; } 20%, 85% { opacity: 1; } }
-@keyframes l-pencil { 50% { transform: translate(-4px, 3px) rotate(-8deg); } }
-@keyframes f-fatia { 0%, 20%, 100% { transform: translate(0, 0); } 45%, 80% { transform: translate(-8px, -8px); } }
-@keyframes w-chuva { from { transform: translateY(-6px); opacity: 0; } 30% { opacity: 1; } to { transform: translateY(14px); opacity: 0; } }
-@keyframes s-peca { 0%, 10% { transform: translateY(-28px); opacity: 0; } 30%, 85% { transform: translateY(0); opacity: 1; } 100% { transform: translateY(0); opacity: 0; } }
 
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
@@ -610,7 +550,7 @@ body:has(dialog[open]) { overflow: hidden; }
 .aba-recursos:hover { background: var(--white); }
 .aba-recursos[aria-selected="true"] { background: var(--yellow); }
 .ferramentas { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 250px), 1fr)); gap: 16px; margin: 0; padding: 0; list-style: none; }
-.ferramentas[hidden], .games[hidden] { display: none; }
+.ver-mais { display: inline-flex; align-items: center; gap: 6px; min-height: 44px; margin-top: 14px; font-weight: 700; text-decoration-thickness: 3px; text-underline-offset: 4px; }
 .ferramenta { position: relative; display: flex; align-items: flex-start; gap: 12px; height: 100%; padding: 14px; background: var(--white); color: var(--ink); border: var(--line-fina); border-radius: 20px; box-shadow: var(--drop-baixa); text-decoration: none; transition: transform .12s ease, box-shadow .12s ease; }
 .ferramenta:hover { transform: translateY(2px); box-shadow: 0 2px 0 var(--ink); }
 .ferramenta__arte { display: grid; flex: none; place-items: center; width: 52px; height: 52px; background: var(--c); border: 3px solid var(--ink); border-radius: 14px; }

@@ -273,11 +273,9 @@ document.querySelectorAll('[data-contato]').forEach((link) => {
 // The QR code is a file of its own, loaded only when the dialog opens.
 const shares = {
   site: { title: 'GamificaPampa', url: 'https://gamificapampa.github.io', qr: '/atalhos/qr/site.svg' },
+  bichos: { title: 'Bichos do Pampa', url: 'https://gamificapampa.github.io/bichos', qr: '/recursos-pedagogicos/criancas/bichos-do-pampa/qr.svg' },
   fracoes: { title: 'Pizzaria das Frações', url: 'https://gamificapampa.github.io/fracoes', qr: '/recursos-pedagogicos/criancas/pizzaria-das-fracoes/qr.svg' },
-  'ciclo-da-agua': { title: 'Ciclo da Água', url: 'https://gamificapampa.github.io/ciclo-da-agua', qr: '/recursos-pedagogicos/criancas/ciclo-da-agua/qr.svg' },
-  silabas: { title: 'Fábrica de Sílabas', url: 'https://gamificapampa.github.io/silabas', qr: '/recursos-pedagogicos/criancas/fabrica-de-silabas/qr.svg' },
-  robo: { title: 'Robô pega a estrela', url: 'https://gamificapampa.github.io/robo', qr: '/recursos-pedagogicos/criancas/robo/qr.svg' },
-  maquina: { title: 'Máquina de prompts', url: 'https://gamificapampa.github.io/maquina', qr: '/atalhos/qr/maquina.svg' },
+  reta: { title: 'Reta do Bit', url: 'https://gamificapampa.github.io/reta', qr: '/recursos-pedagogicos/criancas/reta-do-bit/qr.svg' },
 };
 const shareSheet = $('#partilha');
 const copyButton = $('#partilha-copiar');
