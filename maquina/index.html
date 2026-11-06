@@ -6,7 +6,7 @@
   <title>Máquina de prompts · GamificaPampa</title>
   <meta name="description" content="Da Educação Infantil ao Ensino Médio e na EJA, em qualquer matéria: escolha a turma, o que criar e o tema, e a máquina monta um prompt com Papel, Tarefa, Contexto e Formato, pronto para colar no Gemini.">
   <meta property="og:title" content="Máquina de prompts">
-  <meta property="og:description" content="Monte em poucos cliques um prompt para o Gemini criar planos de aula, atividades, quizzes, histórias, jogos e rubricas, da Educação Infantil ao Ensino Médio e na EJA.">
+  <meta property="og:description" content="Monte em poucos cliques um prompt para o Gemini criar jogos, quizzes, atividades, planos de aula e histórias, da Educação Infantil ao Ensino Médio e na EJA, ou o que você quiser.">
   <meta property="og:image" content="https://gamificapampa.github.io/identidade-visual/logos/gamificapampa-github-avatar.png">
   <meta property="og:type" content="website">
   <meta name="theme-color" content="#5fbcff">
@@ -54,6 +54,14 @@
     .chip input:checked + span { background: var(--sky2); transform: translateY(4px); box-shadow: none; }
     .chip input:checked + span::before { content: "✓"; margin-right: 6px; font-weight: 700; }
     .chip input:focus-visible + span { outline: 4px solid var(--pink); outline-offset: 3px; }
+    /* A turma em duas linhas: a etapa e, depois de escolher, só os anos dela */
+    .linha { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; width: 100%; }
+    .trocar { min-height: 40px; padding: 2px 10px; background: none; border: 0; color: var(--ink); font: 700 15px var(--font); text-decoration: underline; text-decoration-thickness: 2px; text-underline-offset: 3px; cursor: pointer; }
+    .step__aviso { color: var(--soft); font-weight: 600; font-size: 15px; }
+    /* As opções que o professor criou: tracejadas, com um x para apagar */
+    .chip--minha span { border-style: dashed; padding-right: 6px; }
+    .chip__x { position: relative; z-index: 1; display: grid; place-items: center; width: 28px; height: 28px; margin-left: 8px; padding: 0; background: var(--cream); color: var(--ink); border: 2px solid var(--ink); border-radius: 50%; font: 700 16px/1 var(--font); cursor: pointer; }
+    .chip__x:hover { background: #ffe3ec; }
     .theme { flex: 1 1 100%; min-width: 0; min-height: 52px; padding: 10px 16px; background: var(--white); color: var(--ink); border: 4px solid var(--ink); border-radius: 16px; font: 500 18px var(--font); }
     .ideas { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; color: var(--soft); font-weight: 600; font-size: 15px; }
     .ideas button { min-height: 40px; padding: 2px 14px; background: rgb(255 255 255 / .5); color: var(--ink); border: 3px dashed var(--ink); border-radius: 999px; font: 600 15px var(--font); cursor: pointer; }
@@ -194,57 +202,72 @@
 
     <div class="machine">
       <form class="card choices" id="machine">
-        <fieldset class="step" style="--c: #4da3ff">
+        <fieldset class="step" id="turma-step" style="--c: #4da3ff">
           <legend><span class="step__num">1</span>Para qual turma?</legend>
-          <label class="chip"><input type="radio" name="turma" value="infantil"><span>Educação Infantil</span></label>
-          <label class="chip"><input type="radio" name="turma" value="1"><span>1º ano</span></label>
-          <label class="chip"><input type="radio" name="turma" value="2"><span>2º ano</span></label>
-          <label class="chip"><input type="radio" name="turma" value="3"><span>3º ano</span></label>
-          <label class="chip"><input type="radio" name="turma" value="4"><span>4º ano</span></label>
-          <label class="chip"><input type="radio" name="turma" value="5"><span>5º ano</span></label>
-          <label class="chip"><input type="radio" name="turma" value="6"><span>6º ano</span></label>
-          <label class="chip"><input type="radio" name="turma" value="7"><span>7º ano</span></label>
-          <label class="chip"><input type="radio" name="turma" value="8"><span>8º ano</span></label>
-          <label class="chip"><input type="radio" name="turma" value="9"><span>9º ano</span></label>
-          <label class="chip"><input type="radio" name="turma" value="em1"><span>1ª série EM</span></label>
-          <label class="chip"><input type="radio" name="turma" value="em2"><span>2ª série EM</span></label>
-          <label class="chip"><input type="radio" name="turma" value="em3"><span>3ª série EM</span></label>
-          <label class="chip"><input type="radio" name="turma" value="eja1"><span>EJA anos iniciais</span></label>
-          <label class="chip"><input type="radio" name="turma" value="eja2"><span>EJA anos finais</span></label>
-          <label class="chip"><input type="radio" name="turma" value="eja3"><span>EJA Ensino Médio</span></label>
+          <div class="linha" id="etapas">
+            <label class="chip" data-fixa><input type="radio" name="etapa" value="infantil"><span>Educação Infantil</span></label>
+            <label class="chip" data-fixa><input type="radio" name="etapa" value="iniciais"><span>Anos iniciais</span></label>
+            <label class="chip" data-fixa><input type="radio" name="etapa" value="finais"><span>Anos finais</span></label>
+            <label class="chip" data-fixa><input type="radio" name="etapa" value="medio"><span>Ensino Médio</span></label>
+            <label class="chip" data-fixa><input type="radio" name="etapa" value="eja"><span>EJA</span></label>
+            <span class="linha" id="minhas-etapa" style="display: contents"></span>
+            <label class="chip" data-fixa><input type="radio" name="etapa" value="outra"><span>Outra turma</span></label>
+            <button class="trocar" type="button" id="trocar-etapa" hidden>Trocar a turma</button>
+          </div>
+          <div class="linha" id="anos" hidden>
+            <label class="chip" data-etapa="infantil"><input type="radio" name="turma" value="infantil"><span>Educação Infantil</span></label>
+            <label class="chip" data-etapa="iniciais"><input type="radio" name="turma" value="1"><span>1º ano</span></label>
+            <label class="chip" data-etapa="iniciais"><input type="radio" name="turma" value="2"><span>2º ano</span></label>
+            <label class="chip" data-etapa="iniciais"><input type="radio" name="turma" value="3"><span>3º ano</span></label>
+            <label class="chip" data-etapa="iniciais"><input type="radio" name="turma" value="4"><span>4º ano</span></label>
+            <label class="chip" data-etapa="iniciais"><input type="radio" name="turma" value="5"><span>5º ano</span></label>
+            <label class="chip" data-etapa="finais"><input type="radio" name="turma" value="6"><span>6º ano</span></label>
+            <label class="chip" data-etapa="finais"><input type="radio" name="turma" value="7"><span>7º ano</span></label>
+            <label class="chip" data-etapa="finais"><input type="radio" name="turma" value="8"><span>8º ano</span></label>
+            <label class="chip" data-etapa="finais"><input type="radio" name="turma" value="9"><span>9º ano</span></label>
+            <label class="chip" data-etapa="medio"><input type="radio" name="turma" value="em1"><span>1ª série</span></label>
+            <label class="chip" data-etapa="medio"><input type="radio" name="turma" value="em2"><span>2ª série</span></label>
+            <label class="chip" data-etapa="medio"><input type="radio" name="turma" value="em3"><span>3ª série</span></label>
+            <label class="chip" data-etapa="eja"><input type="radio" name="turma" value="eja1"><span>Anos iniciais</span></label>
+            <label class="chip" data-etapa="eja"><input type="radio" name="turma" value="eja2"><span>Anos finais</span></label>
+            <label class="chip" data-etapa="eja"><input type="radio" name="turma" value="eja3"><span>Ensino Médio</span></label>
+          </div>
+          <input class="theme" id="turma-outra" name="turma_outra" maxlength="40" autocomplete="off" placeholder="Descreva a turma, como multisseriada do 1º ao 3º ano" aria-label="Descreva a turma" hidden>
         </fieldset>
 
         <fieldset class="step" id="subject-step" style="--c: #cfe6ff">
           <legend><span class="step__num">2</span>De qual matéria? <span class="step__note" id="subject-note">Se quiser</span></legend>
-          <label class="chip"><input type="radio" name="materia" value="portugues"><span>Língua Portuguesa</span></label>
-          <label class="chip"><input type="radio" name="materia" value="matematica"><span>Matemática</span></label>
-          <label class="chip"><input type="radio" name="materia" value="ciencias"><span>Ciências</span></label>
-          <label class="chip"><input type="radio" name="materia" value="historia"><span>História</span></label>
-          <label class="chip"><input type="radio" name="materia" value="geografia"><span>Geografia</span></label>
-          <label class="chip"><input type="radio" name="materia" value="arte"><span>Arte</span></label>
-          <label class="chip"><input type="radio" name="materia" value="ingles"><span>Inglês</span></label>
-          <label class="chip"><input type="radio" name="materia" value="educacao-fisica"><span>Educação Física</span></label>
-          <label class="chip"><input type="radio" name="materia" value="fisica"><span>Física</span></label>
-          <label class="chip"><input type="radio" name="materia" value="quimica"><span>Química</span></label>
-          <label class="chip"><input type="radio" name="materia" value="biologia"><span>Biologia</span></label>
-          <label class="chip"><input type="radio" name="materia" value="filosofia"><span>Filosofia</span></label>
-          <label class="chip"><input type="radio" name="materia" value="sociologia"><span>Sociologia</span></label>
+          <label class="chip" data-etapas="iniciais finais medio eja outra"><input type="radio" name="materia" value="portugues"><span>Língua Portuguesa</span></label>
+          <label class="chip" data-etapas="iniciais finais medio eja outra"><input type="radio" name="materia" value="matematica"><span>Matemática</span></label>
+          <label class="chip" data-etapas="iniciais finais eja outra"><input type="radio" name="materia" value="ciencias"><span>Ciências</span></label>
+          <label class="chip" data-etapas="medio"><input type="radio" name="materia" value="biologia"><span>Biologia</span></label>
+          <label class="chip" data-etapas="medio"><input type="radio" name="materia" value="fisica"><span>Física</span></label>
+          <label class="chip" data-etapas="medio"><input type="radio" name="materia" value="quimica"><span>Química</span></label>
+          <label class="chip" data-etapas="iniciais finais medio eja outra"><input type="radio" name="materia" value="historia"><span>História</span></label>
+          <label class="chip" data-etapas="iniciais finais eja outra"><input type="radio" name="materia" value="geografia"><span>Geografia</span></label>
+          <label class="chip" data-etapas="iniciais outra"><input type="radio" name="materia" value="arte"><span>Arte</span></label>
+          <label class="chip" data-etapas="finais"><input type="radio" name="materia" value="ingles"><span>Inglês</span></label>
+          <span class="linha" id="minhas-materia" style="display: contents"></span>
+          <label class="chip" data-fixa><input type="radio" name="materia" value="outra"><span>Outra</span></label>
+          <input class="theme" id="materia-outra" name="materia_outra" maxlength="40" autocomplete="off" placeholder="Qual matéria? Por exemplo: Ensino Religioso" aria-label="Qual matéria" hidden>
         </fieldset>
 
         <fieldset class="step" style="--c: #4fd6a6">
           <legend><span class="step__num">3</span>O que você quer criar?</legend>
-          <label class="chip"><input type="radio" name="tipo" value="historia"><span>História</span></label>
-          <label class="chip"><input type="radio" name="tipo" value="quiz"><span>Quiz</span></label>
-          <label class="chip"><input type="radio" name="tipo" value="jogo"><span>Jogo</span></label>
-          <label class="chip"><input type="radio" name="tipo" value="atividade"><span>Atividade para imprimir</span></label>
-          <label class="chip"><input type="radio" name="tipo" value="plano"><span>Plano de aula</span></label>
-          <label class="chip"><input type="radio" name="tipo" value="adaptar"><span>Adaptar um texto</span></label>
-          <label class="chip"><input type="radio" name="tipo" value="enem"><span>Questões do Enem</span></label>
-          <label class="chip"><input type="radio" name="tipo" value="encceja"><span>Questões do Encceja</span></label>
-          <label class="chip"><input type="radio" name="tipo" value="sequencia"><span>Sequência didática</span></label>
-          <label class="chip"><input type="radio" name="tipo" value="rubrica"><span>Rubrica e devolutiva</span></label>
+          <label class="chip" data-fixa><input type="radio" name="tipo" value="jogo"><span>Jogo</span></label>
+          <label class="chip" data-fixa><input type="radio" name="tipo" value="quiz"><span>Quiz</span></label>
+          <label class="chip" data-fixa><input type="radio" name="tipo" value="atividade"><span>Atividade para imprimir</span></label>
+          <label class="chip" data-fixa><input type="radio" name="tipo" value="plano"><span>Plano de aula</span></label>
+          <label class="chip" data-fixa><input type="radio" name="tipo" value="historia"><span>História</span></label>
+          <span class="linha" id="minhas-tipo" style="display: contents"></span>
+          <label class="chip" data-fixa><input type="radio" name="tipo" value="outro"><span>Outro</span></label>
+          <input class="theme" id="tipo-outro" name="tipo_outro" maxlength="40" autocomplete="off" placeholder="O que criar? Por exemplo: caça-palavras" aria-label="O que criar" hidden>
+          <div class="linha" id="aulas-linha" hidden>
+            <span class="step__aviso">Quantas aulas?</span>
+            <label class="chip"><input type="radio" name="aulas" value="1"><span>1 aula</span></label>
+            <label class="chip"><input type="radio" name="aulas" value="3"><span>3 aulas, em sequência</span></label>
+          </div>
         </fieldset>
-
         <div class="step" style="--c: #c9f5e3">
           <label class="step__title" for="tema"><span class="step__num">4</span><span id="tema-pergunta">Sobre qual tema?</span></label>
           <input class="theme" id="tema" name="tema" maxlength="80" autocomplete="off" placeholder="Escreva o tema da aula">
@@ -252,15 +275,8 @@
           <p class="privacy"><svg width="24" height="24" aria-hidden="true"><use href="#i-lock"/></svg>Nunca escreva o nome ou dados dos alunos. Descreva a turma, não as pessoas.</p>
         </div>
 
-        <fieldset class="step" style="--c: #ffdcc4">
-          <legend><span class="step__num">5</span>Algum ajuste? <span class="step__note">Se quiser</span></legend>
-          <label class="chip"><input type="checkbox" name="extra" value="local"><span>Exemplos de Alegrete e do Pampa</span></label>
-          <label class="chip"><input type="checkbox" name="extra" value="leitura"><span>Alunos com dificuldade de leitura</span></label>
-          <label class="chip"><input type="checkbox" name="extra" value="curto"><span>Resposta curta</span></label>
-        </fieldset>
-
         <details class="completo" id="completo">
-          <summary><span class="step__num" style="background: #e3d4ff">6</span>Deixar mais completo <span class="step__note">Se quiser</span></summary>
+          <summary><span class="step__num" style="background: #e3d4ff">5</span>Deixar mais completo <span class="step__note">Se quiser</span></summary>
           <div class="completo__corpo">
             <div class="step">
               <label class="step__title" for="objetivo">O que a turma deve conseguir fazer no fim?</label>
@@ -285,11 +301,11 @@
               <label class="chip"><input type="radio" name="tempo" value="50"><span>1 aula</span></label>
               <label class="chip"><input type="radio" name="tempo" value="100"><span>2 aulas</span></label>
             </fieldset>
-            <fieldset class="step" id="nivel-step">
-              <legend>Profundidade</legend>
-              <label class="chip"><input type="radio" name="nivel" value="comecar"><span>Para começar</span></label>
-              <label class="chip"><input type="radio" name="nivel" value="praticar"><span>Para praticar</span></label>
-              <label class="chip"><input type="radio" name="nivel" value="desafiar"><span>Para desafiar</span></label>
+            <fieldset class="step">
+              <legend>Algum ajuste?</legend>
+              <label class="chip"><input type="checkbox" name="extra" value="local"><span>Exemplos de Alegrete e do Pampa</span></label>
+              <label class="chip"><input type="checkbox" name="extra" value="leitura"><span>Alunos com dificuldade de leitura</span></label>
+              <label class="chip"><input type="checkbox" name="extra" value="curto"><span>Resposta curta</span></label>
             </fieldset>
             <fieldset class="step" id="perguntar-step">
               <legend>Conversa</legend>
@@ -653,12 +669,48 @@
     });
     let current = { text: '', label: '' };
 
+    // As opções que o professor escreve (Outra turma, Outra matéria, Outro tipo): a turma vira um grupo próprio,
+    // a matéria aproveita as ideias de uma que a máquina já conhece, e o tipo ganha um formato com os mesmos cuidados
+    const semAcento = (texto) => String(texto).normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().trim();
+    const turmaPropria = (texto) => ({ name: texto, year: `da turma ${texto},`, age: `a turma ${texto}; considere a idade típica dessa turma`, propria: true });
+    const materiaPropria = (texto) => {
+      const chave = Object.keys(subjects).find((id) => semAcento(subjects[id].name) === semAcento(texto) || semAcento(subjects[id].name).startsWith(semAcento(texto)) || id === semAcento(texto).replace(/\s+/g, '-'));
+      return { name: texto, ideas: chave ? subjects[chave].ideas : anyIdeas, key: chave };
+    };
+    const tiposProprios = new Map();
+    const tipoProprio = (texto) => {
+      if (!tiposProprios.has(texto)) tiposProprios.set(texto, {
+        name: texto,
+        papel: 'que cria materiais claros, que fazem a turma pensar',
+        tarefa: (theme) => `Crie este material sobre ${theme}: ${texto}.`,
+        formato: 'Organize o material para usar direto na aula: instruções curtas para a turma, do mais fácil ao mais difícil, perguntas de lembrar, de aplicar e de explicar, e no fim o gabarito ou o que esperar de uma boa resposta. Escreva fora de bloco de código e descreva as imagens entre parênteses. Antes de entregar, confira cada conta e cada fato e se o material trabalha o objetivo.',
+        tip: 'Um material do seu jeito: confira se a IA entendeu o pedido e, se não, explique melhor na mesma conversa.',
+      });
+      return tiposProprios.get(texto);
+    };
+    // O valor de uma escolha que pode ser própria: "outra" lê o campo de texto, "minha:..." é uma opção guardada
+    const proprio = (valor, campo, data) => {
+      const texto = valor === 'outra' || valor === 'outro' ? String(data.get(campo) || '') : String(valor || '').startsWith('minha:') ? valor.slice(6) : '';
+      return texto.trim().replace(/\s+/g, ' ').replace(/[.!?;]+$/, '');
+    };
+
     const read = () => {
       const data = new FormData(form);
-      const turma = data.get('turma');
-      const group = classes[turma];
-      const subject = turma === 'infantil' ? null : subjects[data.get('materia')];
-      const kind = kinds[data.get('tipo')];
+      const etapa = data.get('etapa') || '';
+      const turmaTexto = proprio(etapa, 'turma_outra', data);
+      const turma = turmaTexto ? 'propria' : data.get('turma');
+      const group = turmaTexto ? turmaPropria(turmaTexto) : classes[turma];
+      const materiaValor = data.get('materia') || '';
+      const materiaTexto = proprio(materiaValor, 'materia_outra', data);
+      const subject = turma === 'infantil' ? null : materiaTexto ? materiaPropria(materiaTexto) : subjects[materiaValor];
+      const tipoValor = data.get('tipo') || '';
+      const tipoTexto = proprio(tipoValor, 'tipo_outro', data);
+      let kind = tipoTexto ? tipoProprio(tipoTexto) : kinds[tipoValor];
+      // O quiz vira o do Enem na 3ª série e o do Encceja na EJA dos anos finais e do Ensino Médio;
+      // o plano de 3 aulas é a sequência didática
+      if (tipoValor === 'quiz' && turma === 'em3') kind = kinds.enem;
+      if (tipoValor === 'quiz' && ['eja2', 'eja3'].includes(turma)) kind = kinds.encceja;
+      if (tipoValor === 'plano' && data.get('aulas') === '3') kind = kinds.sequencia;
       const theme = String(data.get('tema') || '').trim().replace(/[.!?]+$/, '');
       const extras = data.getAll('extra');
       const infantil = turma === 'infantil';
@@ -700,12 +752,6 @@
         const tempoPlano = { 15: 'uma atividade de 15 minutos', 50: 'uma aula de 50 minutos', 100: 'duas aulas de 50 minutos' }[tempo];
         formato = formato.replace('uma aula de 50 minutos', tempoPlano).replace('somam 50 minutos', `somam ${tempo} minutos`);
       }
-      const nivel = data.get('nivel');
-      const nivelFrase = { comecar: ' A turma está começando no tema: prefira perguntas de lembrar e de aplicar, com exemplos.', desafiar: ' A turma já domina o básico: inclua mais perguntas de explicar, comparar e resolver problemas novos.' }[nivel];
-      if (formato && nivelFrase && !['adaptar', 'rubrica', 'jogo'].includes(tipoId)) {
-        // A profundidade entra antes da conferência final, que fecha o Formato
-        formato = formato.includes(' Antes de entregar,') ? formato.replace(' Antes de entregar,', `${nivelFrase} Antes de entregar,`) : formato + nivelFrase;
-      }
       if (formato && extras.includes('curto')) formato += ' Seja breve: a resposta deve caber numa página.';
       if (formato && kind !== kinds.jogo && !formato.includes('BNCC')) formato += ' Não cite códigos da BNCC.';
       if (formato) formato += ' Responda em português do Brasil.';
@@ -722,7 +768,7 @@
       }
       const text = { papel, tarefa, contexto, formato };
       const label = [kind && kind.name, group && group.name, theme].filter(Boolean).join(' · ');
-      return { text, kind, turma, subject, label, adult, theme, leitura: extras.includes('leitura'), local: extras.includes('local') };
+      return { text, kind, turma, etapa, subject, label, adult, theme, leitura: extras.includes('leitura'), local: extras.includes('local'), tipoValor, materiaValor };
     };
 
     // Ideas for the theme follow the chosen subject, and in the EJA they come from adult life.
@@ -734,7 +780,7 @@
         return (['1', '2', '3', '4', '5'].includes(turma) && kind.ideasIniciais) || kind.ideas;
       }
       if (!adult) return subject ? subject.ideas : anyIdeas;
-      const key = subject && Object.keys(subjects).find((id) => subjects[id] === subject);
+      const key = subject && (subject.key || Object.keys(subjects).find((id) => subjects[id] === subject));
       return adultIdeas[key] || (subject ? subject.ideas : adultIdeas.any);
     };
     const showIdeas = (ideas) => {
@@ -758,8 +804,48 @@
     // Bit goes back to floating once the jump ends.
     $('#bit').addEventListener('animationend', (event) => { if (event.animationName === 'saltar') $('#bit').classList.remove('anima-saltar'); });
 
+    // Qual etapa tem cada turma, para quem volta com uma turma guardada de antes das etapas
+    const ETAPA_DA_TURMA = (turma) => turma === 'infantil' ? 'infantil' : /^[1-5]$/.test(turma) ? 'iniciais' : /^[6-9]$/.test(turma) ? 'finais' : /^em/.test(turma) ? 'medio' : /^eja/.test(turma) ? 'eja' : '';
+    const marcar = (nome, valor) => { const campo = [...form.querySelectorAll(`[name="${nome}"]`)].find((c) => c.value === valor); if (campo) campo.checked = true; };
+    const desmarcar = (nome) => { for (const campo of form.querySelectorAll(`[name="${nome}"]`)) campo.checked = false; };
+    // A turma em duas linhas: as etapas e, escolhida uma, só ela, os anos dela e o Trocar a turma
+    const mostrarEscolhas = () => {
+      const data = new FormData(form);
+      let etapa = data.get('etapa') || '';
+      const turma = data.get('turma') || '';
+      if (!etapa && turma && ETAPA_DA_TURMA(turma)) { etapa = ETAPA_DA_TURMA(turma); marcar('etapa', etapa); }
+      if (etapa === 'infantil' && turma !== 'infantil') marcar('turma', 'infantil');
+      const anosDaEtapa = ['iniciais', 'finais', 'medio', 'eja'].includes(etapa) ? etapa : '';
+      const turmaMarcada = new FormData(form).get('turma') || '';
+      if (turmaMarcada && ETAPA_DA_TURMA(turmaMarcada) !== etapa) desmarcar('turma');
+      for (const label of $('#etapas').querySelectorAll('label')) label.hidden = Boolean(etapa) && !label.querySelector('input').checked;
+      $('#trocar-etapa').hidden = !etapa;
+      $('#anos').hidden = !anosDaEtapa;
+      for (const label of $('#anos').querySelectorAll('label')) label.hidden = label.dataset.etapa !== anosDaEtapa;
+      $('#turma-outra').hidden = etapa !== 'outra';
+      // As matérias da etapa; as guardadas e a Outra aparecem em todas. Antes da turma, nenhuma
+      const grupoMaterias = anosDaEtapa || (etapa ? 'outra' : '');
+      for (const label of $('#subject-step').querySelectorAll('label')) {
+        const lista = label.dataset.etapas;
+        label.hidden = !etapa || etapa === 'infantil' || (lista ? !lista.split(' ').includes(grupoMaterias) : false);
+        const campo = label.querySelector('input');
+        if (etapa && label.hidden && campo.checked) campo.checked = false;
+      }
+      const materia = new FormData(form).get('materia') || '';
+      $('#materia-outra').hidden = materia !== 'outra' || etapa === 'infantil';
+      const tipo = data.get('tipo') || '';
+      $('#tipo-outro').hidden = tipo !== 'outro';
+      $('#aulas-linha').hidden = tipo !== 'plano';
+      // O quiz diz quando vira o do Enem ou o do Encceja
+      const quiz = form.querySelector('[name="tipo"][value="quiz"] + span');
+      const turmaAgora = new FormData(form).get('turma');
+      quiz.textContent = turmaAgora === 'em3' ? 'Quiz no estilo do Enem' : ['eja2', 'eja3'].includes(turmaAgora) ? 'Quiz no estilo do Encceja' : 'Quiz';
+      return etapa;
+    };
+
     let lastIdeas;
     const update = () => {
+      const etapaEscolhida = mostrarEscolhas();
       const { text, kind, turma, subject, label, adult, theme, leitura, local } = read();
       // O padrão de qualidade aparece só no jogo, que é o pedido que vira HTML
       const isGame = kind === kinds.jogo;
@@ -788,7 +874,7 @@
       current = done === 4 ? { text: pieces.map((piece) => text[piece.id]).join(' '), label, jogo: isGame, theme } : { text: '', label: '' };
       copyButton.disabled = done < 4;
       // Peça mais aparece com o prompt pronto, para todo tipo menos o jogo
-      const tipo = kind ? Object.keys(kinds).find((id) => kinds[id] === kind) : '';
+      const tipo = kind ? (Object.keys(kinds).find((id) => kinds[id] === kind) || 'proprio') : '';
       const mostrarMais = done === 4 && tipo && tipo !== 'jogo';
       $('#mais').hidden = !mostrarMais;
       const chaveMais = mostrarMais ? `${tipo}|${local}` : '';
@@ -808,16 +894,15 @@
       maisAgora = chaveMais;
       // No passo 6, o que não muda nada para o tipo escolhido fica apagado
       $('#perguntar-step').disabled = tipo === 'jogo';
-      $('#nivel-step').disabled = ['adaptar', 'rubrica', 'jogo'].includes(tipo);
       $('#tempo-step').disabled = ['sequencia', 'rubrica'].includes(tipo);
       $('#criar').hidden = !CRIAR_AQUI.url;
       $('#criar').disabled = done < 4 || criando;
       $('#count').textContent = done === 4 ? 'Prompt pronto! As 4 peças estão no lugar.' : `${done} de 4 peças prontas`;
       $('#count').classList.toggle('is-ready', done === 4);
-      $('#tip').textContent = kind ? (turma === 'infantil' && kind.tipInfantil) || kind.tip : turma ? 'Agora escolha o que criar. A Tarefa e o Formato saem daí.' : 'Comece pela turma. O Papel e o Contexto saem dela.';
+      $('#tip').textContent = kind ? (turma === 'infantil' && kind.tipInfantil) || kind.tip : turma ? 'Agora escolha o que criar. A Tarefa e o Formato saem daí.' : etapaEscolhida === 'outra' ? 'Descreva a turma no campo, sem nomes. O Papel e o Contexto saem daí.' : etapaEscolhida ? 'Agora escolha o ano. O Papel e o Contexto saem dele.' : 'Comece pela turma. O Papel e o Contexto saem dela.';
       const subjectStep = $('#subject-step');
       subjectStep.disabled = turma === 'infantil';
-      $('#subject-note').textContent = turma === 'infantil' ? 'Na Educação Infantil não precisa' : 'Se quiser';
+      $('#subject-note').textContent = turma === 'infantil' ? 'Na Educação Infantil não precisa' : etapaEscolhida ? 'Se quiser' : 'Escolha a turma primeiro';
       const ideas = ideasFor(subject, adult, kind, turma);
       if (ideas !== lastIdeas) { lastIdeas = ideas; showIdeas(ideas); }
       // A rubrica pergunta pelo trabalho a avaliar, e não pelo tema da aula
@@ -830,6 +915,58 @@
         $('#bit').src = '/identidade-visual/mascote/bit.svg';
       }
     };
+
+    // As opções que o professor escreveu ficam neste aparelho e voltam como botões, até 5 por passo, com um x para apagar
+    const MINHAS = 'gp-lembrar:maquina-minhas';
+    const CAMPOS_PROPRIOS = { etapa: 'turma_outra', materia: 'materia_outra', tipo: 'tipo_outro' };
+    const lerMinhas = () => { try { return JSON.parse(localStorage.getItem(MINHAS)) || {}; } catch { return {}; } };
+    const guardarMinhas = (minhas) => { try { localStorage.setItem(MINHAS, JSON.stringify(minhas)); } catch {} };
+    const desenharMinhas = () => {
+      const minhas = lerMinhas();
+      for (const nome of Object.keys(CAMPOS_PROPRIOS)) {
+        const lugar = $(`#minhas-${nome}`);
+        const marcada = new FormData(form).get(nome);
+        lugar.replaceChildren(...(minhas[nome] || []).map((texto) => {
+          const label = Object.assign(document.createElement('label'), { className: 'chip chip--minha' });
+          if (nome !== 'etapa') label.dataset.fixa = '';
+          const campo = Object.assign(document.createElement('input'), { type: 'radio', name: nome, value: `minha:${texto}` });
+          campo.checked = marcada === campo.value;
+          const rotulo = Object.assign(document.createElement('span'), { textContent: texto });
+          const apagar = Object.assign(document.createElement('button'), { type: 'button', className: 'chip__x', textContent: '×' });
+          apagar.setAttribute('aria-label', `Apagar a opção ${texto}`);
+          apagar.addEventListener('click', (evento) => {
+            evento.preventDefault();
+            const agora = lerMinhas();
+            agora[nome] = (agora[nome] || []).filter((t) => t !== texto);
+            guardarMinhas(agora);
+            desenharMinhas();
+            update();
+          });
+          rotulo.append(apagar);
+          label.append(campo, rotulo);
+          return label;
+        }));
+      }
+    };
+    // Quem escreve uma opção nova e sai do campo ganha o botão dela para as próximas vezes
+    for (const [nome, campo] of Object.entries(CAMPOS_PROPRIOS)) {
+      form.elements[campo].addEventListener('change', () => {
+        const texto = form.elements[campo].value.trim().replace(/\s+/g, ' ');
+        if (texto.length < 2) return;
+        const minhas = lerMinhas();
+        minhas[nome] = [texto, ...(minhas[nome] || []).filter((t) => t !== texto)].slice(0, 5);
+        guardarMinhas(minhas);
+        const marcada = new FormData(form).get(nome);
+        desenharMinhas();
+        if (marcada === 'outra' || marcada === 'outro') marcar(nome, marcada);
+      });
+    }
+    $('#trocar-etapa').addEventListener('click', () => {
+      desmarcar('etapa');
+      desmarcar('turma');
+      update();
+      form.querySelector('[name="etapa"]').focus();
+    });
 
     // Recent prompts stay only in this browser, so the teacher can copy them again later.
     const storeKey = 'gamificapampa-maquina';
@@ -1024,7 +1161,7 @@
     $('#criar').addEventListener('click', () => {
       if (!current.text || criando || !CRIAR_AQUI.url) return;
       const { kind, local } = read();
-      const tipo = kind ? Object.keys(kinds).find((id) => kinds[id] === kind) : '';
+      const tipo = kind ? (Object.keys(kinds).find((id) => kinds[id] === kind) || 'proprio') : '';
       conversa = { jogo: Boolean(current.jogo), tema: current.theme, tipo, local, historico: [], ajustes: 0, texto: '', html: '' };
       // Pela API não há Canvas nem limite de tamanho do pedido: o jogo já vai com o padrão de qualidade
       const prompt = current.jogo
@@ -1057,12 +1194,13 @@
     $('#teste-fechar').addEventListener('click', () => { $('#teste').hidden = true; });
     $('#recent-clear').addEventListener('click', () => { saveRecent([]); renderRecent(); });
     // O site lembra a última turma, matéria, tipo, tema e ajustes neste aparelho; Começar de novo esquece
+    desenharMinhas();
     Lembrar.campos('maquina', form.elements);
     // Quem já preencheu o passo 6 numa visita anterior encontra ele aberto
-    if (['objetivo', 'sabe'].some((nome) => form.elements[nome].value.trim()) || ['uso', 'tempo', 'nivel', 'perguntar'].some((nome) => new FormData(form).get(nome))) $('#completo').open = true;
+    if (['objetivo', 'sabe'].some((nome) => form.elements[nome].value.trim()) || ['uso', 'tempo', 'perguntar', 'extra'].some((nome) => new FormData(form).get(nome))) $('#completo').open = true;
     // No celular, o console com o Copiar fica depois das perguntas: uma barra no pé da tela traz o Copiar e as peças prontas
     Copiar.barraFixa({ observar: document.querySelector('#console .actions'), copiar: copyButton, contador: $('#count') });
-    $('#reset').addEventListener('click', () => { form.reset(); Lembrar.guardar('maquina', {}); update(); form.querySelector('input').focus(); });
+    $('#reset').addEventListener('click', () => { form.reset(); Lembrar.guardar('maquina', {}); update(); form.querySelector('[name="etapa"]').focus(); });
     form.addEventListener('input', update);
     form.addEventListener('change', update);
     form.addEventListener('submit', (event) => event.preventDefault());
