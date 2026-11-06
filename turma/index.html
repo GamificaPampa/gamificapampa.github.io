@@ -232,8 +232,6 @@
   const endereco = (jogo, arquivo = '') => pasta(jogo) + (arquivo || (local ? 'index.html' : ''));
   const icone = (nome) => (window.Icones ? Icones.svg(nome) : '');
   const $ = (id) => document.getElementById(id);
-  // O nível 3 do hub (Aplicar) fica feito quando o professor abre o menu da turma, só neste aparelho
-  if (!local) { try { localStorage.setItem('gp-lembrar:passos', JSON.stringify({ ...(JSON.parse(localStorage.getItem('gp-lembrar:passos')) || {}), turma: true })); } catch {} }
   const jogos = window.JOGOS || [];
 
   document.querySelectorAll('[data-icone]').forEach((el) => el.insertAdjacentHTML('afterbegin', icone(el.dataset.icone) + ' '));

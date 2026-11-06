@@ -1,5 +1,9 @@
 document.documentElement.classList.add('js');
 
+// As seções que saíram do hub em 06/11 têm página própria: o endereço antigo leva até lá
+const SECOES_QUE_SAIRAM = { '#projetos': '/projetos/', '#escola': '/recursos-pedagogicos/' };
+if (SECOES_QUE_SAIRAM[location.hash]) location.replace(SECOES_QUE_SAIRAM[location.hash]);
+
 // Quem parou as animações (botão redondo do topo, lembrado no aparelho) também fica sem os efeitos feitos em script
 const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)').matches || Boolean(window.Animacoes?.paradas);
 const $ = (selector) => document.querySelector(selector);
@@ -65,50 +69,15 @@ if (bitGame) {
   small.addEventListener('change', place);
 }
 
-// Os três níveis: cada um fica Feito quando o professor passa pela página dele. A barra.js marca o Jogo do Prompt e
-// a Máquina, o menu da turma marca a turma, e o clique no botão daqui também marca. Fica só neste aparelho
-const PASSOS = 'gp-lembrar:passos';
-const passosFeitos = () => { try { return JSON.parse(localStorage.getItem(PASSOS)) || {}; } catch { return {}; } };
-const marcarPasso = (passo) => { try { localStorage.setItem(PASSOS, JSON.stringify({ ...passosFeitos(), [passo]: true })); } catch {} };
-const niveis = [...document.querySelectorAll('.level[data-passo]')];
-const mostrarPassos = () => {
-  const feitos = passosFeitos();
-  let total = 0;
-  niveis.forEach((nivel) => {
-    const feito = Boolean(feitos[nivel.dataset.passo]);
-    nivel.classList.toggle('is-feito', feito);
-    nivel.dataset.progress = feito ? 3 : 0;
-    if (feito) total += 1;
-  });
-  $('#passos-xp')?.style.setProperty('--xp', `${Math.round((total / 3) * 100)}%`);
-  const placar = $('#passos-placar');
-  if (placar) {
-    if (total === 3) placar.innerHTML = 'Os três níveis feitos. Próxima fase: <a href="/recursos-pedagogicos/professores/oficina-prompts/">a Oficina de Prompts completa</a>.';
-    else placar.textContent = total ? `${total} de 3 níveis feitos neste aparelho.` : 'Nenhum nível feito ainda.';
-    placar.classList.toggle('is-completo', total === 3);
-  }
-};
-niveis.forEach((nivel) => nivel.querySelectorAll('.level__acoes a').forEach((link) => link.addEventListener('click', () => marcarPasso(nivel.dataset.passo))));
-mostrarPassos();
-addEventListener('pageshow', mostrarPassos);
-addEventListener('storage', (evento) => { if (evento.key === PASSOS) mostrarPassos(); });
+// Os três níveis saíram do hub (retrospectiva de 06/11): apaga o que ficou guardado deles no aparelho
+try { localStorage.removeItem('gp-lembrar:passos'); } catch {}
 
-// Revealing sections and filling the level blocks as they enter the screen.
+// Revealing sections as they enter the screen.
 const revealObserver = new IntersectionObserver((entries) => {
   for (const entry of entries) {
     if (!entry.isIntersecting) continue;
-    const element = entry.target;
-    element.classList.add('is-visible');
-    if (element.matches('.level')) {
-      const progress = Number(element.dataset.progress);
-      element.querySelectorAll('.blocks span').forEach((block, index) => block.classList.toggle('on', index < progress));
-      if (progress) {
-        const plus = Object.assign(document.createElement('span'), { className: 'plus', textContent: '+10 XP' });
-        setTimeout(() => element.append(plus), 900);
-        setTimeout(() => plus.remove(), 2000);
-      }
-    }
-    revealObserver.unobserve(element);
+    entry.target.classList.add('is-visible');
+    revealObserver.unobserve(entry.target);
   }
 }, { threshold: 0.2 });
 document.querySelectorAll('.reveal').forEach((element) => revealObserver.observe(element));
@@ -220,11 +189,7 @@ document.querySelectorAll('.game').forEach((card) => {
   });
 });
 
-// Opening each project sheet in a dialog, closing it on the X, on Esc or on a click outside.
-document.querySelectorAll('[data-ficha]').forEach((button) => {
-  const sheet = document.getElementById(button.dataset.ficha);
-  button.addEventListener('click', () => sheet.showModal());
-});
+// The share dialog closes on a click outside it.
 document.querySelectorAll('dialog.ficha').forEach((sheet) => {
   sheet.addEventListener('click', (event) => { if (event.target === sheet) sheet.close(); });
 });
@@ -262,11 +227,6 @@ $('#mail-again').addEventListener('click', () => {
   mailer.classList.remove('is-sent');
   $('#mail-done').hidden = true;
   $('#mail-status').textContent = 'A mensagem vai direto para a coordenação do Educador 5.0 e do GamificaEdu.';
-});
-
-// Closing the project sheet when the visitor jumps from it to the e-mail form.
-document.querySelectorAll('[data-contato]').forEach((link) => {
-  link.addEventListener('click', () => link.closest('dialog').close());
 });
 
 // Sharing a resource: the dialog shows its QR code, to project for the class, and the link for WhatsApp, Classroom or copying.
