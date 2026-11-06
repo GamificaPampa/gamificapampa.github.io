@@ -1,5 +1,5 @@
-/* A lista das novidades do site. A página /novidades/ mostra todas, e o hub mostra a mais recente
-   numa faixa acima do título, por 45 dias ou até a pessoa abrir as novidades.
+/* A lista das novidades do site. A página /novidades/ mostra todas, e os cartões do hub ganham a etiqueta
+   Novo quando a novidade é de até 14 dias.
 
    COMO ACRESCENTAR UMA NOVIDADE */
 // Ponha um objeto novo em NOVIDADES, de preferência no começo da lista. A página ordena pela data, então a ordem
@@ -17,6 +17,12 @@
 //     links: [['Jogar', '/recursos-pedagogicos/criancas/pasta-do-jogo/', 'jogar']] },
 // Sem dado de aluno, sem detalhe técnico: só o que muda para o professor.
 window.NOVIDADES = [
+  { data: '2026-11-06', titulo: 'Jogos com o visual que você escolher', texto: 'No jogo, a Máquina agora pergunta o visual: GamificaPampa, Quadro de giz, Caderno, Noite ou Alto contraste. A segunda mensagem traz esse visual, o que faz um jogo ensinar bem e um jogo-modelo de exemplo.', icone: 'jogo', cor: 'purple',
+    links: [['Abrir a máquina', '/maquina/', 'conhecer'], ['Ver os jogos-modelo', '/maquina/modelos/', 'jogar']] },
+  { data: '2026-11-06', titulo: 'Máquina mais simples, e do seu jeito', texto: 'A turma vem por etapa, só com as matérias dela, e o que criar ficou em cinco tipos. Não achou? Toque em Outra e escreva: a máquina guarda a sua opção neste aparelho para a próxima vez.', icone: 'engrenagem', cor: 'blue',
+    links: [['Abrir a máquina', '/maquina/', 'conhecer']] },
+  { data: '2026-11-06', titulo: 'Página dos projetos', texto: 'O Educador 5.0 e o GamificaEdu ganharam páginas próprias, com a ficha inteira e os materiais de cada projeto. O início do site ficou mais curto.', icone: 'livros', cor: 'mint',
+    links: [['Ver os projetos', '/projetos/', 'conhecer']] },
   { data: '2026-11-05', titulo: 'Peça mais e Deixar mais completo', texto: 'Com o prompt pronto, a Máquina dá mensagens para pedir mais ao Gemini: revisar como especialista, mais desafio, versão para quem tem dificuldade e outras. No passo 6, você conta o objetivo, o que a turma já sabe e quanto tempo tem.',
     icone: 'livros', cor: 'purple', links: [
       ['Máquina de prompts', '/maquina/'],
