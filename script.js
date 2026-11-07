@@ -48,26 +48,6 @@ document.addEventListener('click', (event) => {
 });
 mapa.querySelectorAll('a').forEach((link) => link.addEventListener('click', () => setMapa(false)));
 
-// No celular e no tablet, a cena do pedido desce para depois dos recursos, para os jogos e as ferramentas virem logo
-// abaixo do título. Na tela larga, ela volta para o lado do título.
-const bitGame = $('#estudio');
-if (bitGame) {
-  const home = [bitGame.parentElement, bitGame.nextSibling];
-  const phoneSpot = Object.assign(document.createElement('section'), { className: 'container bit-celular' });
-  phoneSpot.setAttribute('aria-label', 'Do pedido ao material');
-  const small = matchMedia('(max-width: 1023px)');
-  const place = () => {
-    if (small.matches) {
-      if (!phoneSpot.isConnected) $('#recursos').after(phoneSpot);
-      phoneSpot.append(bitGame);
-    } else {
-      home[0].insertBefore(bitGame, home[1]);
-      phoneSpot.remove();
-    }
-  };
-  place();
-  small.addEventListener('change', place);
-}
 
 // Os três níveis saíram do hub (retrospectiva de 06/11): apaga o que ficou guardado deles no aparelho
 try { localStorage.removeItem('gp-lembrar:passos'); } catch {}
@@ -97,65 +77,6 @@ document.querySelectorAll('.bot').forEach((bot) => {
   bot.addEventListener('click', () => { if (!reducedMotion) replay(bot, 'jump'); });
   bot.addEventListener('animationend', () => bot.classList.remove('jump'));
 });
-
-// Cena do topo: o pedido aparece no notebook, uma parte de cada vez (Papel, Tarefa, Contexto e Formato), a IA pensa
-// e saem dois materiais: a folha e o jogo de verdade do site. Roda uma vez quando aparece na tela e para no resultado;
-// Ver de novo repete. Com as animações paradas, a cena já aparece pronta
-const EXEMPLO = {
-  partes: [['p', 'Você é professora do 4º ano.'], ['t', 'Crie uma atividade de frações'], ['c', 'para crianças de 9 anos, com pizza e chocolate.'], ['f', 'Uma folha A4 com 5 exercícios e o gabarito.']],
-  folha: ['Folha de exercícios', '5 questões e o gabarito'],
-  jogo: ['Pizzaria das Frações', 'pizzaria-das-fracoes', '/fracoes'],
-};
-const I = '#2f2a4a';
-const FOLHA = `<svg width="34" height="34" viewBox="0 0 32 32"><path d="M8 4h12l5 5v19H8z" fill="#fff" stroke="${I}" stroke-width="2.4" stroke-linejoin="round"/><path d="M12 14h9M12 19h9M12 24h5" stroke="#4da3ff" stroke-width="2.4" stroke-linecap="round"/><path d="M20 4v5h5" fill="none" stroke="${I}" stroke-width="2.2"/></svg>`;
-const estudio = $('#estudio');
-if (estudio) {
-  const prompt = $('#estudio-prompt');
-  const saidas = $('#estudio-saidas');
-  const deNovo = $('#estudio-de-novo');
-  saidas.innerHTML = `<li class="saida"><span class="saida__arte" style="--c: var(--blue-claro)">${FOLHA}</span><span><b>${EXEMPLO.folha[0]}</b><small>${EXEMPLO.folha[1]}</small></span></li>`
-    + `<li class="saida saida--jogo"><span class="saida__arte" style="--c: var(--white)"><img src="/recursos-pedagogicos/criancas/${EXEMPLO.jogo[1]}/capa.svg" alt="" width="54" height="54"></span><span><b><a href="${EXEMPLO.jogo[2]}">${EXEMPLO.jogo[0]}</a></b><small>O jogo já está pronto no site</small><span class="saida__jogar"><svg width="12" height="12" viewBox="0 0 24 24"><path d="M6 4l14 8-14 8z" fill="#fff" stroke="#2f2a4a" stroke-width="3" stroke-linejoin="round"/></svg>Jogar</span></span></li>`;
-  const cartoes = [...saidas.children];
-  const pecas = EXEMPLO.partes.map(([tipo, texto]) => {
-    const parte = Object.assign(document.createElement('span'), { className: `parte parte--${tipo}` });
-    parte.innerHTML = `<b>${tipo.toUpperCase()}</b>`;
-    parte.append(texto);
-    return parte;
-  });
-  let relogios = [];
-  const depois = (ms, f) => relogios.push(setTimeout(f, ms));
-  const mostrar = () => {
-    relogios.forEach(clearTimeout);
-    relogios = [];
-    estudio.classList.remove('is-pensando', 'is-enviando', 'is-pronto');
-    prompt.replaceChildren();
-    cartoes.forEach((cartao) => cartao.classList.remove('is-fora'));
-    const escrever = (parte, i) => prompt.append(parte, i < pecas.length - 1 ? ' ' : '');
-    if (reducedMotion || window.Animacoes?.paradas) {
-      pecas.forEach(escrever);
-      cartoes.forEach((cartao) => cartao.classList.add('is-fora'));
-      return;
-    }
-    pecas.forEach((parte, i) => depois(300 + i * 650, () => escrever(parte, i)));
-    const enviou = 300 + pecas.length * 650;
-    depois(enviou, () => estudio.classList.add('is-enviando'));
-    depois(enviou + 400, () => estudio.classList.add('is-pensando'));
-    depois(enviou + 1400, () => estudio.classList.remove('is-pensando', 'is-enviando'));
-    cartoes.forEach((cartao, i) => depois(enviou + 1500 + i * 400, () => cartao.classList.add('is-fora')));
-    depois(enviou + 1500 + cartoes.length * 400 + 300, () => estudio.classList.add('is-pronto'));
-  };
-  deNovo.addEventListener('click', mostrar);
-  // Só começa quando a cena está na tela
-  let comecou = false;
-  const comecar = () => { if (!comecou) { comecou = true; mostrar(); } };
-  const aVista = () => { const caixa = estudio.getBoundingClientRect(); return caixa.top < innerHeight * .8 && caixa.bottom > 0; };
-  if (aVista()) comecar();
-  else {
-    const olho = new IntersectionObserver(([item]) => { if (item.isIntersecting) { comecar(); olho.disconnect(); } }, { threshold: .3 });
-    olho.observe(estudio);
-  }
-  window.Animacoes?.aoMudar?.(() => { if (comecou) mostrar(); });
-}
 
 // O botão de parar as animações fica no fim do painel Todas as páginas, no computador e no celular
 if (window.Animacoes) $('#mapa-rodape').append(Animacoes.botao({ texto: true }));
