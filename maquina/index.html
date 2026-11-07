@@ -88,6 +88,12 @@
     .alerta { display: flex; align-items: flex-start; gap: 10px; padding: 10px 12px; background: #ffe3ec; color: var(--ink); border: 3px solid var(--pink); border-radius: 14px; font-weight: 600; font-size: 15px; line-height: 1.4; }
     .alerta svg { flex: none; }
     .material-nota { color: rgb(255 255 255 / .85); font-size: 14px; }
+    /* Anexar arquivo: o nome do arquivo num selo, com o x para tirar */
+    .anexo { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; width: 100%; }
+    .anexo__tipos { color: var(--soft); font-weight: 600; font-size: 15px; }
+    .anexo__nome { display: inline-flex; align-items: center; max-width: 100%; min-width: 0; padding: 4px 6px 4px 14px; background: var(--white); border: 3px solid var(--ink); border-radius: 999px; font-weight: 600; }
+    .anexo__nome > span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .anexo__aviso { width: 100%; padding: 10px 14px; background: #fff6d6; border: 3px solid var(--ink); border-radius: 14px; font-weight: 600; font-size: 15px; }
     /* Meus prompts: a mesma lista da Biblioteca */
     .meus { display: grid; gap: 10px; margin: 0; padding: 0; list-style: none; }
     .meus li { display: grid; gap: 8px; padding: 12px 14px; background: var(--white); border: 3px solid var(--ink); border-radius: 16px; }
@@ -198,6 +204,7 @@
     <symbol id="i-baixar" viewBox="0 0 24 24"><path d="M12 3v12m-5-5l5 5 5-5" fill="none" stroke="#2f2a4a" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/><path d="M4 17v2.5A1.5 1.5 0 0 0 5.5 21h13a1.5 1.5 0 0 0 1.5-1.5V17" fill="none" stroke="#2f2a4a" stroke-width="3" stroke-linecap="round"/></symbol>
     <symbol id="i-enviar" viewBox="0 0 24 24"><path d="M12 15V4m-5 5 5-5 5 5" fill="none" stroke="#2f2a4a" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/><path d="M4 16v3a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-3" fill="none" stroke="#2f2a4a" stroke-width="3" stroke-linecap="round"/></symbol>
     <symbol id="i-lock" viewBox="0 0 24 24"><path d="M7.5 11V8a4.5 4.5 0 0 1 9 0v3" fill="none" stroke="#2f2a4a" stroke-width="2.8"/><rect x="4" y="10.5" width="16" height="11" rx="3.5" fill="#ff5f8f" stroke="#2f2a4a" stroke-width="2.6"/><circle cx="12" cy="16" r="1.8" fill="#2f2a4a"/></symbol>
+    <symbol id="i-clipe" viewBox="0 0 24 24"><path d="M15.5 6.5l-7.4 7.4a2 2 0 0 0 2.8 2.8l8-8a4 4 0 0 0-5.7-5.7l-8.2 8.2a6 6 0 0 0 8.5 8.5l6.2-6.2" fill="none" stroke="#2f2a4a" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></symbol>
     <symbol id="i-estrela" viewBox="0 0 24 24"><path d="M12 2.5l2.9 6 6.6.9-4.8 4.6 1.2 6.5L12 17.4l-5.9 3.1 1.2-6.5-4.8-4.6 6.6-.9z" fill="#ffd23f" stroke="#2f2a4a" stroke-width="2.2" stroke-linejoin="round"/></symbol>
   </svg>
 
@@ -343,13 +350,20 @@
               <p class="privacy"><svg width="24" height="24" aria-hidden="true"><use href="#i-lock"/></svg>Marque só a necessidade. Nunca escreva o nome nem a turma de quem tem.</p>
             </fieldset>
             <div class="step">
-              <label class="step__title" for="mais">Algo mais que a IA precisa saber?</label>
-              <textarea class="theme" id="mais" name="mais" maxlength="240" rows="2" placeholder="Por exemplo: a escola não tem impressora colorida"></textarea>
+              <label class="step__title" for="algo-mais">Algo mais que a IA precisa saber?</label>
+              <textarea class="theme" id="algo-mais" name="mais" maxlength="240" rows="2" placeholder="Por exemplo: a escola não tem impressora colorida"></textarea>
             </div>
             <div class="step">
               <label class="step__title" for="material">Tem um material pronto para adaptar?</label>
-              <textarea class="theme" id="material" maxlength="6000" rows="4" placeholder="Cole aqui o texto ou a atividade. A IA adapta para a turma sem perder o conteúdo."></textarea>
-              <p class="privacy"><svg width="24" height="24" aria-hidden="true"><use href="#i-lock"/></svg>Antes de colar, apague nomes, turma e notas. O material não fica guardado neste aparelho.</p>
+              <textarea class="theme" id="material" maxlength="6000" rows="4" placeholder="Cole aqui o texto ou a atividade, ou anexe o arquivo. A IA adapta para a turma sem perder o conteúdo."></textarea>
+              <div class="anexo">
+                <button class="btn btn--small" type="button" id="anexar"><svg width="18" height="18" aria-hidden="true"><use href="#i-clipe"/></svg>Anexar arquivo</button>
+                <input type="file" id="anexo" accept=".txt,.md,.docx,.odt,.pdf,image/*" hidden>
+                <span class="anexo__tipos">Word, PDF, texto ou foto</span>
+                <span class="anexo__nome" id="anexo-nome" hidden><span></span><button type="button" class="chip__x" id="anexo-tirar" aria-label="Tirar o arquivo">×</button></span>
+              </div>
+              <p class="anexo__aviso" id="anexo-aviso" role="status" hidden></p>
+              <p class="privacy"><svg width="24" height="24" aria-hidden="true"><use href="#i-lock"/></svg>Antes de colar ou anexar, apague nomes, turma e notas. O arquivo é lido aqui, no seu aparelho, e nada fica guardado.</p>
             </div>
             <fieldset class="step" id="perguntar-step">
               <legend>Conversa</legend>
@@ -791,11 +805,109 @@
       [/[\w.+-]+@[\w-]+\.[\w.]+/, 'um e-mail'],
       [/\bmatr[ií]cula\b/i, 'uma matrícula'],
     ];
-    const CAMPOS_VIGIADOS = [['tema', 'Tema'], ['objetivo', 'Objetivo'], ['sabe', 'O que a turma já sabe'], ['mais', 'Algo mais'], ['material', 'Material'], ['turma-outra', 'Outra turma']];
+    const CAMPOS_VIGIADOS = [['tema', 'Tema'], ['objetivo', 'Objetivo'], ['sabe', 'O que a turma já sabe'], ['algo-mais', 'Algo mais'], ['material', 'Material'], ['turma-outra', 'Outra turma']];
     const dadoDeAluno = () => CAMPOS_VIGIADOS.flatMap(([id, nome]) => {
       const texto = (document.getElementById(id) || {}).value || '';
       return texto ? PRIVACIDADE.filter(([padrao]) => padrao.test(texto)).map(([, oque]) => `${oque} em "${nome}"`) : [];
     });
+
+    // Anexar arquivo: o texto de Word, ODT, PDF e .txt é lido aqui, no aparelho, e vai para o campo do material,
+    // onde o professor confere e apaga nomes. Foto, PDF escaneado e arquivo grande o professor anexa no Gemini,
+    // e o prompt diz para usar o arquivo anexado.
+    const MAXIMO_MATERIAL = 6000;
+    const PDFJS = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/';
+    const anexo = { nome: '', noGemini: false, lendo: false };
+    const lerDoZip = async (arquivo, interno) => {
+      const bytes = new Uint8Array(await arquivo.arrayBuffer());
+      const dv = new DataView(bytes.buffer);
+      let fim = -1;
+      for (let i = bytes.length - 22; i >= Math.max(0, bytes.length - 65557); i--) if (dv.getUint32(i, true) === 0x06054b50) { fim = i; break; }
+      if (fim < 0) throw new Error('não é zip');
+      let p = dv.getUint32(fim + 16, true);
+      for (let n = dv.getUint16(fim + 10, true); n > 0 && dv.getUint32(p, true) === 0x02014b50; n--) {
+        const metodo = dv.getUint16(p + 10, true);
+        const tamanho = dv.getUint32(p + 20, true);
+        const [lNome, lExtra, lComentario] = [28, 30, 32].map((d) => dv.getUint16(p + d, true));
+        const local = dv.getUint32(p + 42, true);
+        if (new TextDecoder().decode(bytes.subarray(p + 46, p + 46 + lNome)) === interno) {
+          const inicio = local + 30 + dv.getUint16(local + 26, true) + dv.getUint16(local + 28, true);
+          const dados = bytes.subarray(inicio, inicio + tamanho);
+          if (metodo === 0) return new TextDecoder().decode(dados);
+          return new Response(new Blob([dados]).stream().pipeThrough(new DecompressionStream('deflate-raw'))).text();
+        }
+        p += 46 + lNome + lExtra + lComentario;
+      }
+      throw new Error('sem ' + interno);
+    };
+    const W = 'http://schemas.openxmlformats.org/wordprocessingml/2006/main';
+    const textoDoWord = (xml) => [...new DOMParser().parseFromString(xml, 'application/xml').getElementsByTagNameNS(W, 'p')]
+      .filter((paragrafo) => { for (let el = paragrafo.parentNode; el && el.nodeType === 1; el = el.parentNode) if (el.localName === 'Fallback') return false; return true; })
+      .map((paragrafo) => [...paragrafo.getElementsByTagNameNS(W, '*')].map((el) => el.localName === 't' ? el.textContent : el.localName === 'tab' ? ' ' : el.localName === 'br' ? '\n' : '').join(''))
+      .join('\n');
+    const T = 'urn:oasis:names:tc:opendocument:xmlns:text:1.0';
+    const textoDoOdt = (xml) => [...new DOMParser().parseFromString(xml, 'application/xml').getElementsByTagNameNS(T, '*')]
+      .filter((el) => el.localName === 'p' || el.localName === 'h').map((el) => el.textContent).join('\n');
+    const carregarPdf = () => window.pdfjsLib ? Promise.resolve(window.pdfjsLib) : new Promise((pronto, falha) => {
+      const script = Object.assign(document.createElement('script'), { src: PDFJS + 'pdf.min.js' });
+      script.onload = () => { window.pdfjsLib.GlobalWorkerOptions.workerSrc = PDFJS + 'pdf.worker.min.js'; pronto(window.pdfjsLib); };
+      script.onerror = falha;
+      document.head.append(script);
+    });
+    const textoDoPdf = async (arquivo) => {
+      const pdf = await (await carregarPdf()).getDocument({ data: new Uint8Array(await arquivo.arrayBuffer()) }).promise;
+      let texto = '';
+      for (let pagina = 1; pagina <= pdf.numPages && texto.length <= MAXIMO_MATERIAL; pagina++) {
+        const { items } = await (await pdf.getPage(pagina)).getTextContent();
+        texto += items.map((item) => item.str + (item.hasEOL ? '\n' : '')).join('') + '\n\n';
+      }
+      return texto;
+    };
+    const mostrarAnexo = (nome, aviso = '') => {
+      anexo.nome = nome;
+      if (!nome) anexo.noGemini = false;
+      $('#anexo-nome').hidden = !nome;
+      $('#anexo-nome').firstChild.textContent = nome;
+      $('#anexo-aviso').hidden = !aviso;
+      $('#anexo-aviso').textContent = aviso;
+    };
+    const NO_GEMINI = 'No Gemini, toque no + e anexe o arquivo junto com o prompt.';
+    const MOTIVOS = {
+      foto: 'A foto não vira texto aqui, mas o Gemini lê.',
+      escaneado: 'Este PDF parece escaneado: não tem texto para ler aqui, mas o Gemini lê.',
+      grande: `O arquivo tem mais de ${MAXIMO_MATERIAL / 1000} mil letras, muito para ir dentro do prompt.`,
+      formato: 'Este tipo de arquivo não dá para ler aqui.',
+      erro: 'Não deu para ler este arquivo aqui.',
+    };
+    const anexar = async (arquivo) => {
+      if (!arquivo) return;
+      const extensao = (arquivo.name.split('.').pop() || '').toLowerCase();
+      anexo.lendo = true;
+      mostrarAnexo(arquivo.name, 'Lendo o arquivo...');
+      let texto = '';
+      let motivo = '';
+      try {
+        if (arquivo.type.startsWith('image/')) motivo = 'foto';
+        else if (['txt', 'md'].includes(extensao) || arquivo.type === 'text/plain') texto = await arquivo.text();
+        else if (extensao === 'docx') texto = textoDoWord(await lerDoZip(arquivo, 'word/document.xml'));
+        else if (extensao === 'odt') texto = textoDoOdt(await lerDoZip(arquivo, 'content.xml'));
+        else if (extensao === 'pdf') { texto = await textoDoPdf(arquivo); if (!texto.trim()) motivo = 'escaneado'; }
+        else motivo = 'formato';
+      } catch { motivo = 'erro'; }
+      texto = texto.replace(/\r/g, '').replace(/[ \t\u00a0]+/g, ' ').replace(/ *\n */g, '\n').replace(/\n{3,}/g, '\n\n').trim();
+      if (!motivo && !texto) motivo = 'erro';
+      if (!motivo && texto.length > MAXIMO_MATERIAL) motivo = 'grande';
+      anexo.lendo = false;
+      anexo.noGemini = Boolean(motivo);
+      $('#material').value = motivo ? '' : texto;
+      mostrarAnexo(arquivo.name, motivo ? `${MOTIVOS[motivo]} ${NO_GEMINI}` : 'O texto do arquivo está no campo acima. Confira e apague nomes, turma e notas, se houver.');
+      update();
+    };
+    $('#anexar').addEventListener('click', () => $('#anexo').click());
+    $('#anexo').addEventListener('change', (event) => { anexar(event.target.files[0]); event.target.value = ''; });
+    $('#anexo-tirar').addEventListener('click', () => { if (!anexo.noGemini) $('#material').value = ''; mostrarAnexo(''); update(); $('#anexar').focus(); });
+    // Também dá para soltar o arquivo em cima do campo
+    $('#material').addEventListener('dragover', (event) => { if (event.dataTransfer.types.includes('Files')) event.preventDefault(); });
+    $('#material').addEventListener('drop', (event) => { if (event.dataTransfer.files.length) { event.preventDefault(); anexar(event.dataTransfer.files[0]); } });
 
     const read = () => {
       const data = new FormData(form);
@@ -879,6 +991,7 @@
       // Um material colado vai no fim do pedido; a Tarefa diz para usar como base
       const material = String($('#material').value || '').trim();
       if (tarefa && material) tarefa += ' Use como base o material que está no fim deste pedido: adapte para esta turma sem perder o conteúdo.';
+      else if (tarefa && anexo.noGemini) tarefa += ' Use como base o material do arquivo que anexei junto com este pedido: adapte para esta turma sem perder o conteúdo.';
       const text = { papel, tarefa, contexto, formato };
       const label = [kind && kind.name, group && group.name, theme].filter(Boolean).join(' · ');
       return { text, kind, turma, etapa, subject, label, adult, theme, leitura: extras.includes('leitura'), local: extras.includes('local'), tipoValor, materiaValor, estilo, material };
@@ -991,8 +1104,9 @@
       const comMaterial = (corpo) => material ? `${corpo}\n\nMaterial:\n\"\"\"\n${material}\n\"\"\"` : corpo;
       current = done === 4 ? { text: comMaterial(base), guardavel: material ? `${base}\n\nMaterial:\n[cole aqui o material]` : base, label, jogo: isGame, theme, tipo: kind ? (Object.keys(kinds).find((id) => kinds[id] === kind) || 'proprio') : '', etapa: etapaEscolhida, materia: subject ? subject.name : '' } : { text: '', label: '' };
       $('#guardar').disabled = done < 4;
-      $('#material-nota').hidden = !material;
-      $('#material-nota').textContent = material ? `Mais o material colado (${material.length} letras), no fim do prompt.` : '';
+      $('#material-nota').hidden = !material && !anexo.noGemini;
+      $('#material-nota').textContent = material ? `Mais o material ${anexo.nome ? 'do arquivo' : 'colado'} (${material.length} letras), no fim do prompt.` : anexo.noGemini ? 'Lembre de anexar o arquivo no Gemini junto com o prompt.' : '';
+      if (!material && !anexo.noGemini && !anexo.lendo && anexo.nome) mostrarAnexo('');
       const achados = dadoDeAluno();
       $('#alerta').hidden = !achados.length;
       if (achados.length) $('#alerta').textContent = `Parece que há dado de aluno: ${achados.join(', ')}. Apague antes de copiar. Se não for, pode seguir.`;
@@ -1020,7 +1134,8 @@
       $('#perguntar-step').disabled = tipo === 'jogo';
       $('#tempo-step').disabled = ['sequencia', 'rubrica'].includes(tipo);
       $('#criar').hidden = !CRIAR_AQUI.url;
-      $('#criar').disabled = done < 4 || criando;
+      // O arquivo que vai anexado no Gemini não chega ao Criar aqui
+      $('#criar').disabled = done < 4 || criando || anexo.noGemini;
       $('#count').textContent = done === 4 ? 'Prompt pronto! As 4 peças estão no lugar.' : `${done} de 4 peças prontas`;
       $('#count').classList.toggle('is-ready', done === 4);
       $('#tip').textContent = kind ? (turma === 'infantil' && kind.tipInfantil) || kind.tip : turma ? 'Agora escolha o que criar. A Tarefa e o Formato saem daí.' : etapaEscolhida === 'outra' ? 'Descreva a turma no campo, sem nomes. O Papel e o Contexto saem daí.' : etapaEscolhida ? 'Agora escolha o ano. O Papel e o Contexto saem dele.' : 'Comece pela turma. O Papel e o Contexto saem dela.';
@@ -1377,12 +1492,12 @@
     $('#teste-fechar').addEventListener('click', () => { $('#teste').hidden = true; });
     // O site lembra a última turma, matéria, tipo, tema e ajustes neste aparelho; Começar de novo esquece
     desenharMinhas();
-    Lembrar.campos('maquina', [...form.elements].filter((campo) => campo.id !== 'material'));
+    Lembrar.campos('maquina', [...form.elements].filter((campo) => campo.id !== 'material' && campo.type !== 'file'));
     // Quem já preencheu o passo 6 numa visita anterior encontra ele aberto
     if (['objetivo', 'sabe', 'mais'].some((nome) => form.elements[nome].value.trim()) || ['uso', 'tempo', 'perguntar', 'extra'].some((nome) => new FormData(form).get(nome))) $('#completo').open = true;
     // No celular, o console com o Copiar fica depois das perguntas: uma barra no pé da tela traz o Copiar e as peças prontas
     Copiar.barraFixa({ observar: document.querySelector('#console .actions'), copiar: copyButton, contador: $('#count') });
-    $('#reset').addEventListener('click', () => { form.reset(); $('#material').value = ''; Lembrar.guardar('maquina', {}); update(); form.querySelector('[name="etapa"]').focus(); });
+    $('#reset').addEventListener('click', () => { form.reset(); $('#material').value = ''; mostrarAnexo(''); Lembrar.guardar('maquina', {}); update(); form.querySelector('[name="etapa"]').focus(); });
     form.addEventListener('input', update);
     form.addEventListener('change', update);
     form.addEventListener('submit', (event) => event.preventDefault());
