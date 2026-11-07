@@ -4,9 +4,9 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Máquina de prompts · GamificaPampa</title>
-  <meta name="description" content="Da Educação Infantil ao Ensino Médio e na EJA, em qualquer matéria: escolha a turma, o que criar e o tema, e a máquina monta um prompt com Papel, Tarefa, Contexto e Formato, pronto para colar no Gemini.">
+  <meta name="description" content="Da Educação Infantil ao Ensino Médio e na EJA, em qualquer matéria: escolha a turma, o que criar e o tema, e a máquina monta um prompt com Papel, Tarefa, Contexto e Formato, pronto para colar no ChatGPT.">
   <meta property="og:title" content="Máquina de prompts">
-  <meta property="og:description" content="Monte em poucos cliques um prompt para o Gemini criar jogos, quizzes, atividades, planos de aula e histórias, da Educação Infantil ao Ensino Médio e na EJA, ou o que você quiser.">
+  <meta property="og:description" content="Monte em poucos cliques um prompt para o ChatGPT criar jogos, quizzes, atividades, planos de aula e histórias, da Educação Infantil ao Ensino Médio e na EJA, ou o que você quiser.">
   <meta property="og:image" content="https://gamificapampa.github.io/identidade-visual/logos/gamificapampa-github-avatar.png">
   <meta property="og:type" content="website">
   <meta name="theme-color" content="#5fbcff">
@@ -158,7 +158,7 @@
     .ajuste .ideas button:disabled, .ajuste__linha button:disabled { opacity: .5; cursor: not-allowed; }
     .teste__jogo { width: 100%; height: min(640px, 80vh); background: var(--white); border: 4px solid var(--ink); border-radius: 16px; }
 
-    /* The Bit Gem: the same help as a conversation inside Gemini */
+    /* The Bit assistant: the same help as a conversation inside a ChatGPT project */
     .gem-bit { display: flex; flex-wrap: wrap; align-items: center; gap: 18px 26px; margin-bottom: 56px; }
     .gem-bit img { flex: none; width: clamp(80px, 10vw, 104px); height: auto; }
     .gem-bit div { display: grid; flex: 1 1 280px; justify-items: start; gap: 10px; }
@@ -224,7 +224,7 @@
       <h1 class="loud anima-letras"><span>Máquina</span> <span>de</span> <span class="yellow">prompts</span></h1>
       <div class="talk">
         <img class="anima-flutuar" id="bit" src="/identidade-visual/mascote/bit.svg" width="100" height="100" alt="Bit, o robô do GamificaPampa">
-        <p class="bubble anima-balao" id="bubble" style="--d: .4s">Escolha as peças e eu monto um prompt para você colar no Gemini. Cada escolha acende uma luz da máquina.</p>
+        <p class="bubble anima-balao" id="bubble" style="--d: .4s">Escolha as peças e eu monto um prompt para você colar no ChatGPT. Cada escolha acende uma luz da máquina.</p>
       </div>
     </section>
 
@@ -367,7 +367,7 @@
             </div>
             <fieldset class="step" id="perguntar-step">
               <legend>Conversa</legend>
-              <label class="chip"><input type="checkbox" name="perguntar" value="sim"><span>O Gemini me pergunta antes de criar</span></label>
+              <label class="chip"><input type="checkbox" name="perguntar" value="sim"><span>O ChatGPT me pergunta antes de criar</span></label>
             </fieldset>
           </div>
         </details>
@@ -386,14 +386,14 @@
         <div class="actions">
           <button class="btn btn--jogar btn--small" type="button" id="criar" hidden disabled><svg width="18" height="18" aria-hidden="true"><use href="#i-testar"/></svg>Criar aqui</button>
           <button class="btn btn--jogar btn--small" type="button" id="copy" disabled><svg width="18" height="18" aria-hidden="true"><use href="#i-copy"/></svg>Copiar o prompt</button>
-          <a class="btn btn--small" href="https://gemini.google.com/app" target="_blank" rel="noopener">Abrir o Gemini</a>
           <a class="btn btn--small" href="https://chatgpt.com/" target="_blank" rel="noopener">Abrir o ChatGPT</a>
+          <a class="btn btn--small" href="https://gemini.google.com/app" target="_blank" rel="noopener">Abrir o Gemini</a>
           <button class="btn btn--small" type="button" id="guardar" disabled><svg width="18" height="18" aria-hidden="true"><use href="#i-estrela"/></svg>Guardar em Meus prompts</button>
           <button class="btn btn--small" type="button" id="reset"><svg width="18" height="18" aria-hidden="true"><use href="#i-reset"/></svg>Começar de novo</button>
         </div>
         <div class="quality" id="quality" hidden>
           <h3><b>2</b>A segunda mensagem: o padrão do jogo</h3>
-          <p>Quando o jogo aparecer no Canvas, mande esta mensagem na mesma conversa. Ela traz o visual escolhido, o que faz um jogo ensinar bem e um jogo-modelo de exemplo. Se o Gemini recusar, toque em Refazer.</p>
+          <p>Quando o jogo aparecer no Canvas, mande esta mensagem na mesma conversa. Ela traz o visual escolhido, o que faz um jogo ensinar bem e um jogo-modelo de exemplo. Se ele recusar, peça de novo ou abra uma conversa nova.</p>
           <details>
             <summary>Ver a segunda mensagem</summary>
             <pre id="quality-texto"></pre>
@@ -416,14 +416,14 @@
           <p class="teste__status" id="teste-status" role="status"></p>
         </div>
       </div>
-      <p class="teste__aviso"><svg width="24" height="24" aria-hidden="true"><use href="#i-lock"/></svg>O pedido vai para a IA (Gemini ou ChatGPT) pelo servidor da equipe. Nunca escreva nome ou dado de aluno, nem nos ajustes, e confira tudo antes de usar com a turma.</p>
+      <p class="teste__aviso"><svg width="24" height="24" aria-hidden="true"><use href="#i-lock"/></svg>O pedido vai para a IA (ChatGPT ou Gemini) pelo servidor da equipe. Nunca escreva nome ou dado de aluno, nem nos ajustes, e confira tudo antes de usar com a turma.</p>
       <iframe class="teste__jogo" id="teste-jogo" title="Prévia do jogo" sandbox="allow-scripts" hidden></iframe>
       <div class="teste__texto" id="teste-texto" hidden></div>
       <div class="actions">
         <button class="btn btn--baixar btn--small" type="button" id="teste-baixar" hidden><svg width="18" height="18" aria-hidden="true"><use href="#i-baixar"/></svg>Baixar o jogo</button>
         <button class="btn btn--compartilhar btn--small" type="button" id="teste-publicar" hidden><svg width="18" height="18" aria-hidden="true"><use href="#i-enviar"/></svg>Publicar meu jogo</button>
         <button class="btn btn--small" type="button" id="teste-copiar" hidden><svg width="18" height="18" aria-hidden="true"><use href="#i-copy"/></svg>Copiar a resposta</button>
-        <a class="btn btn--small" href="https://gemini.google.com/app" target="_blank" rel="noopener">Abrir o Gemini</a>
+        <a class="btn btn--small" href="https://chatgpt.com/" target="_blank" rel="noopener">Abrir o ChatGPT</a>
         <button class="btn btn--small" type="button" id="teste-fechar">Fechar</button>
       </div>
       <div class="ajuste" id="ajuste" hidden>
@@ -441,8 +441,8 @@
       <img src="/identidade-visual/mascote/bit-acenando.svg" width="100" height="100" alt="Bit acenando">
       <div>
         <h2>Prefere conversar?</h2>
-        <p>Crie o Gem do Bit no Gemini. Ele faz uma pergunta por vez, monta o prompt com as quatro peças e, quando você aprovar, cria o material.</p>
-        <a class="btn btn--conhecer" href="https://gamificapampa.github.io/recursos-pedagogicos/professores/oficina-prompts/gems.html#bit"><svg width="22" height="22" aria-hidden="true"><use href="#i-lupa"/></svg>Ver o Gem do Bit</a>
+        <p>Crie o assistente do Bit num Projeto do ChatGPT (ou num Gem do Gemini). Ele faz uma pergunta por vez, monta o prompt com as quatro peças e, quando você aprovar, cria o material.</p>
+        <a class="btn btn--conhecer" href="https://gamificapampa.github.io/recursos-pedagogicos/professores/oficina-prompts/gems.html#bit"><svg width="22" height="22" aria-hidden="true"><use href="#i-lupa"/></svg>Ver o assistente do Bit</a>
       </div>
     </section>
 
@@ -455,9 +455,9 @@
 
     <section class="how">
       <h2 class="loud">Como a máquina <span class="yellow">pensa</span></h2>
-      <p>Um bom prompt tem quatro peças. É o mesmo método da Oficina de Prompts, e a máquina já escreve do jeito que deu certo nos testes com o Gemini: com o objetivo no topo, os erros comuns da turma e um pedido para ele conferir tudo antes de entregar.</p>
+      <p>Um bom prompt tem quatro peças. É o mesmo método da Oficina de Prompts, e a máquina já escreve do jeito que deu certo nos testes: com o objetivo no topo, os erros comuns da turma e um pedido para a IA conferir tudo antes de entregar.</p>
       <div class="how__grid">
-        <article class="how__card how__card--papel"><h3><b>P</b>Papel</h3><p>Quem o Gemini deve ser. Com a matéria e o ano, ele fala do jeito certo para a turma.</p></article>
+        <article class="how__card how__card--papel"><h3><b>P</b>Papel</h3><p>Quem a IA deve ser. Com a matéria e o ano, ela fala do jeito certo para a turma.</p></article>
         <article class="how__card how__card--tarefa"><h3><b>T</b>Tarefa</h3><p>O que ele deve fazer, com um verbo claro e um tema concreto.</p></article>
         <article class="how__card how__card--contexto"><h3><b>C</b>Contexto</h3><p>Para quem e com quais limites: a idade, a leitura e o lugar.</p></article>
         <article class="how__card how__card--formato"><h3><b>F</b>Formato</h3><p>Como o resultado deve sair, para chegar pronto para usar na aula.</p></article>
@@ -546,7 +546,7 @@
         papel: 'que escreve histórias que ensinam e fazem pensar',
         tarefa: (theme) => `Escreva uma história curta sobre ${theme}.`,
         formato: 'Use até 6 parágrafos curtos, nomes brasileiros e um problema que o personagem resolve usando o que a turma vai aprender. No fim, 3 perguntas para conversar com a turma: uma sobre o que aconteceu, uma para pensar por quê e uma de opinião. Use só animais, plantas, lugares e fatos que existem de verdade, e descreva as imagens entre parênteses. Antes de entregar, confira se a história ensina o objetivo e se nada foi inventado.',
-        tip: 'Confira os nomes de bichos e plantas: o modelo rápido às vezes inventa um. Se ele desenhar com letras e símbolos, peça "descreva as imagens entre parênteses".',
+        tip: 'Confira os nomes de bichos e plantas: a IA às vezes inventa um. Se ele desenhar com letras e símbolos, peça "descreva as imagens entre parênteses".',
       },
       quiz: {
         name: 'Quiz',
@@ -562,7 +562,7 @@
         tarefa: (theme) => `Crie um jogo em HTML sobre ${theme} para jogar no navegador, em que cada fase treine uma parte do tema, da mais fácil à mais difícil.`,
         formato: 'Faça tudo num único arquivo HTML, com o CSS e o JavaScript dentro dele e sem nada de fora, que funcione no celular e no computador. Quero botões grandes, 3 fases, som no acerto, estrelas no final e, no erro, uma frase que explica o conceito.',
         formatoAdulto: 'Faça tudo num único arquivo HTML, com o CSS e o JavaScript dentro dele e sem nada de fora, que funcione no celular e no computador. Quero botões grandes, visual adulto e sem bichinhos, 3 fases, som no acerto, a pontuação no final e, no erro, uma frase que explica o conceito.',
-        tip: 'Ligue o Canvas em + > Mais ferramentas > Canvas. Se ele recusar o jogo, toque em Refazer ou mande primeiro só a Tarefa. Quando o jogo aparecer, mande a segunda mensagem, com o visual e o padrão do jogo. Depois ganhe um link e um QR Code em gamificapampa.github.io/publicador.',
+        tip: 'No ChatGPT, toque no + da caixa de mensagem e escolha Canvas. Se ele recusar o jogo, peça de novo ou mande primeiro só a Tarefa. Quando o jogo aparecer, mande a segunda mensagem, com o visual e o padrão do jogo. Depois ganhe um link e um QR Code em gamificapampa.github.io/publicador.',
       },
       atividade: {
         name: 'Atividade para imprimir',
@@ -570,14 +570,14 @@
         tarefa: (theme) => `Crie uma atividade para imprimir sobre ${theme}.`,
         formato: 'Monte uma folha A4 com um exemplo resolvido no início, 5 exercícios do fácil ao difícil (um deles com uma situação do dia a dia) e um desafio extra para quem terminar antes. O gabarito vem separado no fim. Escreva fora de bloco de código, descreva as imagens entre parênteses e escreva frações e contas como texto, como 1/2. Antes de entregar, confira se cada exercício tem uma só resposta certa, se a resposta não aparece no próprio enunciado e se o gabarito bate com ele.',
         formatoInfantil: 'Monte uma folha A4 com 3 ou 4 atividades quase sem texto (ligar, circular, contar ou pintar), cada uma com uma instrução curta para eu ler em voz alta, e desenhos de contorno simples, descritos entre parênteses. No fim, uma dica para o professor. Escreva fora de bloco de código. Antes de entregar, confira se cada atividade tem uma só resposta certa.',
-        tip: 'O prompt pede um exemplo resolvido, um desafio extra e que o Gemini confira o gabarito. Mesmo assim, resolva a folha antes de imprimir.',
+        tip: 'O prompt pede um exemplo resolvido, um desafio extra e que a IA confira o gabarito. Mesmo assim, resolva a folha antes de imprimir.',
       },
       plano: {
         name: 'Plano de aula',
         papel: 'que planeja aulas ativas, em que a turma faz e não só escuta',
         tarefa: (theme) => `Monte um plano de aula sobre ${theme}.`,
         formato: 'Divida em objetivo, materiais, passo a passo com o tempo de cada parte e uma forma de avaliar com critério, para uma aula de 50 minutos. Comece com uma pergunta ou um problema, tenha uma parte em que a turma faz e termine com um fechamento. Diga que erro comum observar e como ajudar quem errar. Antes de entregar, confira se os tempos somam 50 minutos e se a avaliação mede o objetivo.',
-        tip: 'O modelo rápido do Gemini às vezes inventa códigos da BNCC. Por isso o prompt pede para não citar.',
+        tip: 'A IA às vezes inventa códigos da BNCC. Por isso o prompt pede para não citar.',
       },
       adaptar: {
         name: 'Adaptar um texto',
@@ -630,8 +630,8 @@
         ideasIniciais: ['a maquete do ciclo da água', 'a leitura em voz alta', 'um cartaz em grupo'],
         ideasInfantil: ['a roda de conversa', 'a brincadeira de faz de conta', 'a pintura com tinta'],
         ideasAdulto: ['uma carta de reclamação', 'uma apresentação oral', 'o orçamento da casa'],
-        tip: 'Mostre a rubrica para a turma antes do trabalho. Nomes e notas você escreve depois, no Google Docs, nunca na conversa com o Gemini.',
-        tipInfantil: 'O registro acompanha cada criança sem nota. Escreva o nome depois, no Google Docs, nunca na conversa com o Gemini.',
+        tip: 'Mostre a rubrica para a turma antes do trabalho. Nomes e notas você escreve depois, no Google Docs, nunca na conversa com a IA.',
+        tipInfantil: 'O registro acompanha cada criança sem nota. Escreva o nome depois, no Google Docs, nunca na conversa com a IA.',
       },
     };
     let qualityCurrent = '';
@@ -812,11 +812,11 @@
     });
 
     // Anexar arquivo: o texto de Word, ODT, PDF e .txt é lido aqui, no aparelho, e vai para o campo do material,
-    // onde o professor confere e apaga nomes. Foto, PDF escaneado e arquivo grande o professor anexa no Gemini,
+    // onde o professor confere e apaga nomes. Foto, PDF escaneado e arquivo grande o professor anexa no ChatGPT,
     // e o prompt diz para usar o arquivo anexado.
     const MAXIMO_MATERIAL = 6000;
     const PDFJS = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/';
-    const anexo = { nome: '', noGemini: false, lendo: false };
+    const anexo = { nome: '', naConversa: false, lendo: false };
     const lerDoZip = async (arquivo, interno) => {
       const bytes = new Uint8Array(await arquivo.arrayBuffer());
       const dv = new DataView(bytes.buffer);
@@ -864,16 +864,16 @@
     };
     const mostrarAnexo = (nome, aviso = '') => {
       anexo.nome = nome;
-      if (!nome) anexo.noGemini = false;
+      if (!nome) anexo.naConversa = false;
       $('#anexo-nome').hidden = !nome;
       $('#anexo-nome').firstChild.textContent = nome;
       $('#anexo-aviso').hidden = !aviso;
       $('#anexo-aviso').textContent = aviso;
     };
-    const NO_GEMINI = 'No Gemini, toque no + e anexe o arquivo junto com o prompt.';
+    const NA_CONVERSA = 'No ChatGPT, toque no + e anexe o arquivo junto com o prompt.';
     const MOTIVOS = {
-      foto: 'A foto não vira texto aqui, mas o Gemini lê.',
-      escaneado: 'Este PDF parece escaneado: não tem texto para ler aqui, mas o Gemini lê.',
+      foto: 'A foto não vira texto aqui, mas o ChatGPT lê.',
+      escaneado: 'Este PDF parece escaneado: não tem texto para ler aqui, mas o ChatGPT lê.',
       grande: `O arquivo tem mais de ${MAXIMO_MATERIAL / 1000} mil letras, muito para ir dentro do prompt.`,
       formato: 'Este tipo de arquivo não dá para ler aqui.',
       erro: 'Não deu para ler este arquivo aqui.',
@@ -897,14 +897,14 @@
       if (!motivo && !texto) motivo = 'erro';
       if (!motivo && texto.length > MAXIMO_MATERIAL) motivo = 'grande';
       anexo.lendo = false;
-      anexo.noGemini = Boolean(motivo);
+      anexo.naConversa = Boolean(motivo);
       $('#material').value = motivo ? '' : texto;
-      mostrarAnexo(arquivo.name, motivo ? `${MOTIVOS[motivo]} ${NO_GEMINI}` : 'O texto do arquivo está no campo acima. Confira e apague nomes, turma e notas, se houver.');
+      mostrarAnexo(arquivo.name, motivo ? `${MOTIVOS[motivo]} ${NA_CONVERSA}` : 'O texto do arquivo está no campo acima. Confira e apague nomes, turma e notas, se houver.');
       update();
     };
     $('#anexar').addEventListener('click', () => $('#anexo').click());
     $('#anexo').addEventListener('change', (event) => { anexar(event.target.files[0]); event.target.value = ''; });
-    $('#anexo-tirar').addEventListener('click', () => { if (!anexo.noGemini) $('#material').value = ''; mostrarAnexo(''); update(); $('#anexar').focus(); });
+    $('#anexo-tirar').addEventListener('click', () => { if (!anexo.naConversa) $('#material').value = ''; mostrarAnexo(''); update(); $('#anexar').focus(); });
     // Também dá para soltar o arquivo em cima do campo
     $('#material').addEventListener('dragover', (event) => { if (event.dataTransfer.types.includes('Files')) event.preventDefault(); });
     $('#material').addEventListener('drop', (event) => { if (event.dataTransfer.files.length) { event.preventDefault(); anexar(event.dataTransfer.files[0]); } });
@@ -984,14 +984,14 @@
           ? ` O objetivo é que ${infantil ? 'as crianças consigam' : adult ? 'os estudantes consigam' : 'a turma consiga'} ${objetivo}; escreva esse objetivo no topo.`
           : ` No topo, escreva numa frase o objetivo: o que ${infantil ? 'as crianças vão' : adult ? 'os estudantes vão' : 'a turma vai'} conseguir fazer depois.`;
       }
-      // "O Gemini me pergunta antes" (Fase 3): na Fase 0 ele perguntou e esperou nas 3 vezes. Fica fora do jogo, por causa do Canvas
+      // "O ChatGPT me pergunta antes" (Fase 3, testado no Gemini): na Fase 0 ele perguntou e esperou nas 3 vezes. Fica fora do jogo, por causa do Canvas
       if (formato && tipoId !== 'jogo' && data.get('perguntar')) {
         formato += ' Antes de criar, faça até 3 perguntas sobre a minha turma, o objetivo e onde a turma costuma errar, e espere as minhas respostas.';
       }
       // Um material colado vai no fim do pedido; a Tarefa diz para usar como base
       const material = String($('#material').value || '').trim();
       if (tarefa && material) tarefa += ' Use como base o material que está no fim deste pedido: adapte para esta turma sem perder o conteúdo.';
-      else if (tarefa && anexo.noGemini) tarefa += ' Use como base o material do arquivo que anexei junto com este pedido: adapte para esta turma sem perder o conteúdo.';
+      else if (tarefa && anexo.naConversa) tarefa += ' Use como base o material do arquivo que anexei junto com este pedido: adapte para esta turma sem perder o conteúdo.';
       const text = { papel, tarefa, contexto, formato };
       const label = [kind && kind.name, group && group.name, theme].filter(Boolean).join(' · ');
       return { text, kind, turma, etapa, subject, label, adult, theme, leitura: extras.includes('leitura'), local: extras.includes('local'), tipoValor, materiaValor, estilo, material };
@@ -1022,7 +1022,7 @@
     // Cheering when the four pieces are in place, the first time they are.
     const celebrate = () => {
       $('#bit').src = '/identidade-visual/mascote/bit-comemorando.svg';
-      bubble.textContent = 'Prompt pronto! Copie e cole no Gemini. Se ele recusar, toque em Refazer ou abra uma conversa nova. Se a resposta não vier do seu jeito, peça ajustes na mesma conversa.';
+      bubble.textContent = 'Prompt pronto! Copie e cole no ChatGPT. Se ele recusar, peça de novo ou abra uma conversa nova. Se a resposta não vier do seu jeito, peça ajustes na mesma conversa.';
       replay(consoleBox, 'is-ready');
       if (!reducedMotion) replay($('#bit'), 'anima-saltar');
     };
@@ -1104,9 +1104,9 @@
       const comMaterial = (corpo) => material ? `${corpo}\n\nMaterial:\n\"\"\"\n${material}\n\"\"\"` : corpo;
       current = done === 4 ? { text: comMaterial(base), guardavel: material ? `${base}\n\nMaterial:\n[cole aqui o material]` : base, label, jogo: isGame, theme, tipo: kind ? (Object.keys(kinds).find((id) => kinds[id] === kind) || 'proprio') : '', etapa: etapaEscolhida, materia: subject ? subject.name : '' } : { text: '', label: '' };
       $('#guardar').disabled = done < 4;
-      $('#material-nota').hidden = !material && !anexo.noGemini;
-      $('#material-nota').textContent = material ? `Mais o material ${anexo.nome ? 'do arquivo' : 'colado'} (${material.length} letras), no fim do prompt.` : anexo.noGemini ? 'Lembre de anexar o arquivo no Gemini junto com o prompt.' : '';
-      if (!material && !anexo.noGemini && !anexo.lendo && anexo.nome) mostrarAnexo('');
+      $('#material-nota').hidden = !material && !anexo.naConversa;
+      $('#material-nota').textContent = material ? `Mais o material ${anexo.nome ? 'do arquivo' : 'colado'} (${material.length} letras), no fim do prompt.` : anexo.naConversa ? 'Lembre de anexar o arquivo no ChatGPT junto com o prompt.' : '';
+      if (!material && !anexo.naConversa && !anexo.lendo && anexo.nome) mostrarAnexo('');
       const achados = dadoDeAluno();
       $('#alerta').hidden = !achados.length;
       if (achados.length) $('#alerta').textContent = `Parece que há dado de aluno: ${achados.join(', ')}. Apague antes de copiar. Se não for, pode seguir.`;
@@ -1134,8 +1134,8 @@
       $('#perguntar-step').disabled = tipo === 'jogo';
       $('#tempo-step').disabled = ['sequencia', 'rubrica'].includes(tipo);
       $('#criar').hidden = !CRIAR_AQUI.url;
-      // O arquivo que vai anexado no Gemini não chega ao Criar aqui
-      $('#criar').disabled = done < 4 || criando || anexo.noGemini;
+      // O arquivo que vai anexado na conversa não chega ao Criar aqui
+      $('#criar').disabled = done < 4 || criando || anexo.naConversa;
       $('#count').textContent = done === 4 ? 'Prompt pronto! As 4 peças estão no lugar.' : `${done} de 4 peças prontas`;
       $('#count').classList.toggle('is-ready', done === 4);
       $('#tip').textContent = kind ? (turma === 'infantil' && kind.tipInfantil) || kind.tip : turma ? 'Agora escolha o que criar. A Tarefa e o Formato saem daí.' : etapaEscolhida === 'outra' ? 'Descreva a turma no campo, sem nomes. O Papel e o Contexto saem daí.' : etapaEscolhida ? 'Agora escolha o ano. O Papel e o Contexto saem dele.' : 'Comece pela turma. O Papel e o Contexto saem dela.';
@@ -1371,7 +1371,7 @@
       caixa.hidden = !pronto;
       if (!pronto) return;
       const restam = MAX_AJUSTES - conversa.ajustes;
-      $('#ajuste-conta').textContent = restam > 0 ? `até ${restam} ${restam === 1 ? 'ajuste' : 'ajustes'}` : 'acabaram os ajustes: copie o prompt e siga no Gemini';
+      $('#ajuste-conta').textContent = restam > 0 ? `até ${restam} ${restam === 1 ? 'ajuste' : 'ajustes'}` : 'acabaram os ajustes: copie o prompt e siga no ChatGPT';
       const pedidos = conversa.jogo ? PEDIDOS_DO_JOGO : pedidosPara(conversa.tipo, conversa.local);
       $('#ajuste-ideias').replaceChildren(...pedidos.map((pedido) => {
         const botao = Object.assign(document.createElement('button'), { type: 'button', textContent: pedido.nome, title: pedido.texto, disabled: restam <= 0 });
@@ -1393,7 +1393,7 @@
         });
         if (!(resposta.headers.get('Content-Type') || '').startsWith('text/event-stream')) {
           const dados = await resposta.json().catch(() => ({}));
-          throw new Error(dados.erro || 'Não deu para criar agora. Cole o prompt no Gemini.');
+          throw new Error(dados.erro || 'Não deu para criar agora. Cole o prompt no ChatGPT.');
         }
         const leitor = resposta.body.getReader();
         const decodificador = new TextDecoder();
@@ -1418,8 +1418,8 @@
         if (!fim) throw new Error('A resposta caiu no meio. Tente de novo.');
         return { texto, cortado: fim.cortado };
       } catch (erro) {
-        if (erro.name === 'AbortError') throw new Error('A IA demorou demais. Cole o prompt no Gemini.');
-        if (erro.message === 'Failed to fetch') throw new Error('Sem conexão com o Criar aqui agora. Cole o prompt no Gemini.');
+        if (erro.name === 'AbortError') throw new Error('A IA demorou demais. Cole o prompt no ChatGPT.');
+        if (erro.message === 'Failed to fetch') throw new Error('Sem conexão com o Criar aqui agora. Cole o prompt no ChatGPT.');
         throw erro;
       } finally {
         clearTimeout(relogio);
@@ -1439,7 +1439,7 @@
         });
         const html = conversa.jogo ? garantirEstilo(extrairHTML(texto)) : '';
         if (conversa.jogo && !html) {
-          mostrarResposta({ pose: 'bit-ops', status: `A IA não mandou o jogo inteiro.${cortado ? ' A resposta foi cortada no meio.' : ''} Peça de novo, ou cole o prompt no Gemini com o Canvas ligado.`, html: conversa.html, pronto: Boolean(conversa.html) });
+          mostrarResposta({ pose: 'bit-ops', status: `A IA não mandou o jogo inteiro.${cortado ? ' A resposta foi cortada no meio.' : ''} Peça de novo, ou cole o prompt no ChatGPT com o Canvas ligado.`, html: conversa.html, pronto: Boolean(conversa.html) });
           return;
         }
         conversa.historico.push({ papel: 'professor', texto: prompt }, { papel: 'ia', texto });
