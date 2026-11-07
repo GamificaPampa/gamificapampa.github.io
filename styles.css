@@ -389,3 +389,10 @@ body:has(dialog[open]) { overflow: hidden; }
 .ferramenta__texto span { display: block; margin-top: 4px; color: var(--soft); font-size: 15px; font-weight: 600; line-height: 1.35; }
 .ferramenta__novo { position: absolute; top: -10px; right: 12px; padding: 1px 10px; background: var(--pink); color: var(--ink); border: 2px solid var(--ink); border-radius: 999px; font-size: 12px; font-weight: 700; }
 
+
+/* À noite (o céu da hora em Alegrete), a barra do topo também escurece */
+.ceu-hora--noite .nav { background: rgb(18 15 44 / .88); color: #fff; }
+.ceu-hora--noite .nav__links a, .ceu-hora--noite .nav__mapa { color: #fff; }
+.ceu-hora--noite .nav__links a:hover, .ceu-hora--noite .nav__mapa:hover, .ceu-hora--noite .nav__mapa[aria-expanded="true"] { background: rgb(255 255 255 / .14); }
+.ceu-hora--noite .mapa a { color: var(--ink); }
+.ceu-hora--noite .nav__seta { border-color: #fff; }
