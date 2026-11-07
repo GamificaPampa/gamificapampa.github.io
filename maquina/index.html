@@ -84,6 +84,16 @@
     .completo__corpo { display: grid; gap: 20px; margin-top: 16px; padding-left: 14px; border-left: 4px dashed #c6b3f0; }
     .completo .step legend, .completo .step__title { font-size: 17px; }
     .completo textarea.theme { resize: vertical; line-height: 1.4; }
+    /* O aviso de dado de aluno, no console, quando um campo parece ter nome, turma ou contato */
+    .alerta { display: flex; align-items: flex-start; gap: 10px; padding: 10px 12px; background: #ffe3ec; color: var(--ink); border: 3px solid var(--pink); border-radius: 14px; font-weight: 600; font-size: 15px; line-height: 1.4; }
+    .alerta svg { flex: none; }
+    .material-nota { color: rgb(255 255 255 / .85); font-size: 14px; }
+    /* Meus prompts: a mesma lista da Biblioteca */
+    .meus { display: grid; gap: 10px; margin: 0; padding: 0; list-style: none; }
+    .meus li { display: grid; gap: 8px; padding: 12px 14px; background: var(--white); border: 3px solid var(--ink); border-radius: 16px; }
+    .meus b { font-size: 17px; }
+    .meus small { color: var(--soft); font-weight: 600; }
+    .meus .botoes { display: flex; flex-wrap: wrap; gap: 8px; }
 
     /* The console, dark like the screen on the hub, with the four lights and the prompt on paper */
     .console { display: grid; gap: 16px; padding: 20px; background: var(--ink); color: var(--white); border: var(--line); border-radius: var(--radius); box-shadow: var(--drop); }
@@ -188,6 +198,7 @@
     <symbol id="i-baixar" viewBox="0 0 24 24"><path d="M12 3v12m-5-5l5 5 5-5" fill="none" stroke="#2f2a4a" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/><path d="M4 17v2.5A1.5 1.5 0 0 0 5.5 21h13a1.5 1.5 0 0 0 1.5-1.5V17" fill="none" stroke="#2f2a4a" stroke-width="3" stroke-linecap="round"/></symbol>
     <symbol id="i-enviar" viewBox="0 0 24 24"><path d="M12 15V4m-5 5 5-5 5 5" fill="none" stroke="#2f2a4a" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/><path d="M4 16v3a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-3" fill="none" stroke="#2f2a4a" stroke-width="3" stroke-linecap="round"/></symbol>
     <symbol id="i-lock" viewBox="0 0 24 24"><path d="M7.5 11V8a4.5 4.5 0 0 1 9 0v3" fill="none" stroke="#2f2a4a" stroke-width="2.8"/><rect x="4" y="10.5" width="16" height="11" rx="3.5" fill="#ff5f8f" stroke="#2f2a4a" stroke-width="2.6"/><circle cx="12" cy="16" r="1.8" fill="#2f2a4a"/></symbol>
+    <symbol id="i-estrela" viewBox="0 0 24 24"><path d="M12 2.5l2.9 6 6.6.9-4.8 4.6 1.2 6.5L12 17.4l-5.9 3.1 1.2-6.5-4.8-4.6 6.6-.9z" fill="#ffd23f" stroke="#2f2a4a" stroke-width="2.2" stroke-linejoin="round"/></symbol>
   </svg>
 
   <div class="cenario cenario--fixo" aria-hidden="true">
@@ -319,9 +330,27 @@
             <fieldset class="step">
               <legend>Algum ajuste?</legend>
               <label class="chip"><input type="checkbox" name="extra" value="local"><span>Exemplos de Alegrete e do Pampa</span></label>
-              <label class="chip"><input type="checkbox" name="extra" value="leitura"><span>Alunos com dificuldade de leitura</span></label>
               <label class="chip"><input type="checkbox" name="extra" value="curto"><span>Resposta curta</span></label>
             </fieldset>
+            <fieldset class="step">
+              <legend>Na turma há alunos com:</legend>
+              <label class="chip"><input type="checkbox" name="extra" value="leitura"><span>Dificuldade de leitura</span></label>
+              <label class="chip"><input type="checkbox" name="necessidade" value="tea"><span>Autismo (TEA)</span></label>
+              <label class="chip"><input type="checkbox" name="necessidade" value="tdah"><span>TDAH</span></label>
+              <label class="chip"><input type="checkbox" name="necessidade" value="visual"><span>Deficiência visual</span></label>
+              <label class="chip"><input type="checkbox" name="necessidade" value="auditiva"><span>Deficiência auditiva</span></label>
+              <label class="chip"><input type="checkbox" name="necessidade" value="altas"><span>Altas habilidades</span></label>
+              <p class="privacy"><svg width="24" height="24" aria-hidden="true"><use href="#i-lock"/></svg>Marque só a necessidade. Nunca escreva o nome nem a turma de quem tem.</p>
+            </fieldset>
+            <div class="step">
+              <label class="step__title" for="mais">Algo mais que a IA precisa saber?</label>
+              <textarea class="theme" id="mais" name="mais" maxlength="240" rows="2" placeholder="Por exemplo: a escola não tem impressora colorida"></textarea>
+            </div>
+            <div class="step">
+              <label class="step__title" for="material">Tem um material pronto para adaptar?</label>
+              <textarea class="theme" id="material" maxlength="6000" rows="4" placeholder="Cole aqui o texto ou a atividade. A IA adapta para a turma sem perder o conteúdo."></textarea>
+              <p class="privacy"><svg width="24" height="24" aria-hidden="true"><use href="#i-lock"/></svg>Antes de colar, apague nomes, turma e notas. O material não fica guardado neste aparelho.</p>
+            </div>
             <fieldset class="step" id="perguntar-step">
               <legend>Conversa</legend>
               <label class="chip"><input type="checkbox" name="perguntar" value="sim"><span>O Gemini me pergunta antes de criar</span></label>
@@ -337,11 +366,15 @@
         </div>
         <p class="count" id="count" role="status">0 de 4 peças prontas</p>
         <div class="prompt" id="prompt"></div>
+        <p class="material-nota" id="material-nota" hidden></p>
+        <p class="alerta" id="alerta" role="status" hidden></p>
         <p class="tip"><img src="/identidade-visual/mascote/bit-pensando.svg" width="38" height="38" alt=""><span id="tip">Comece pela turma. O Papel e o Contexto saem dela.</span></p>
         <div class="actions">
           <button class="btn btn--jogar btn--small" type="button" id="criar" hidden disabled><svg width="18" height="18" aria-hidden="true"><use href="#i-testar"/></svg>Criar aqui</button>
           <button class="btn btn--jogar btn--small" type="button" id="copy" disabled><svg width="18" height="18" aria-hidden="true"><use href="#i-copy"/></svg>Copiar o prompt</button>
           <a class="btn btn--small" href="https://gemini.google.com/app" target="_blank" rel="noopener">Abrir o Gemini</a>
+          <a class="btn btn--small" href="https://chatgpt.com/" target="_blank" rel="noopener">Abrir o ChatGPT</a>
+          <button class="btn btn--small" type="button" id="guardar" disabled><svg width="18" height="18" aria-hidden="true"><use href="#i-estrela"/></svg>Guardar em Meus prompts</button>
           <button class="btn btn--small" type="button" id="reset"><svg width="18" height="18" aria-hidden="true"><use href="#i-reset"/></svg>Começar de novo</button>
         </div>
         <div class="quality" id="quality" hidden>
@@ -400,10 +433,10 @@
     </section>
 
     <section class="recent" id="recent" hidden>
-      <h2 class="loud">Seus últimos <span class="yellow">prompts</span></h2>
-      <p class="recent__note">Ficam guardados só neste navegador, para você copiar de novo.</p>
-      <ol id="recent-list"></ol>
-      <button class="btn btn--small" type="button" id="recent-clear">Apagar a lista</button>
+      <h2 class="loud">Meus <span class="yellow">prompts</span></h2>
+      <p class="recent__note">Ficam só neste aparelho e aparecem também na Biblioteca, em Meus prompts.</p>
+      <ol class="meus" id="recent-list"></ol>
+      <a class="btn btn--small" href="/recursos-pedagogicos/professores/oficina-prompts/biblioteca.html?meus=1">Ver na Biblioteca</a>
     </section>
 
     <section class="how">
@@ -741,6 +774,29 @@
       return texto.trim().replace(/\s+/g, ' ').replace(/[.!?;]+$/, '');
     };
 
+    const NECESSIDADES = {
+      tea: ['autismo (TEA)', 'instruções literais, uma de cada vez, e uma rotina previsível'],
+      tdah: ['TDAH', 'tarefas curtas, uma instrução por vez e pausas para se mexer'],
+      visual: ['deficiência visual', 'letra grande, bom contraste e imagens descritas em palavras'],
+      auditiva: ['deficiência auditiva', 'instruções escritas e apoio visual, sem depender de som'],
+      altas: ['altas habilidades', 'um desafio extra para ir além'],
+    };
+    // O aviso de dado de aluno: as mesmas buscas do antigo Construtor e da Biblioteca
+    const PRIVACIDADE = [
+      [/\bnome\s*(do aluno|da aluna|completo)?\s*:/i, 'um campo de nome'],
+      [/\b(alun[oa]s?|menin[oa]s?|crian[cç]as?|estudantes?)\s+[A-ZÁÉÍÓÚÂÊÔÃÕÇ][a-záéíóúâêôãõç]+/, 'um nome perto de aluno ou criança'],
+      [/(\b[Tt]urma[ \t]+\d{1,2}[ \t]?[A-H]|\b\d{1,2}[ \t]?[ºo°][ \t]?(ano[ \t])?[A-H])(?![\w)])/, 'o nome de uma turma, como 3º B'],
+      [/\(?\b\d{2}\)?\s?9?\d{4}[-\s]?\d{4}\b/, 'um telefone'],
+      [/\b\d{3}\.?\d{3}\.?\d{3}-?\d{2}\b/, 'um CPF'],
+      [/[\w.+-]+@[\w-]+\.[\w.]+/, 'um e-mail'],
+      [/\bmatr[ií]cula\b/i, 'uma matrícula'],
+    ];
+    const CAMPOS_VIGIADOS = [['tema', 'Tema'], ['objetivo', 'Objetivo'], ['sabe', 'O que a turma já sabe'], ['mais', 'Algo mais'], ['material', 'Material'], ['turma-outra', 'Outra turma']];
+    const dadoDeAluno = () => CAMPOS_VIGIADOS.flatMap(([id, nome]) => {
+      const texto = (document.getElementById(id) || {}).value || '';
+      return texto ? PRIVACIDADE.filter(([padrao]) => padrao.test(texto)).map(([, oque]) => `${oque} em "${nome}"`) : [];
+    });
+
     const read = () => {
       const data = new FormData(form);
       const etapa = data.get('etapa') || '';
@@ -794,6 +850,11 @@
       // No plano, o tempo troca os 50 minutos do Formato; na sequência, as 3 aulas já dizem o tempo
       const tempoNoContexto = tempo && !['plano', 'sequencia', 'rubrica'].includes(tipoId) ? tempos[tempo] : '';
       if (contexto && sabe) contexto += ` Sobre a turma: ${sabe}.`;
+      // As necessidades da turma (do antigo Construtor), cada uma com a adaptação concreta
+      const necessidades = data.getAll('necessidade').filter((id) => NECESSIDADES[id]);
+      if (contexto && necessidades.length) contexto += ` Há ${adult ? 'estudantes' : 'alunos'} com ${necessidades.map((id) => `${NECESSIDADES[id][0]} (${NECESSIDADES[id][1]})`).join('; ')}.`;
+      const mais = limpo('mais');
+      if (contexto && mais) contexto += ` ${mais.charAt(0).toUpperCase()}${mais.slice(1)}.`;
       if (contexto && (usoFrase || tempoNoContexto)) contexto += ` O material vai ser usado ${[usoFrase, tempoNoContexto].filter(Boolean).join(', ')}.`;
       let formato = kind ? (infantil && kind.formatoInfantil) || (adult && kind.formatoAdulto) || kind.formato : '';
       if (formato && tipoId === 'plano' && tempo) {
@@ -815,9 +876,12 @@
       if (formato && tipoId !== 'jogo' && data.get('perguntar')) {
         formato += ' Antes de criar, faça até 3 perguntas sobre a minha turma, o objetivo e onde a turma costuma errar, e espere as minhas respostas.';
       }
+      // Um material colado vai no fim do pedido; a Tarefa diz para usar como base
+      const material = String($('#material').value || '').trim();
+      if (tarefa && material) tarefa += ' Use como base o material que está no fim deste pedido: adapte para esta turma sem perder o conteúdo.';
       const text = { papel, tarefa, contexto, formato };
       const label = [kind && kind.name, group && group.name, theme].filter(Boolean).join(' · ');
-      return { text, kind, turma, etapa, subject, label, adult, theme, leitura: extras.includes('leitura'), local: extras.includes('local'), tipoValor, materiaValor, estilo };
+      return { text, kind, turma, etapa, subject, label, adult, theme, leitura: extras.includes('leitura'), local: extras.includes('local'), tipoValor, materiaValor, estilo, material };
     };
 
     // Ideas for the theme follow the chosen subject, and in the EJA they come from adult life.
@@ -898,7 +962,7 @@
     let lastIdeas;
     const update = () => {
       const etapaEscolhida = mostrarEscolhas();
-      const { text, kind, turma, subject, label, adult, theme, leitura, local, estilo } = read();
+      const { text, kind, turma, subject, label, adult, theme, leitura, local, estilo, material } = read();
       // A segunda mensagem aparece só no jogo, que é o pedido que vira HTML
       const isGame = kind === kinds.jogo;
       $('#quality').hidden = !isGame;
@@ -923,7 +987,15 @@
       });
       const done = pieces.filter((piece) => text[piece.id]).length;
       const wasReady = Boolean(current.text);
-      current = done === 4 ? { text: pieces.map((piece) => text[piece.id]).join(' '), label, jogo: isGame, theme } : { text: '', label: '' };
+      const base = pieces.map((piece) => text[piece.id]).join(' ');
+      const comMaterial = (corpo) => material ? `${corpo}\n\nMaterial:\n\"\"\"\n${material}\n\"\"\"` : corpo;
+      current = done === 4 ? { text: comMaterial(base), guardavel: material ? `${base}\n\nMaterial:\n[cole aqui o material]` : base, label, jogo: isGame, theme, tipo: kind ? (Object.keys(kinds).find((id) => kinds[id] === kind) || 'proprio') : '', etapa: etapaEscolhida, materia: subject ? subject.name : '' } : { text: '', label: '' };
+      $('#guardar').disabled = done < 4;
+      $('#material-nota').hidden = !material;
+      $('#material-nota').textContent = material ? `Mais o material colado (${material.length} letras), no fim do prompt.` : '';
+      const achados = dadoDeAluno();
+      $('#alerta').hidden = !achados.length;
+      if (achados.length) $('#alerta').textContent = `Parece que há dado de aluno: ${achados.join(', ')}. Apague antes de copiar. Se não for, pode seguir.`;
       copyButton.disabled = done < 4;
       // Peça mais aparece com o prompt pronto, para todo tipo menos o jogo
       const tipo = kind ? (Object.keys(kinds).find((id) => kinds[id] === kind) || 'proprio') : '';
@@ -1035,14 +1107,12 @@
       form.querySelector('[name="etapa"]').focus();
     });
 
-    // Recent prompts stay only in this browser, so the teacher can copy them again later.
-    const storeKey = 'gamificapampa-maquina';
-    const loadRecent = () => {
-      try { return JSON.parse(localStorage.getItem(storeKey)) || []; } catch { return []; }
-    };
-    const saveRecent = (list) => {
-      try { localStorage.setItem(storeKey, JSON.stringify(list)); } catch {}
-    };
+    // Meus prompts: a mesma lista da Biblioteca (chave gamificapampa-meus-prompts, origem "construtor"), só neste aparelho.
+    // Cada ação lê o que está guardado, muda e grava de novo, para não apagar o que outra aba guardou
+    const MEUS = 'gamificapampa-meus-prompts';
+    const lerMeus = () => { try { const d = JSON.parse(localStorage.getItem(MEUS)); return Array.isArray(d) ? d.filter((i) => i && typeof i.id === 'string' && typeof i.origem === 'string') : []; } catch { return []; } };
+    const gravarMeus = (lista) => { try { localStorage.setItem(MEUS, JSON.stringify(lista)); return true; } catch { return false; } };
+    const montados = () => lerMeus().filter((i) => i.origem === 'construtor' && typeof i.nome === 'string' && Array.isArray(i.mensagens));
     // Copiar do identidade-visual: só diz que copiou quando copiou e, se não der, mostra o texto para copiar à mão
     const copyText = (text) => Copiar.texto(text, { avisar: false });
     const flash = (button, text) => {
@@ -1052,27 +1122,54 @@
       setTimeout(() => { label.textContent = before; }, 2000);
     };
     const renderRecent = () => {
-      const list = loadRecent();
-      $('#recent').hidden = list.length === 0;
-      $('#recent-list').replaceChildren(...list.map((item) => {
+      const lista = montados();
+      $('#recent').hidden = lista.length === 0;
+      $('#recent-list').replaceChildren(...lista.slice(0, 8).map((item) => {
         const row = document.createElement('li');
-        const info = document.createElement('div');
-        info.append(Object.assign(document.createElement('b'), { textContent: item.label }), Object.assign(document.createElement('span'), { textContent: item.text }));
-        const button = Object.assign(document.createElement('button'), { type: 'button', className: 'btn btn--small' });
-        button.append('Copiar');
-        button.addEventListener('click', async () => { flash(button, await copyText(item.text) ? 'Copiado!' : 'Não copiou'); });
-        row.append(info, button);
+        row.append(Object.assign(document.createElement('b'), { textContent: item.nome }), Object.assign(document.createElement('small'), { textContent: item.data ? `Guardado em ${new Date(item.data).toLocaleDateString('pt-BR')}` : '' }));
+        const botoes = Object.assign(document.createElement('div'), { className: 'botoes' });
+        item.mensagens.forEach((texto, i) => {
+          const botao = Object.assign(document.createElement('button'), { type: 'button', className: 'btn btn--small btn--jogar' });
+          botao.append(item.mensagens.length > 1 ? `Copiar a ${i + 1}ª mensagem` : 'Copiar');
+          botao.addEventListener('click', async () => { flash(botao, await copyText(texto) ? 'Copiado!' : 'Não copiou'); });
+          botoes.append(botao);
+        });
+        const apagar = Object.assign(document.createElement('button'), { type: 'button', className: 'btn btn--small' });
+        apagar.append('Apagar');
+        apagar.addEventListener('click', () => {
+          if (apagar.dataset.certeza !== '1') { apagar.dataset.certeza = '1'; apagar.lastChild.textContent = 'Apagar mesmo?'; return; }
+          gravarMeus(lerMeus().filter((outro) => outro.id !== item.id));
+          renderRecent();
+        });
+        botoes.append(apagar);
+        row.append(botoes);
         return row;
       }));
     };
+    // Quem usava a lista antiga de últimos prompts encontra eles em Meus prompts, uma vez só
+    try {
+      const antigos = JSON.parse(localStorage.getItem('gamificapampa-maquina')) || [];
+      if (antigos.length) {
+        const lista = lerMeus();
+        antigos.forEach((item, i) => { if (item && item.text && !lista.some((o) => o.mensagens && o.mensagens[0] === item.text)) lista.push({ id: `m-antigo-${Date.now().toString(36)}-${i}`, origem: 'construtor', nome: item.label || 'Prompt da máquina', mensagens: [item.text], data: new Date().toISOString() }); });
+        gravarMeus(lista);
+      }
+      localStorage.removeItem('gamificapampa-maquina');
+    } catch {}
 
     copyButton.addEventListener('click', async () => {
-      if (!(await copyText(current.text))) {
-        flash(copyButton, 'Não deu para copiar');
-        return;
-      }
-      flash(copyButton, 'Prompt copiado!');
-      saveRecent([current, ...loadRecent().filter((item) => item.text !== current.text)].slice(0, 5));
+      flash(copyButton, await copyText(current.text) ? 'Prompt copiado!' : 'Não deu para copiar');
+    });
+    // Guardar em Meus prompts: o prompt (e a segunda mensagem, no jogo), sem o material colado, que pode ter dado de aluno
+    $('#guardar').addEventListener('click', () => {
+      if (!current.text) return;
+      const achados = dadoDeAluno();
+      if (achados.length && !confirm(`Parece que há dado de aluno: ${achados.join(', ')}. Nada disso deve ficar guardado. Guardar mesmo assim?`)) return;
+      const lista = lerMeus();
+      if (lista.length >= 200) { flash($('#guardar'), 'A lista está cheia'); return; }
+      const mensagens = current.jogo ? [current.guardavel, qualityCurrent] : [current.guardavel];
+      lista.unshift({ id: `c-${Date.now().toString(36)}${Math.random().toString(36).slice(2, 6)}`, origem: 'construtor', nome: current.label, mensagens, tipo: ['proprio'].includes(current.tipo) ? 'atividade' : current.tipo, etapa: ['infantil', 'iniciais', 'finais', 'medio', 'eja'].includes(current.etapa) ? current.etapa : '', materia: current.materia, data: new Date().toISOString() });
+      flash($('#guardar'), gravarMeus(lista) ? 'Guardado!' : 'Não deu para guardar');
       renderRecent();
     });
     // Os verbos começam o objetivo; o professor completa
@@ -1278,15 +1375,14 @@
       location.href = '/publicador/?origem=maquina';
     });
     $('#teste-fechar').addEventListener('click', () => { $('#teste').hidden = true; });
-    $('#recent-clear').addEventListener('click', () => { saveRecent([]); renderRecent(); });
     // O site lembra a última turma, matéria, tipo, tema e ajustes neste aparelho; Começar de novo esquece
     desenharMinhas();
-    Lembrar.campos('maquina', form.elements);
+    Lembrar.campos('maquina', [...form.elements].filter((campo) => campo.id !== 'material'));
     // Quem já preencheu o passo 6 numa visita anterior encontra ele aberto
-    if (['objetivo', 'sabe'].some((nome) => form.elements[nome].value.trim()) || ['uso', 'tempo', 'perguntar', 'extra'].some((nome) => new FormData(form).get(nome))) $('#completo').open = true;
+    if (['objetivo', 'sabe', 'mais'].some((nome) => form.elements[nome].value.trim()) || ['uso', 'tempo', 'perguntar', 'extra'].some((nome) => new FormData(form).get(nome))) $('#completo').open = true;
     // No celular, o console com o Copiar fica depois das perguntas: uma barra no pé da tela traz o Copiar e as peças prontas
     Copiar.barraFixa({ observar: document.querySelector('#console .actions'), copiar: copyButton, contador: $('#count') });
-    $('#reset').addEventListener('click', () => { form.reset(); Lembrar.guardar('maquina', {}); update(); form.querySelector('[name="etapa"]').focus(); });
+    $('#reset').addEventListener('click', () => { form.reset(); $('#material').value = ''; Lembrar.guardar('maquina', {}); update(); form.querySelector('[name="etapa"]').focus(); });
     form.addEventListener('input', update);
     form.addEventListener('change', update);
     form.addEventListener('submit', (event) => event.preventDefault());

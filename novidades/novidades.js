@@ -17,6 +17,8 @@
 //     links: [['Jogar', '/recursos-pedagogicos/criancas/pasta-do-jogo/', 'jogar']] },
 // Sem dado de aluno, sem detalhe técnico: só o que muda para o professor.
 window.NOVIDADES = [
+  { data: '2026-11-07', titulo: 'Máquina e Construtor viraram uma coisa só', texto: 'A Máquina de prompts ganhou o que só o Construtor tinha: colar um material para adaptar, marcar as necessidades da turma, abrir o ChatGPT e guardar em Meus prompts, a mesma lista da Biblioteca. O endereço do Construtor leva à Máquina.', icone: 'engrenagem', cor: 'blue',
+    links: [['Abrir a máquina', '/maquina/', 'conhecer']] },
   { data: '2026-11-06', titulo: 'Jogos com o visual que você escolher', texto: 'No jogo, a Máquina agora pergunta o visual: GamificaPampa, Quadro de giz, Caderno, Noite ou Alto contraste. A segunda mensagem traz esse visual, o que faz um jogo ensinar bem e um jogo-modelo de exemplo.', icone: 'jogo', cor: 'purple',
     links: [['Abrir a máquina', '/maquina/', 'conhecer'], ['Ver os jogos-modelo', '/maquina/modelos/', 'jogar']] },
   { data: '2026-11-06', titulo: 'Máquina mais simples, e do seu jeito', texto: 'A turma vem por etapa, só com as matérias dela, e o que criar ficou em cinco tipos. Não achou? Toque em Outra e escreva: a máquina guarda a sua opção neste aparelho para a próxima vez.', icone: 'engrenagem', cor: 'blue',

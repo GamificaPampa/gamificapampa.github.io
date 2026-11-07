@@ -1,4 +1,4 @@
-/* Links curtos: gamificapampa.github.io/ninja leva para o jogo, /prompt para o construtor e assim por diante.
+/* Links curtos: gamificapampa.github.io/ninja leva para o jogo, /maquina para a máquina de prompts e assim por diante.
    O GitHub Pages mostra o 404.html para todo endereço que não existe; ele procura o nome aqui e redireciona.
    A página /atalhos/ mostra a mesma lista, com copiar e QR. Os jogos entram sozinhos, pelo jogos.js.
    Para outro atalho, acrescente uma linha [grupo, rótulo, endereço] e gere o QR com:
@@ -32,7 +32,7 @@ const ATALHOS = {
   oficina: ['Oficina de Prompts', 'Página da oficina', OFICINA],
   curso: ['Oficina de Prompts', 'Curso online', OFICINA + 'curso.html'],
   'jogo-do-prompt': ['Oficina de Prompts', 'Jogo do Prompt', OFICINA + 'jogo.html'],
-  prompt: ['Oficina de Prompts', 'Construtor de prompts', OFICINA + 'construtor.html'],
+  prompt: ['', '', 'https://gamificapampa.github.io/maquina/'],
   maquina: ['Oficina de Prompts', 'Máquina de prompts', 'https://gamificapampa.github.io/maquina/'],
   biblioteca: ['Oficina de Prompts', 'Biblioteca de prompts', OFICINA + 'biblioteca.html'],
   frases: ['Oficina de Prompts', 'Frases que salvam', OFICINA + 'frases.html'],

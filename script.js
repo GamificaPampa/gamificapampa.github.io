@@ -196,8 +196,7 @@ moreButton.addEventListener('click', () => navigator.share({ title: shared.title
 // Com o campo vazio, o painel mostra os grupos; ao digitar, mostra os resultados no lugar deles.
 // Ctrl K ou / abre o painel com o cursor no campo; as setas escolhem e o Enter abre
 const BUSCA_EXTRA = {
-  'Máquina de prompts': 'plano de aula atividade quiz prova avaliação rubrica devolutiva eja encceja história',
-  'Construtor de prompts': 'montar prompt passo a passo',
+  'Máquina de prompts': 'plano de aula atividade quiz prova avaliação eja encceja enem história jogo construtor montar prompt adaptar material colar necessidades meus prompts estilo',
   'Biblioteca de prompts': 'modelos exemplos prontos calendário datas',
   'Adaptador de atividades': 'inclusão tea autismo tdah dislexia adaptar acessível',
   'Gems prontos': 'gem gemini assistente ensino médio',
