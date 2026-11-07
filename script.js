@@ -79,6 +79,8 @@ document.querySelectorAll('.bot').forEach((bot) => {
 });
 
 // O botão de parar as animações fica no fim do painel Todas as páginas, no computador e no celular
+// No pé do menu Todas as páginas: o céu de noite (como um modo escuro) e o parar animações, os dois lembrados no aparelho
+if (window.Ceu) $('#mapa-rodape').append(Ceu.botao({ texto: true }));
 if (window.Animacoes) $('#mapa-rodape').append(Animacoes.botao({ texto: true }));
 
 if (!reducedMotion && matchMedia('(pointer: fine)').matches) {
