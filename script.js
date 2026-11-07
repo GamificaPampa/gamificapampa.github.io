@@ -154,9 +154,10 @@ $('#mail-again').addEventListener('click', () => {
 // The QR code is a file of its own, loaded only when the dialog opens.
 const shares = {
   site: { title: 'GamificaPampa', url: 'https://gamificapampa.github.io', qr: '/atalhos/qr/site.svg' },
-  bichos: { title: 'Bichos do Pampa', url: 'https://gamificapampa.github.io/bichos', qr: '/recursos-pedagogicos/criancas/bichos-do-pampa/qr.svg' },
-  fracoes: { title: 'Pizzaria das Frações', url: 'https://gamificapampa.github.io/fracoes', qr: '/recursos-pedagogicos/criancas/pizzaria-das-fracoes/qr.svg' },
-  reta: { title: 'Reta do Bit', url: 'https://gamificapampa.github.io/reta', qr: '/recursos-pedagogicos/criancas/reta-do-bit/qr.svg' },
+  genetica: { title: 'Genética do Bit', url: 'https://gamificapampa.github.io/genetica', qr: '/recursos-pedagogicos/criancas/genetica-do-bit/qr.svg' },
+  ohm: { title: 'Lâmpada do Bit', url: 'https://gamificapampa.github.io/ohm', qr: '/recursos-pedagogicos/criancas/lampada-do-bit/qr.svg' },
+  redacao: { title: 'Monte a Redação', url: 'https://gamificapampa.github.io/redacao', qr: '/recursos-pedagogicos/criancas/monte-a-redacao/qr.svg' },
+  geografia: { title: 'Mapa do Bit', url: 'https://gamificapampa.github.io/geografia', qr: '/recursos-pedagogicos/criancas/mapa-do-bit/qr.svg' },
 };
 const shareSheet = $('#partilha');
 const copyButton = $('#partilha-copiar');
