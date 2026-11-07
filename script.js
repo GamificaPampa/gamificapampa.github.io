@@ -156,8 +156,8 @@ const shares = {
   site: { title: 'GamificaPampa', url: 'https://gamificapampa.github.io', qr: '/atalhos/qr/site.svg' },
   genetica: { title: 'Genética do Bit', url: 'https://gamificapampa.github.io/genetica', qr: '/recursos-pedagogicos/criancas/genetica-do-bit/qr.svg' },
   ohm: { title: 'Lâmpada do Bit', url: 'https://gamificapampa.github.io/ohm', qr: '/recursos-pedagogicos/criancas/lampada-do-bit/qr.svg' },
-  redacao: { title: 'Monte a Redação', url: 'https://gamificapampa.github.io/redacao', qr: '/recursos-pedagogicos/criancas/monte-a-redacao/qr.svg' },
-  geografia: { title: 'Mapa do Bit', url: 'https://gamificapampa.github.io/geografia', qr: '/recursos-pedagogicos/criancas/mapa-do-bit/qr.svg' },
+  balanca: { title: 'Balança do Bit', url: 'https://gamificapampa.github.io/balanca', qr: '/recursos-pedagogicos/criancas/balanca-do-bit/qr.svg' },
+  detetive: { title: 'Detetive da Notícia', url: 'https://gamificapampa.github.io/detetive', qr: '/recursos-pedagogicos/criancas/detetive-da-noticia/qr.svg' },
 };
 const shareSheet = $('#partilha');
 const copyButton = $('#partilha-copiar');
