@@ -387,5 +387,5 @@ body:has(dialog[open]) { overflow: hidden; }
 .ferramenta__arte svg { width: 34px; height: 34px; }
 .ferramenta__texto b { display: block; font-size: 18px; line-height: 1.2; }
 .ferramenta__texto span { display: block; margin-top: 4px; color: var(--soft); font-size: 15px; font-weight: 600; line-height: 1.35; }
-.ferramenta__novo { position: absolute; top: -10px; right: 12px; padding: 1px 10px; background: var(--pink); color: var(--white); border: 2px solid var(--ink); border-radius: 999px; font-size: 12px; font-weight: 700; }
+.ferramenta__novo { position: absolute; top: -10px; right: 12px; padding: 1px 10px; background: var(--pink); color: var(--ink); border: 2px solid var(--ink); border-radius: 999px; font-size: 12px; font-weight: 700; }
 
