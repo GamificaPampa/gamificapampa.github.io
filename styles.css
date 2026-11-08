@@ -412,10 +412,14 @@ body:has(dialog[open]) { overflow: hidden; }
 }
 .ceu-noite .mapa { background: var(--noite-cartao); border-color: #000; color: var(--noite-texto); }
 .ceu-noite .mapa a { color: var(--noite-texto); }
-.ceu-noite .mapa a:hover { background: rgb(255 255 255 / .1); }
+.ceu-noite .mapa a:hover, .ceu-noite .nav__links .mapa a:not(.busca__item):hover { background: rgb(255 255 255 / .1); }
 .ceu-noite .mapa__rodape { border-top-color: rgb(255 255 255 / .18); }
 /* O que tem fundo claro próprio (os títulos dos grupos, as etiquetas dos jogos e o Ctrl K) continua com a tinta escura */
 .ceu-noite .mapa__titulo, .ceu-noite .game .tag, .ceu-noite .busca__caixa kbd { color: var(--ink); }
+/* Na busca, o resultado escolhido (pelas setas ou sob o mouse) fica no amarelo-claro, com a tinta escura */
+.ceu-noite .busca__item small { color: var(--noite-suave); }
+.ceu-noite .nav__links .busca__item[aria-selected="true"], .ceu-noite .nav__links .busca__item:hover { color: var(--ink); }
+.ceu-noite .nav__links .busca__item[aria-selected="true"] small, .ceu-noite .nav__links .busca__item:hover small { color: var(--soft); }
 /* Cartões, abas, formulário, balão e rodapé */
 .ceu-noite .card, .ceu-noite .ferramenta, .ceu-noite .mailer { background: var(--noite-cartao); color: var(--noite-texto); border-color: #000; }
 .ceu-noite .ferramenta, .ceu-noite .card { box-shadow: 0 6px 0 #000; }
