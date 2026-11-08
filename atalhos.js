@@ -68,7 +68,10 @@ const APELIDOS = {
 
 // Do endereço digitado ao nome da lista: sem acento, sem maiúscula, com hífen no lugar de espaço
 function atalhoDe(caminho) {
-  const nome = decodeURIComponent(caminho).toLowerCase().replace(/\/index\.html$/, '').replace(/^\/+|\/+$/g, '')
+  // Um % solto no endereço (gamificapampa.github.io/turma%) não decodifica: segue o endereço como veio, sem erro
+  let texto = caminho;
+  try { texto = decodeURIComponent(caminho); } catch {}
+  const nome = texto.toLowerCase().replace(/\/index\.html$/, '').replace(/^\/+|\/+$/g, '')
     .normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[\s_]+/g, '-');
   return ATALHOS[nome] ? nome : APELIDOS[nome] && ATALHOS[APELIDOS[nome]] ? APELIDOS[nome] : '';
 }
