@@ -412,6 +412,8 @@ body:has(dialog[open]) { overflow: hidden; }
 .ceu-noite .mapa a { color: var(--noite-texto); }
 .ceu-noite .mapa a:hover { background: rgb(255 255 255 / .1); }
 .ceu-noite .mapa__rodape { border-top-color: rgb(255 255 255 / .18); }
+/* O que tem fundo claro próprio (os títulos dos grupos, as etiquetas dos jogos e o Ctrl K) continua com a tinta escura */
+.ceu-noite .mapa__titulo, .ceu-noite .game .tag, .ceu-noite .busca__caixa kbd { color: var(--ink); }
 /* Cartões, abas, formulário, balão e rodapé */
 .ceu-noite .card, .ceu-noite .ferramenta, .ceu-noite .mailer { background: var(--noite-cartao); color: var(--noite-texto); border-color: #000; }
 .ceu-noite .ferramenta, .ceu-noite .card { box-shadow: 0 6px 0 #000; }
