@@ -17,6 +17,8 @@
 //     links: [['Jogar', '/recursos-pedagogicos/criancas/pasta-do-jogo/', 'jogar']] },
 // Sem dado de aluno, sem detalhe técnico: só o que muda para o professor.
 window.NOVIDADES = [
+  { data: '2026-11-08', titulo: 'Tudo para imprimir', texto: 'Uma página só com tudo o que vai para o papel: roteiros, folhas de atividades, certificado, medalhas, mapas, a folha das famílias, o guia e o baralho, com o número de folhas de cada um.', icone: 'prancheta', cor: 'orange',
+    links: [['Ver os papéis', '/recursos-pedagogicos/professores/imprimir/', 'baixar']] },
   { data: '2026-11-08', titulo: 'Noite em todo o site', texto: 'O botão Noite, que deixa o céu escuro como um modo escuro, agora está em todas as páginas do professor e no menu da turma. A escolha fica guardada no aparelho, e o que se imprime continua branco.', icone: 'estrela', cor: 'purple',
     links: [['Abrir o menu da turma', '/turma/', 'jogar']] },
   { data: '2026-11-07', titulo: 'Agora no ChatGPT', texto: 'O ChatGPT passou a ser a IA principal da Oficina de Prompts: a Máquina abre o ChatGPT, o passo a passo ensina nele e o Bit vira um Projeto do ChatGPT, nos Assistentes do Bit. A conta gratuita basta. Quem prefere o Gemini continua podendo usar: os prompts são os mesmos.', icone: 'bit', cor: 'mint',

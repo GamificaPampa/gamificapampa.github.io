@@ -24,6 +24,7 @@ const ATALHOS = {
   atividades: ['Aula com as crianças', 'Folha de atividades (PDF)', AULA + 'atividades.pdf'],
   certificado: ['Aula com as crianças', 'Certificado de Programador(a) Mirim', AULA + 'certificado.html'],
   medalhas: ['Aula com as crianças', 'Medalhas do Bit para imprimir', RP + 'professores/medalhas/'],
+  imprimir: ['Aula com as crianças', 'Tudo para imprimir, com o número de folhas', RP + 'professores/imprimir/'],
   'aula-ia': ['Aula sobre IA', 'Página da aula sobre IA, com todos os materiais', AULA_IA],
   'slides-ia': ['Aula sobre IA', 'Slides da aula sobre IA', AULA_IA + 'slides.html'],
   'atividades-ia': ['Aula sobre IA', 'Folha de atividades da aula sobre IA (PDF)', AULA_IA + 'atividades.pdf'],
@@ -52,6 +53,7 @@ const ATALHOS = {
 // Outros nomes que levam ao mesmo atalho: o nome inteiro do jogo e o jeito como as pessoas falam
 const APELIDOS = {
   'detetive-da-ia': 'detetive-ia', ia: 'aula-ia', 'aula-sobre-ia': 'aula-ia', adaptador: 'adaptar', inclusao: 'adaptar', cartas: 'baralho', 'ia-em-casa': 'familias', 'familia': 'familias',
+  impressao: 'imprimir', papeis: 'imprimir', pdf: 'imprimir',
   'bichos-do-pampa': 'bichos', infantil: 'bichos', 'educacao-infantil': 'bichos',
   pizzaria: 'fracoes', 'pizzaria-das-fracoes': 'fracoes', fracao: 'fracoes',
   fabrica: 'silabas', 'fabrica-de-silabas': 'silabas', silaba: 'silabas',

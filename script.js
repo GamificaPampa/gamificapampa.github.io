@@ -213,6 +213,7 @@ const BUSCA_EXTRA = {
   'IA em casa, para as famílias': 'pais responsáveis família',
   'Medalhas do Bit': 'premiar imprimir recompensa',
   'Certificado de Programador(a) Mirim': 'diploma',
+  'Tudo para imprimir': 'pdf papel folhas impressão impressora a4 roteiro atividades',
   'Jogos para a turma': 'projetor celular qr crianças',
   'Publicar meu jogo': 'canvas link qr github hospedar',
   'Kit sem internet (zip)': 'offline sem rede baixar zip notebook',
