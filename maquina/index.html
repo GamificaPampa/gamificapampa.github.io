@@ -1259,11 +1259,13 @@
     const montados = () => lerMeus().filter((i) => i.origem === 'construtor' && typeof i.nome === 'string' && Array.isArray(i.mensagens));
     // Copiar do identidade-visual: só diz que copiou quando copiou e, se não der, mostra o texto para copiar à mão
     const copyText = (text) => Copiar.texto(text, { avisar: false });
+    // O rótulo original fica guardado no primeiro toque: com dois toques seguidos, o segundo guardava o Copiado! no lugar dele
     const flash = (button, text) => {
       const label = button.lastChild;
-      const before = label.textContent;
+      button.dataset.rotulo ??= label.textContent;
+      clearTimeout(button.voltaDoRotulo);
       label.textContent = text;
-      setTimeout(() => { label.textContent = before; }, 2000);
+      button.voltaDoRotulo = setTimeout(() => { label.textContent = button.dataset.rotulo; }, 2000);
     };
     const renderRecent = () => {
       const lista = montados();
