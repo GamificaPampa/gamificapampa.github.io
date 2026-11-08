@@ -88,6 +88,9 @@
           <button class="btn btn--small" type="button" data-acao="qr">${icone('qr')} QR</button>
         </div>`;
       item.querySelector('b').textContent = rotulo;
+      // Os botões dizem de qual link são, para o leitor de tela não ler 40 vezes só Copiar e QR
+      item.querySelector('[data-acao="copiar"]').setAttribute('aria-label', 'Copiar o link: ' + rotulo);
+      item.querySelector('[data-acao="qr"]').setAttribute('aria-label', 'QR Code: ' + rotulo);
       const link = item.querySelector('a');
       link.href = '/' + atalho;
       link.textContent = endereco;
