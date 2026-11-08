@@ -390,9 +390,43 @@ body:has(dialog[open]) { overflow: hidden; }
 .ferramenta__novo { position: absolute; top: -10px; right: 12px; padding: 1px 10px; background: var(--pink); color: var(--ink); border: 2px solid var(--ink); border-radius: 999px; font-size: 12px; font-weight: 700; }
 
 
-/* À noite (o botão Noite do menu), a barra do topo também escurece */
-.ceu-noite .nav { background: rgb(18 15 44 / .88); color: #fff; }
-.ceu-noite .nav__links a, .ceu-noite .nav__mapa { color: #fff; }
-.ceu-noite .nav__links a:hover, .ceu-noite .nav__mapa:hover, .ceu-noite .nav__mapa[aria-expanded="true"] { background: rgb(255 255 255 / .14); }
-.ceu-noite .mapa, .ceu-noite .mapa a { color: var(--ink); }
-.ceu-noite .nav__seta { border-color: #fff; }
+/* Noite (o botão Noite do menu, ou o modo escuro do aparelho): a página inteira escurece, como um modo escuro.
+   O fundo fica quase preto azulado, as superfícies num roxo escuro e o texto claro. O contorno de tinta continua */
+.ceu-noite { --noite-fundo: #0e0c22; --noite-cartao: #1f1b42; --noite-campo: #16132f; --noite-texto: #f4f1ff; --noite-suave: #c3bde8; color-scheme: dark; }
+.ceu-noite body { background: var(--noite-fundo); color: var(--noite-texto); }
+.ceu-noite .nav { background: #0e0c22; color: #fff; -webkit-backdrop-filter: none; backdrop-filter: none; }
+.ceu-noite .nav__mapa, .ceu-noite .nav__mapa .nav__seta { color: #fff; border-color: #fff; }
+.ceu-noite .nav__mapa:hover, .ceu-noite .nav__mapa[aria-expanded="true"] { background: rgb(255 255 255 / .14); }
+.ceu-noite .scrollxp { background: var(--noite-cartao); border-color: #000; }
+/* Os links da barra, os do painel do celular e o painel Todas as páginas */
+@media (min-width: 1024px) {
+  .ceu-noite .nav__links > a { color: #fff; }
+  .ceu-noite .nav__links > a:hover { background: rgb(255 255 255 / .14); }
+}
+@media (max-width: 1023px) {
+  .ceu-noite.js .nav__links { background: var(--noite-cartao); border-color: #000; }
+  .ceu-noite.js .nav__links > a { color: #fff; }
+  .ceu-noite.js .nav__links > a:hover { background: rgb(255 255 255 / .12); }
+}
+.ceu-noite .mapa { background: var(--noite-cartao); border-color: #000; color: var(--noite-texto); }
+.ceu-noite .mapa a { color: var(--noite-texto); }
+.ceu-noite .mapa a:hover { background: rgb(255 255 255 / .1); }
+.ceu-noite .mapa__rodape { border-top-color: rgb(255 255 255 / .18); }
+/* Cartões, abas, formulário, balão e rodapé */
+.ceu-noite .card, .ceu-noite .ferramenta, .ceu-noite .mailer { background: var(--noite-cartao); color: var(--noite-texto); border-color: #000; }
+.ceu-noite .ferramenta, .ceu-noite .card { box-shadow: 0 6px 0 #000; }
+.ceu-noite .ferramenta:hover { box-shadow: 0 2px 0 #000; }
+.ceu-noite .ferramenta__texto span, .ceu-noite .game p, .ceu-noite .mailer__to { color: var(--noite-suave); }
+.ceu-noite .ferramenta__arte { border-color: #000; }
+.ceu-noite .aba-recursos { background: rgb(255 255 255 / .12); color: #fff; border-color: rgb(255 255 255 / .5); }
+.ceu-noite .aba-recursos[aria-selected="true"] { background: var(--yellow); color: var(--ink); border-color: var(--ink); }
+.ceu-noite .mailer input, .ceu-noite .mailer select, .ceu-noite .mailer textarea { background: var(--noite-campo); color: var(--noite-texto); border-color: #6d66a8; }
+.ceu-noite .mailer input::placeholder, .ceu-noite .mailer textarea::placeholder { color: #8f88c0; }
+.ceu-noite .bubble { background: var(--noite-cartao); color: var(--noite-texto); border-color: #000; }
+.ceu-noite .bubble::after { border-right-color: var(--noite-cartao); }
+.ceu-noite .bubble::before { border-right-color: #000; }
+.ceu-noite .footer { background: #08071a; border-top-color: #000; }
+.ceu-noite .footer__info { color: var(--noite-suave); }
+.ceu-noite .footer__info strong, .ceu-noite .footer__link { color: var(--noite-texto); }
+.ceu-noite .footer__inner img { padding: 6px 14px; background: #fff; border-radius: 999px; }
+.ceu-noite .ver-mais { color: #fff; }
