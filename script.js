@@ -201,7 +201,7 @@ const BUSCA_EXTRA = {
   'Máquina de prompts': 'plano de aula atividade quiz prova avaliação eja encceja enem história jogo construtor montar prompt adaptar material colar necessidades meus prompts estilo',
   'Biblioteca de prompts': 'modelos exemplos prontos calendário datas',
   'Adaptador de atividades': 'inclusão tea autismo tdah dislexia adaptar acessível',
-  'Assistentes do Bit': 'projeto chatgpt gem gemini assistente ensino médio',
+  'Assistentes do Bit': 'projeto chatgpt gem gems gemini assistente ensino médio',
   'Frases que salvam': 'armadilhas erros consertar resposta',
   'Curso online': 'módulos certificado comprovante à distância',
   'Jogo do Prompt': 'aprender quatro partes papel tarefa contexto formato',
