@@ -286,6 +286,7 @@
     capa.src = endereco(jogo, 'capa.svg');
     capa.addEventListener('error', () => capa.remove());
     item.querySelector('h3 a').textContent = jogo.nome;
+    item.querySelector('.btn--jogar').setAttribute('aria-label', 'Jogar ' + jogo.nome);
     item.querySelector('.frase').textContent = jogo.frase;
     item.querySelector('.marcador').textContent = meta + (jogo.celular ? ' · No celular' : '');
     const qr = item.querySelector('.qr');
