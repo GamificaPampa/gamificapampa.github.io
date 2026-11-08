@@ -17,6 +17,8 @@
 //     links: [['Jogar', '/recursos-pedagogicos/criancas/pasta-do-jogo/', 'jogar']] },
 // Sem dado de aluno, sem detalhe técnico: só o que muda para o professor.
 window.NOVIDADES = [
+  { data: '2026-11-08', titulo: 'Noite em todo o site', texto: 'O botão Noite, que deixa o céu escuro como um modo escuro, agora está em todas as páginas do professor e no menu da turma. A escolha fica guardada no aparelho, e o que se imprime continua branco.', icone: 'estrela', cor: 'purple',
+    links: [['Abrir o menu da turma', '/turma/', 'jogar']] },
   { data: '2026-11-07', titulo: 'Agora no ChatGPT', texto: 'O ChatGPT passou a ser a IA principal da Oficina de Prompts: a Máquina abre o ChatGPT, o passo a passo ensina nele e o Bit vira um Projeto do ChatGPT, nos Assistentes do Bit. A conta gratuita basta. Quem prefere o Gemini continua podendo usar: os prompts são os mesmos.', icone: 'bit', cor: 'mint',
     links: [['Abrir a máquina', '/maquina/', 'conhecer'], ['Ver os Assistentes do Bit', '/recursos-pedagogicos/professores/oficina-prompts/gems.html', 'conhecer']] },
   { data: '2026-11-07', titulo: 'Máquina e Construtor viraram uma coisa só', texto: 'A Máquina de prompts ganhou o que só o Construtor tinha: colar ou anexar um material para adaptar (Word, PDF, texto ou foto), marcar as necessidades da turma, abrir o ChatGPT e guardar em Meus prompts, a mesma lista da Biblioteca. O endereço do Construtor leva à Máquina.', icone: 'engrenagem', cor: 'blue',
