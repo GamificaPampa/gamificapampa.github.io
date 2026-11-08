@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="pt-BR">
+<html lang="pt-BR" data-ceu="dia-noite" data-ceu-auto>
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
@@ -15,6 +15,7 @@
 <link rel="stylesheet" href="/identidade-visual/css/componentes.css">
 <link rel="stylesheet" href="/identidade-visual/css/cenario.css">
 <link rel="stylesheet" href="/identidade-visual/css/animacoes.css">
+<script src="/identidade-visual/js/ceu.js"></script>
 <style>
   /* layout: menu para o projetor. Topo curto com tela cheia e QR, filtros numa faixa, os jogos agrupados por matéria
      e, no fim, o bloco do professor. Em 1280 x 720 a primeira fileira de jogos aparece sem rolar */
@@ -235,6 +236,8 @@
   const jogos = window.JOGOS || [];
 
   document.querySelectorAll('[data-icone]').forEach((el) => el.insertAdjacentHTML('afterbegin', icone(el.dataset.icone) + ' '));
+  // A noite (ceu.js), o modo escuro do site, no topo junto da tela cheia
+  if (window.Ceu) document.querySelector('.topo__acoes').prepend(Ceu.botao({ texto: true }));
 
   // Filtros: matéria e faixa de idade. A escolha fica guardada neste aparelho
   const IDADES = [['4 e 5', 4, 5], ['6 e 7', 6, 7], ['8 e 9', 8, 9], ['10 e 11', 10, 11], ['12 a 14', 12, 14], ['Ensino médio', 15, 18]];
