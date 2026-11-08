@@ -353,6 +353,8 @@ body:has(dialog[open]) { overflow: hidden; }
 .nav__partilhar:active { transform: translateY(5px); box-shadow: none; }
 /* No celular, logo, compartilhar e Menu cabem numa linha só */
 @media (max-width: 479px) { .nav__inner { column-gap: 10px; } .nav__logo img { width: 148px; } }
+/* Nos celulares de 360 px, os mais comuns, o logo de 148 px empurrava o Menu para uma segunda linha */
+@media (max-width: 379px) { .nav__logo img { width: 128px; } }
 /* Busca dentro de Todas as páginas: o campo no alto do painel e os resultados no lugar dos grupos */
 .busca__caixa { display: flex; align-items: center; gap: 10px; padding: 4px 10px 4px 14px; background: var(--white); border: var(--line-fina); border-radius: 999px; cursor: text; }
 .busca__caixa kbd { flex: none; padding: 1px 8px; background: var(--cream); border: 2px solid var(--ink); border-radius: 8px; font: 600 13px var(--font); white-space: nowrap; }
