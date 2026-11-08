@@ -1196,7 +1196,13 @@
     // As opções que o professor escreveu ficam neste aparelho e voltam como botões, até 5 por passo, com um x para apagar
     const MINHAS = 'gp-lembrar:maquina-minhas';
     const CAMPOS_PROPRIOS = { etapa: 'turma_outra', materia: 'materia_outra', tipo: 'tipo_outro' };
-    const lerMinhas = () => { try { return JSON.parse(localStorage.getItem(MINHAS)) || {}; } catch { return {}; } };
+    // Só listas de textos: um valor estragado guardado no aparelho não pode travar a página
+    const lerMinhas = () => {
+      try {
+        const dados = JSON.parse(localStorage.getItem(MINHAS));
+        return Object.fromEntries(Object.keys(CAMPOS_PROPRIOS).map((nome) => [nome, Array.isArray(dados?.[nome]) ? dados[nome].filter((texto) => typeof texto === 'string') : []]));
+      } catch { return {}; }
+    };
     const guardarMinhas = (minhas) => { try { localStorage.setItem(MINHAS, JSON.stringify(minhas)); } catch {} };
     const desenharMinhas = () => {
       const minhas = lerMinhas();
