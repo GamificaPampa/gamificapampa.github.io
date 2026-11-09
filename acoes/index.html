@@ -45,7 +45,7 @@
     /* A capa é sempre 4:3: uma foto em pé é cortada no ponto de "posicao" */
     .acao__capa img { display: block; width: 100%; height: auto; aspect-ratio: 4 / 3; object-fit: cover; object-position: var(--posicao, center); }
     .acao__midia .acao__fotos { grid-template-columns: repeat(4, minmax(0, 1fr)); padding: 16px 18px 20px; }
-    @media (min-width: 900px) { .acao__midia .acao__fotos { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; padding: 22px 26px 26px; } }
+    @media (min-width: 900px) { .acao__midia .acao__fotos { grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 10px; padding: 22px 24px 26px; } }
     .acao__corpo { display: grid; align-content: start; gap: 14px; min-width: 0; padding: 30px 22px 24px; }
     @media (min-width: 768px) { .acao__corpo { padding: 34px 30px 28px; } }
     .acao__topo { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; }
@@ -139,7 +139,7 @@
   <footer class="foot">GamificaPampa, projeto de extensão da UNIPAMPA, Campus Alegrete</footer>
 
 <script src="/identidade-visual/js/icones.js"></script>
-<script src="acoes.js?v=3"></script>
+<script src="acoes.js?v=4"></script>
 <script>
 (() => {
   const ACOES = window.ACOES || [];
