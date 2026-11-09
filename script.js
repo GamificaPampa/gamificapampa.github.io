@@ -281,7 +281,8 @@ if (campo && lista) {
     if (!achados.length) return;
     if (evento.key === 'ArrowDown') { evento.preventDefault(); marcar(escolhido + 1); }
     if (evento.key === 'ArrowUp') { evento.preventDefault(); marcar(escolhido - 1); }
-    if (evento.key === 'Enter') { evento.preventDefault(); location.href = achados[escolhido].href; }
+    // O Enter toca no resultado, como o dedo: o painel e o menu fecham, também no "Fale com a equipe", que fica nesta página
+    if (evento.key === 'Enter') { evento.preventDefault(); lista.querySelector(`#busca-${escolhido}`).click(); }
   });
   addEventListener('keydown', (evento) => {
     const digitando = evento.target.closest?.('input, textarea, select, [contenteditable]');
