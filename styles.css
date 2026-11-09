@@ -117,6 +117,13 @@ h2 { font-size: clamp(38px, 5.6vw, 66px); }
   .nav__links { order: 0; width: auto; flex-wrap: nowrap; gap: 8px; }
   .nav__links a { padding-inline: 13px; }
 }
+/* Entre 1024 e 1199 px os sete itens da barra só cabem mais juntos */
+@media (min-width: 1024px) and (max-width: 1199px) {
+  .nav__inner { column-gap: 12px; }
+  .nav__links { gap: 2px; }
+  .nav__links a { padding-inline: 9px; }
+  .nav__mapa { padding-inline: 10px; }
+}
 /* Todas as páginas: o botão da barra abre o painel com o site inteiro, por grupo. Menu não tem sombra */
 .nav__mapa { display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 44px; padding: 4px 14px; border: 0; border-radius: 999px; background: none; color: var(--ink); font: 600 17px var(--font); white-space: nowrap; cursor: pointer; transition: background-color .15s ease; }
 .nav__mapa:hover, .nav__mapa[aria-expanded="true"] { background: rgb(255 255 255 / .55); }
