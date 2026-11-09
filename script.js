@@ -206,7 +206,7 @@ const BUSCA_EXTRA = {
   'Curso online': 'módulos certificado comprovante à distância',
   'Jogo do Prompt': 'aprender quatro partes papel tarefa contexto formato',
   'Jogo do Prompt em grupo': 'projetor formação reunião votar',
-  'Passo a passo no ChatGPT': 'canvas projeto chat temporário como usar tutorial',
+  'Passo a passo no ChatGPT': 'prévia jogo projeto chat temporário como usar tutorial',
   'Baralho de prompts': 'cartas imprimir sortear',
   'Aula com os jogos': 'engenharia de software programação crianças 50 minutos',
   'Aula sobre IA': 'inteligência artificial 9º ano ensino médio',
