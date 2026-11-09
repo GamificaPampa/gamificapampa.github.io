@@ -17,6 +17,8 @@
 //     links: [['Jogar', '/recursos-pedagogicos/criancas/pasta-do-jogo/', 'jogar']] },
 // Sem dado de aluno, sem detalhe técnico: só o que muda para o professor.
 window.NOVIDADES = [
+  { data: '2026-11-09', titulo: 'Ações nas escolas', texto: 'Uma página com as oficinas, aulas e visitas do projeto nas escolas de Alegrete, cada uma com o relato e as fotos, e uma galeria com tudo. A primeira é a oficina na Escola Tancredo Neves.', icone: 'computador', cor: 'mint',
+    links: [['Ver as ações', '/acoes/', 'conhecer']] },
   { data: '2026-11-08', titulo: 'Tudo para imprimir', texto: 'Uma página só com tudo o que vai para o papel: roteiros, folhas de atividades, certificado, medalhas, mapas, a folha das famílias, o guia e o baralho, com o número de folhas de cada um.', icone: 'prancheta', cor: 'orange',
     links: [['Ver os papéis', '/recursos-pedagogicos/professores/imprimir/', 'baixar']] },
   { data: '2026-11-08', titulo: 'Noite em todo o site', texto: 'O botão Noite, que deixa o céu escuro como um modo escuro, agora está em todas as páginas do professor e no menu da turma. A escolha fica guardada no aparelho, e o que se imprime continua branco.', icone: 'estrela', cor: 'purple',

@@ -1,0 +1,293 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Ações nas escolas · GamificaPampa</title>
+  <meta name="description" content="As oficinas, aulas e visitas do GamificaPampa nas escolas públicas de Alegrete/RS, com relatos e fotos.">
+  <meta property="og:title" content="Ações do GamificaPampa nas escolas">
+  <meta property="og:description" content="Oficinas, aulas e visitas nas escolas de Alegrete, com relatos e fotos.">
+  <meta property="og:image" content="https://gamificapampa.github.io/acoes/capa.jpg">
+  <meta property="og:type" content="website">
+  <meta name="theme-color" content="#5fbcff">
+  <link rel="icon" type="image/svg+xml" href="/identidade-visual/logos/gamificapampa-icone.svg">
+  <link rel="stylesheet" href="/identidade-visual/css/fontes.css">
+  <link rel="stylesheet" href="/identidade-visual/css/cores.css">
+  <link rel="stylesheet" href="/identidade-visual/css/componentes.css">
+  <link rel="stylesheet" href="/identidade-visual/css/cenario.css">
+  <link rel="stylesheet" href="/identidade-visual/css/animacoes.css">
+  <style>
+    p, ul, figure { margin: 0; }
+    :focus-visible { outline: 4px solid var(--pink); outline-offset: 3px; }
+    .icone { display: inline-block; width: 1.15em; height: 1.15em; vertical-align: -.22em; flex: none; }
+    .wrap { width: min(1180px, 100% - 32px); margin-inline: auto; }
+    @media (min-width: 768px) { .wrap { width: min(1180px, 100% - 64px); } }
+
+    /* Abertura, com o Bit contando o que tem aqui */
+    .intro { display: grid; justify-items: start; gap: 18px; padding-block: 14px 26px; }
+    .intro h1 { font-size: clamp(42px, 7vw, 84px); }
+    .talk { display: flex; align-items: center; gap: 18px; max-width: 720px; }
+    .talk img { flex: none; width: clamp(72px, 10vw, 100px); height: auto; }
+    .talk .bubble { min-width: 0; font-size: clamp(16px, 1.8vw, 20px); line-height: 1.35; box-shadow: 0 6px 0 rgb(47 42 74 / .3); }
+    .filtros { display: flex; flex-wrap: wrap; gap: 10px; padding-bottom: 26px; }
+    .filtros[hidden] { display: none; }
+    .filtro-opcao { display: inline-flex; align-items: center; gap: 8px; }
+
+    /* Uma postagem por ação: a foto de capa e o relato lado a lado no computador, um embaixo do outro no celular */
+    .acoes { display: grid; gap: 34px; padding-bottom: 46px; }
+    .acao { display: grid; gap: 0; min-width: 0; background: var(--white); border: 4px solid var(--ink); border-radius: 26px; overflow: hidden; box-shadow: inset 0 12px 0 var(--c); scroll-margin-top: 90px; }
+    @media (min-width: 900px) { .acao { grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr); } }
+    .acao__capa { display: block; position: relative; padding: 0; border: 0; border-bottom: 4px solid var(--ink); background: var(--sky2); cursor: zoom-in; }
+    @media (min-width: 900px) { .acao__capa { align-self: start; border-bottom: 0; } .acao__corpo { border-left: 4px solid var(--ink); margin-left: -4px; } }
+    /* A capa mostra a foto inteira no computador; no celular, uma foto em pé é cortada em 4:3, no ponto de "posicao" */
+    .acao__capa img { display: block; width: 100%; height: auto; aspect-ratio: 4 / 3; object-fit: cover; object-position: var(--posicao, center); }
+    @media (min-width: 900px) { .acao__capa img { aspect-ratio: auto; } }
+    .acao__corpo { display: grid; align-content: start; gap: 14px; min-width: 0; padding: 30px 22px 24px; }
+    @media (min-width: 768px) { .acao__corpo { padding: 34px 30px 28px; } }
+    .acao__topo { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; }
+    .etiqueta { display: inline-flex; align-items: center; gap: 6px; padding: 3px 12px; background: var(--c); border: 3px solid var(--ink); border-radius: 999px; font-weight: 700; font-size: 15px; }
+    .etiqueta .icone { width: 20px; height: 20px; }
+    .acao time { display: inline-block; padding: 3px 12px; background: var(--sky2); border: 3px solid var(--ink); border-radius: 999px; font-weight: 700; font-size: 15px; }
+    .acao h2 { font-size: clamp(26px, 3.4vw, 36px); line-height: 1.12; overflow-wrap: anywhere; }
+    .acao__local { display: flex; align-items: center; gap: 6px; color: var(--soft); font-weight: 600; }
+    .acao__resumo { font-size: clamp(17px, 1.9vw, 20px); font-weight: 600; line-height: 1.4; }
+    .acao__texto { display: grid; gap: 10px; color: var(--soft); font-size: 16px; line-height: 1.5; }
+    .acao__fotos { display: grid; grid-template-columns: repeat(auto-fill, minmax(72px, 1fr)); gap: 8px; padding: 0; list-style: none; }
+    .miniatura { display: block; width: 100%; padding: 0; background: var(--sky2); border: 3px solid var(--ink); border-radius: 12px; overflow: hidden; cursor: zoom-in; box-shadow: 0 4px 0 var(--ink); transition: transform .1s ease, box-shadow .1s ease; }
+    .miniatura:hover { transform: translateY(2px); box-shadow: 0 2px 0 var(--ink); }
+    .miniatura img { display: block; width: 100%; height: auto; aspect-ratio: 1; object-fit: cover; }
+    .acao__links { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 4px; }
+    .acao__links .btn { max-width: 100%; text-align: left; }
+    .acao__links .icone, .fim .icone { width: 22px; height: 22px; }
+
+    /* Galeria: todas as fotos de todas as ações */
+    .galeria { display: grid; justify-items: start; gap: 18px; padding-bottom: 46px; }
+    .galeria h2 { display: inline-block; padding: 4px 20px; background: var(--white); border: 4px solid var(--ink); border-radius: 999px; font-size: clamp(24px, 3.4vw, 32px); }
+    .galeria__grade { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(46%, 200px), 1fr)); gap: 14px; width: 100%; padding: 0; list-style: none; }
+    .galeria__grade .miniatura { border-width: 4px; border-radius: 18px; box-shadow: 0 6px 0 var(--ink); }
+    .galeria__grade .miniatura img { aspect-ratio: 4 / 3; }
+
+    /* Foto em tela cheia, com legenda e setas */
+    .visor { width: min(1100px, 100% - 24px); max-width: none; max-height: calc(100% - 24px); padding: 0; background: var(--white); color: var(--ink); border: 4px solid var(--ink); border-radius: 22px; overflow: hidden; }
+    .visor::backdrop { background: rgb(14 12 34 / .82); }
+    .visor img { display: block; width: 100%; height: min(calc(100dvh - 120px), 820px); object-fit: contain; background: #0e0c22; }
+    .visor__barra { display: flex; align-items: center; gap: 10px; padding: 12px 14px; border-top: 4px solid var(--ink); }
+    .visor figcaption { flex: 1; min-width: 0; font-weight: 600; line-height: 1.3; }
+    .visor figcaption small { display: block; color: var(--soft); font-weight: 500; }
+    .visor__botao { display: grid; place-items: center; flex: none; width: 48px; height: 48px; padding: 0; background: var(--white); color: var(--ink); border: 3px solid var(--ink); border-radius: 50%; cursor: pointer; box-shadow: 0 4px 0 var(--ink); }
+    .visor__botao:hover { transform: translateY(2px); box-shadow: 0 2px 0 var(--ink); }
+    .visor__botao .icone { width: 24px; height: 24px; }
+
+    .vazio { padding: 18px 20px; font-weight: 600; }
+    .fim { display: flex; flex-wrap: wrap; gap: 14px; padding-bottom: clamp(140px, 18vw, 220px); }
+    .foot { position: relative; padding: 0 16px 28px; font-weight: 600; text-align: center; }
+  </style>
+<script src="/identidade-visual/js/barra.js" defer></script>
+</head>
+<body class="ceu">
+  <div class="cenario cenario--fixo" aria-hidden="true">
+    <span class="nuvem" style="top: 6%; --w: 190px; --t: 80s; --d: -12s"></span>
+    <span class="nuvem" style="top: 28%; --w: 140px; --t: 65s; --d: -40s"></span>
+    <span class="nuvem" style="top: 52%; --w: 220px; --t: 95s; --d: -70s"></span>
+    <span class="morros"></span>
+  </div>
+
+  <main class="wrap">
+    <section class="intro">
+      <p class="pill" style="--c: var(--mint)">NAS ESCOLAS</p>
+      <h1 class="loud anima-letras"><span>O</span> <span>que</span> <span class="yellow">fizemos</span></h1>
+      <div class="talk">
+        <img class="anima-flutuar" src="/identidade-visual/mascote/bit-feliz.svg" width="100" height="100" alt="Bit, o robô do GamificaPampa, feliz">
+        <p class="bubble anima-balao" style="--d: .4s">Aqui ficam as oficinas, as aulas e as visitas nas escolas de Alegrete, com o que aconteceu e as fotos.</p>
+      </div>
+    </section>
+
+    <div class="filtros" id="filtros" role="group" aria-label="Mostrar só um tipo de ação" hidden></div>
+
+    <div class="acoes" id="acoes">
+      <noscript><p class="card vazio">Esta página precisa do JavaScript ligado para mostrar as ações.</p></noscript>
+    </div>
+
+    <section class="galeria" aria-labelledby="titulo-galeria">
+      <h2 id="titulo-galeria">Galeria</h2>
+      <ul class="galeria__grade" id="galeria"></ul>
+    </section>
+
+    <p class="fim">
+      <a class="btn btn--conhecer" href="/projetos/"><span data-icone="lupa"></span>Os projetos</a>
+      <a class="btn btn--conhecer" href="/novidades/"><span data-icone="estrela"></span>Novidades</a>
+      <a class="btn btn--white" href="/"><span data-icone="casa"></span>Voltar ao início</a>
+    </p>
+  </main>
+
+  <dialog class="visor" id="visor" aria-label="Foto ampliada">
+    <figure>
+      <img id="visor-foto" alt="">
+      <div class="visor__barra">
+        <button class="visor__botao" type="button" id="visor-antes" aria-label="Foto anterior"><span data-icone="seta-esquerda"></span></button>
+        <figcaption id="visor-legenda"></figcaption>
+        <button class="visor__botao" type="button" id="visor-depois" aria-label="Próxima foto"><span data-icone="seta-direita"></span></button>
+        <button class="visor__botao" type="button" id="visor-fechar" aria-label="Fechar"><span data-icone="errado"></span></button>
+      </div>
+    </figure>
+  </dialog>
+
+  <footer class="foot">GamificaPampa, projeto de extensão da UNIPAMPA, Campus Alegrete</footer>
+
+<script src="/identidade-visual/js/icones.js"></script>
+<script src="acoes.js"></script>
+<script>
+(() => {
+  const ACOES = window.ACOES || [];
+  // O tipo dá a cor, o ícone e o nome do filtro
+  const TIPOS = {
+    oficina: { nome: 'Oficina', plural: 'Oficinas', cor: 'mint', icone: 'computador' },
+    aula: { nome: 'Aula', plural: 'Aulas', cor: 'yellow', icone: 'prancheta' },
+    visita: { nome: 'Visita', plural: 'Visitas', cor: 'blue', icone: 'mochila' },
+  };
+  const ACOES_DOS_LINKS = { jogar: ['btn--jogar', 'play'], conhecer: ['btn--conhecer', 'lupa'], baixar: ['btn--baixar', 'disquete'], compartilhar: ['btn--compartilhar', 'qr'], secundaria: ['btn--white', 'lupa'] };
+  const MESES = ['janeiro', 'fevereiro', 'março', 'abril', 'maio', 'junho', 'julho', 'agosto', 'setembro', 'outubro', 'novembro', 'dezembro'];
+  const icone = (nome) => (window.Icones ? Icones.svg(nome) : '');
+  const criar = (tag, classe, texto) => Object.assign(document.createElement(tag), { className: classe || '', textContent: texto || '' });
+  const dataLonga = (data) => { const [a, m, d] = data.split('-'); return `${Number(d)} de ${MESES[Number(m) - 1]} de ${a}`; };
+  const pasta = (acao) => 'fotos/' + acao.id + '/';
+  const arquivo = (i) => String(i + 1).padStart(2, '0') + '.webp';
+
+  document.querySelectorAll('[data-icone]').forEach((lugar) => { lugar.outerHTML = icone(lugar.dataset.icone); });
+
+  const ordenadas = [...ACOES].sort((a, b) => b.data.localeCompare(a.data));
+  // Todas as fotos em fila, para o visor andar de uma para a outra
+  const todas = ordenadas.flatMap((acao) => acao.fotos.map((legenda, i) => ({ acao, legenda, grande: pasta(acao) + arquivo(i), mini: pasta(acao) + 'mini/' + arquivo(i) })));
+
+  const miniatura = (foto, classe) => {
+    const botao = criar('button', 'miniatura ' + (classe || ''));
+    botao.type = 'button';
+    botao.setAttribute('aria-label', 'Ampliar: ' + foto.legenda);
+    const img = criar('img');
+    Object.assign(img, { src: foto.mini, alt: '', loading: 'lazy', decoding: 'async', width: 480, height: 360 });
+    botao.append(img);
+    botao.addEventListener('click', () => abrir(todas.indexOf(foto)));
+    return botao;
+  };
+
+  // As postagens
+  const lugar = document.getElementById('acoes');
+  lugar.textContent = '';
+  for (const acao of ordenadas) {
+    const tipo = TIPOS[acao.tipo] || TIPOS.oficina;
+    const fotos = todas.filter((f) => f.acao === acao);
+    const artigo = criar('article', 'acao');
+    artigo.id = acao.id;
+    artigo.dataset.tipo = acao.tipo;
+    artigo.style.setProperty('--c', `var(--${tipo.cor})`);
+    artigo.setAttribute('aria-labelledby', 'titulo-' + acao.id);
+
+    if (fotos.length) {
+      const capa = criar('button', 'acao__capa');
+      capa.type = 'button';
+      capa.setAttribute('aria-label', 'Ampliar: ' + fotos[0].legenda);
+      const img = criar('img');
+      Object.assign(img, { src: fotos[0].grande, alt: '', decoding: 'async', width: 1600, height: 1200 });
+      if (ordenadas.indexOf(acao) > 0) img.loading = 'lazy';
+      if (acao.posicao) capa.style.setProperty('--posicao', acao.posicao);
+      capa.append(img);
+      capa.addEventListener('click', () => abrir(todas.indexOf(fotos[0])));
+      artigo.append(capa);
+    }
+
+    const corpo = criar('div', 'acao__corpo');
+    const topo = criar('div', 'acao__topo');
+    const etiqueta = criar('span', 'etiqueta');
+    etiqueta.innerHTML = icone(tipo.icone);
+    etiqueta.append(tipo.nome);
+    const data = criar('time', '', dataLonga(acao.data));
+    data.dateTime = acao.data;
+    topo.append(etiqueta, data);
+    const titulo = criar('h2', '', acao.titulo);
+    titulo.id = 'titulo-' + acao.id;
+    const local = criar('p', 'acao__local');
+    local.innerHTML = icone('casa');
+    local.append(acao.local);
+    const texto = criar('div', 'acao__texto');
+    for (const paragrafo of acao.texto || []) texto.append(criar('p', '', paragrafo));
+    corpo.append(topo, titulo, local, criar('p', 'acao__resumo', acao.resumo), texto);
+
+    if (fotos.length > 1) {
+      const lista = criar('ul', 'acao__fotos');
+      lista.setAttribute('aria-label', 'Fotos desta ação');
+      for (const foto of fotos) { const item = criar('li'); item.append(miniatura(foto)); lista.append(item); }
+      corpo.append(lista);
+    }
+    if (acao.links?.length) {
+      const links = criar('div', 'acao__links');
+      for (const [rotulo, endereco, tipoLink] of acao.links) {
+        const [classe, nome] = ACOES_DOS_LINKS[tipoLink] || ACOES_DOS_LINKS.conhecer;
+        const a = criar('a', 'btn btn--small ' + classe);
+        a.href = endereco;
+        a.innerHTML = icone(nome);
+        a.append(rotulo);
+        links.append(a);
+      }
+      corpo.append(links);
+    }
+    artigo.append(corpo);
+    lugar.append(artigo);
+  }
+  if (!ordenadas.length) lugar.append(criar('p', 'card vazio', 'As primeiras ações aparecem aqui em breve.'));
+
+  // A galeria
+  const galeria = document.getElementById('galeria');
+  for (const foto of todas) {
+    const item = criar('li');
+    item.dataset.tipo = foto.acao.tipo;
+    item.append(miniatura(foto));
+    galeria.append(item);
+  }
+
+  // Os filtros só aparecem quando há mais de um tipo de ação
+  const tipos = [...new Set(ordenadas.map((a) => a.tipo))].filter((t) => TIPOS[t]);
+  const filtros = document.getElementById('filtros');
+  if (tipos.length > 1) {
+    filtros.hidden = false;
+    const opcoes = [['todas', 'Todas', 'estrela'], ...tipos.map((t) => [t, TIPOS[t].plural, TIPOS[t].icone])];
+    for (const [valor, rotulo, nome] of opcoes) {
+      const botao = criar('button', 'filtro-opcao');
+      botao.type = 'button';
+      botao.innerHTML = icone(nome);
+      botao.append(rotulo);
+      botao.setAttribute('aria-pressed', String(valor === 'todas'));
+      botao.addEventListener('click', () => {
+        filtros.querySelectorAll('button').forEach((b) => b.setAttribute('aria-pressed', String(b === botao)));
+        document.querySelectorAll('.acao, #galeria li').forEach((el) => { el.hidden = valor !== 'todas' && el.dataset.tipo !== valor; });
+      });
+      filtros.append(botao);
+    }
+  }
+
+  // O visor: foto grande, legenda, setas e teclado
+  const visor = document.getElementById('visor');
+  const fotoGrande = document.getElementById('visor-foto');
+  const legenda = document.getElementById('visor-legenda');
+  let atual = 0;
+  const mostrar = (i) => {
+    atual = (i + todas.length) % todas.length;
+    const foto = todas[atual];
+    fotoGrande.src = foto.grande;
+    fotoGrande.alt = foto.legenda;
+    legenda.textContent = foto.legenda;
+    legenda.append(criar('small', '', `${foto.acao.titulo}, ${dataLonga(foto.acao.data)} · ${atual + 1} de ${todas.length}`));
+  };
+  function abrir(i) { mostrar(i); if (!visor.open) visor.showModal(); }
+  document.getElementById('visor-antes').addEventListener('click', () => mostrar(atual - 1));
+  document.getElementById('visor-depois').addEventListener('click', () => mostrar(atual + 1));
+  document.getElementById('visor-fechar').addEventListener('click', () => visor.close());
+  visor.addEventListener('click', (e) => { if (e.target === visor) visor.close(); });
+  visor.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowLeft') mostrar(atual - 1);
+    if (e.key === 'ArrowRight') mostrar(atual + 1);
+  });
+  visor.addEventListener('close', () => { fotoGrande.removeAttribute('src'); });
+})();
+</script>
+</body>
+</html>

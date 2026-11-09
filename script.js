@@ -218,6 +218,7 @@ const BUSCA_EXTRA = {
   'Publicar meu jogo': 'canvas link qr github hospedar',
   'Kit sem internet (zip)': 'offline sem rede baixar zip notebook',
   'Novidades': 'o que mudou novo',
+  'Ações nas escolas': 'acoes oficinas visitas relatos fotos galeria encontros formação tancredo neves',
   'Links curtos com QR': 'atalhos endereço curto',
   'Fale com a equipe': 'contato levar escola formação',
 };
