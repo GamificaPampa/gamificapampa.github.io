@@ -575,7 +575,7 @@
         tarefa: (theme) => `Crie um jogo em HTML sobre ${theme} para jogar no navegador, em que cada fase treine uma parte do tema, da mais fácil à mais difícil.`,
         formato: 'Faça tudo num único arquivo HTML, com o CSS e o JavaScript dentro dele e sem nada de fora, que funcione no celular e no computador. Quero botões grandes, 3 fases, som no acerto, estrelas no final e, no erro, uma frase que explica o conceito.',
         formatoAdulto: 'Faça tudo num único arquivo HTML, com o CSS e o JavaScript dentro dele e sem nada de fora, que funcione no celular e no computador. Quero botões grandes, visual adulto e sem bichinhos, 3 fases, som no acerto, a pontuação no final e, no erro, uma frase que explica o conceito.',
-        tip: 'No ChatGPT, o jogo vem num bloco de código: toque em Prévia para jogar ali mesmo. Depois mande a segunda mensagem, com o visual e o padrão do jogo. Para publicar, baixe o arquivo (a seta do bloco ou o Baixar jogo) e ganhe um link e um QR Code em gamificapampa.github.io/publicador.',
+        tip: 'No ChatGPT, o jogo vem num bloco de código: toque em Prévia para jogar ali mesmo. Depois mande a segunda mensagem, com o visual e o padrão do jogo. Para publicar, abra a Prévia, toque na seta de baixar no alto do bloco e ganhe um link e um QR Code em gamificapampa.github.io/publicador.',
       },
       atividade: {
         name: 'Atividade para imprimir',
@@ -700,7 +700,7 @@
         secao('Antes de entregar', [
           'Jogue de cabeça do começo ao fim: confira cada resposta e cada conta, se todo botão funciona e se não sobrou erro no console.',
           'Escreva tudo em português do Brasil, com acentos.',
-          paraApi ? 'Responda só com o arquivo HTML completo, num único bloco de código html, sem nada antes ou depois.' : 'No fim, liste em poucas linhas o que você mudou.',
+          paraApi ? 'Responda só com o arquivo HTML completo, num único bloco de código html, sem nada antes ou depois.' : 'Mostre o código completo num bloco de código HTML, sem criar arquivo para baixar. No fim, liste em poucas linhas o que você mudou.',
         ]),
       ].join('\n\n');
     };
@@ -986,7 +986,8 @@
         const tempoPlano = { 15: 'uma atividade de 15 minutos', 50: 'uma aula de 50 minutos', 100: 'duas aulas de 50 minutos' }[tempo];
         formato = formato.replace('uma aula de 50 minutos', tempoPlano).replace('somam 50 minutos', `somam ${tempo} minutos`);
       }
-      if (formato && kind === kinds.jogo) formato += ` O visual: ${estilo.frase}.`;
+      // No ChatGPT gratuito, o arquivo para baixar gasta a cota de análise de dados; sem cota, ele não entrega o jogo (teste de 09/11)
+      if (formato && kind === kinds.jogo) formato += ` O visual: ${estilo.frase}. Mostre o código completo num bloco de código HTML, sem criar arquivo.`;
       if (formato && extras.includes('curto')) formato += ' Seja breve: a resposta deve caber numa página.';
       if (formato && kind !== kinds.jogo && !formato.includes('BNCC')) formato += ' Não cite códigos da BNCC.';
       // No teste de 09/11 no ChatGPT, o material de imprimir veio com emojis e, no Enem, com um quadro interativo em inglês
