@@ -46,7 +46,6 @@ window.ACOES = [
       'A equipe ajuda um grupo de perto, na tela do computador',
       'A turma da manhã reunida com a equipe',
       'De tarde, a mesma conversa com os professores dos Anos Iniciais',
-      'Depois da oficina: o início do site, mais curto, numa tela grande',
     ],
     links: [
       ['O que mudou no site', '/novidades/', 'conhecer'],
