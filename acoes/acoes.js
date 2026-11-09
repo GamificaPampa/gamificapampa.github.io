@@ -39,12 +39,12 @@ window.ACOES = [
     fotos: [
       'A turma da tarde reunida com a equipe no fim da oficina',
       'A equipe na entrada da escola',
-      'De manhã, os professores dos Anos Finais acompanham a abertura',
-      'Depois do café, a equipe cria um jogo ao vivo no projetor',
-      'A equipe ajuda um grupo a explorar o site',
+      'De manhã, os professores dos Anos Finais com os computadores prontos',
+      'A hora do café, entre a conversa e a prática',
+      'A equipe ajuda um grupo de perto, na tela do computador',
       'Uma professora cria o próprio jogo: Jornada ao Egito Antigo',
-      'De tarde, a conversa sobre gamificação com os Anos Iniciais',
-      'A equipe mostra a Fábrica de Sílabas, um dos jogos de exemplo',
+      'De tarde, como montar um bom prompt com os Anos Iniciais',
+      'A equipe mostra os Jogos para a turma, um dos recursos do site',
     ],
     links: [
       ['O que mudou no site', '/novidades/', 'conhecer'],
