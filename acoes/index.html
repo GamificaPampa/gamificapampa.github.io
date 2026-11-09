@@ -37,11 +37,15 @@
     .acoes { display: grid; gap: 34px; padding-bottom: 46px; }
     .acao { display: grid; gap: 0; min-width: 0; background: var(--white); border: 4px solid var(--ink); border-radius: 26px; overflow: hidden; box-shadow: inset 0 12px 0 var(--c); scroll-margin-top: 90px; }
     @media (min-width: 900px) { .acao { grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr); } }
-    .acao__capa { display: block; position: relative; padding: 0; border: 0; border-bottom: 4px solid var(--ink); background: var(--sky2); cursor: zoom-in; }
-    @media (min-width: 900px) { .acao__capa { align-self: start; border-bottom: 0; } .acao__corpo { border-left: 4px solid var(--ink); margin-left: -4px; } }
-    /* A capa mostra a foto inteira no computador; no celular, uma foto em pé é cortada em 4:3, no ponto de "posicao" */
+    /* As fotos ficam juntas: a capa e as miniaturas embaixo dela, numa coluna à esquerda no computador */
+    .acao__midia { display: grid; align-content: start; min-width: 0; border-bottom: 4px solid var(--ink); }
+    @media (min-width: 900px) { .acao__midia { border-bottom: 0; } .acao__corpo { border-left: 4px solid var(--ink); margin-left: -4px; } }
+    .acao__capa { display: block; position: relative; padding: 0; border: 0; background: var(--sky2); cursor: zoom-in; }
+    .acao__midia > .acao__capa:not(:last-child) { border-bottom: 4px solid var(--ink); }
+    /* A capa é sempre 4:3: uma foto em pé é cortada no ponto de "posicao" */
     .acao__capa img { display: block; width: 100%; height: auto; aspect-ratio: 4 / 3; object-fit: cover; object-position: var(--posicao, center); }
-    @media (min-width: 900px) { .acao__capa img { aspect-ratio: auto; } }
+    .acao__midia .acao__fotos { grid-template-columns: repeat(4, minmax(0, 1fr)); padding: 16px 18px 20px; }
+    @media (min-width: 900px) { .acao__midia .acao__fotos { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; padding: 22px 26px 26px; } }
     .acao__corpo { display: grid; align-content: start; gap: 14px; min-width: 0; padding: 30px 22px 24px; }
     @media (min-width: 768px) { .acao__corpo { padding: 34px 30px 28px; } }
     .acao__topo { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; }
@@ -135,7 +139,7 @@
   <footer class="foot">GamificaPampa, projeto de extensão da UNIPAMPA, Campus Alegrete</footer>
 
 <script src="/identidade-visual/js/icones.js"></script>
-<script src="acoes.js"></script>
+<script src="acoes.js?v=2"></script>
 <script>
 (() => {
   const ACOES = window.ACOES || [];
@@ -182,6 +186,7 @@
     artigo.style.setProperty('--c', `var(--${tipo.cor})`);
     artigo.setAttribute('aria-labelledby', 'titulo-' + acao.id);
 
+    const midia = criar('div', 'acao__midia');
     if (fotos.length) {
       const capa = criar('button', 'acao__capa');
       capa.type = 'button';
@@ -192,8 +197,15 @@
       if (acao.posicao) capa.style.setProperty('--posicao', acao.posicao);
       capa.append(img);
       capa.addEventListener('click', () => abrir(todas.indexOf(fotos[0])));
-      artigo.append(capa);
+      midia.append(capa);
     }
+    if (fotos.length > 1) {
+      const lista = criar('ul', 'acao__fotos');
+      lista.setAttribute('aria-label', 'Fotos desta ação');
+      for (const foto of fotos) { const item = criar('li'); item.append(miniatura(foto)); lista.append(item); }
+      midia.append(lista);
+    }
+    if (fotos.length) artigo.append(midia);
 
     const corpo = criar('div', 'acao__corpo');
     const topo = criar('div', 'acao__topo');
@@ -212,12 +224,6 @@
     for (const paragrafo of acao.texto || []) texto.append(criar('p', '', paragrafo));
     corpo.append(topo, titulo, local, criar('p', 'acao__resumo', acao.resumo), texto);
 
-    if (fotos.length > 1) {
-      const lista = criar('ul', 'acao__fotos');
-      lista.setAttribute('aria-label', 'Fotos desta ação');
-      for (const foto of fotos) { const item = criar('li'); item.append(miniatura(foto)); lista.append(item); }
-      corpo.append(lista);
-    }
     if (acao.links?.length) {
       const links = criar('div', 'acao__links');
       for (const [rotulo, endereco, tipoLink] of acao.links) {

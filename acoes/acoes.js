@@ -13,7 +13,8 @@
 //   tipo    'oficina', 'aula' ou 'visita' (dá a cor, o ícone e o filtro)
 //   titulo  o nome curto da ação
 //   local   a escola ou o lugar, e a cidade
-//   posicao (opcional) o ponto da capa que não pode ser cortado no celular, como '50% 80%' (o padrão é o centro)
+//   posicao (opcional) o ponto da capa que não pode ser cortado, como '50% 80%' (o padrão é o centro). A capa é
+//           a foto 01, mostrada em 4:3: prefira uma foto deitada, com a turma e a equipe
 //   resumo  uma frase, que aparece em destaque
 //   texto   lista de parágrafos curtos: o que aconteceu, quem participou (sem nomes de alunos), o que mudou depois
 //   fotos   lista de legendas, uma por foto, na ordem dos arquivos (01.webp, 02.webp...). A legenda também é o texto
@@ -28,7 +29,6 @@ window.ACOES = [
     tipo: 'oficina',
     titulo: 'Oficina na Escola Tancredo Neves',
     local: 'EEEM Tancredo de Almeida Neves, Alegrete',
-    posicao: '50% 80%',
     resumo: 'Um dia inteiro na escola: de manhã com os professores dos Anos Finais e de tarde com os dos Anos Iniciais.',
     texto: [
       'A equipe do Educador 5.0 e do GamificaEdu levou a oficina Aperte START para a Escola Tancredo Neves. Foram dois turnos, cada um com cerca de duas horas.',
@@ -37,14 +37,14 @@ window.ACOES = [
       'Obrigado ao corpo docente e à direção da escola pela acolhida.',
     ],
     fotos: [
-      'A equipe em frente à escola',
-      'A abertura da oficina no projetor: Aperte START',
-      'A equipe se apresenta no turno da manhã',
-      'Professores na prática, cada um no seu computador',
-      'O site do GamificaPampa aberto num dos computadores',
-      'A equipe ajuda um grupo, de mesa em mesa',
-      'O turno da tarde, com os professores dos Anos Iniciais',
-      'A turma da tarde reunida no fim da oficina',
+      'A turma da tarde reunida com a equipe no fim da oficina',
+      'A equipe na entrada da escola',
+      'De manhã, os professores dos Anos Finais acompanham a abertura',
+      'Depois do café, a equipe cria um jogo ao vivo no projetor',
+      'A equipe ajuda um grupo a explorar o site',
+      'Uma professora cria o próprio jogo: Jornada ao Egito Antigo',
+      'De tarde, a conversa sobre gamificação com os Anos Iniciais',
+      'A equipe mostra a Fábrica de Sílabas, um dos jogos de exemplo',
     ],
     links: [
       ['O que mudou no site', '/novidades/', 'conhecer'],
