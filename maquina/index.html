@@ -713,7 +713,6 @@
         secao('Como o jogo funciona', [
           'Tela de início com o nome do jogo, o objetivo numa frase e as instruções em até 3 frases, com o botão Jogar.',
           '3 fases, da mais fácil à mais difícil; cada fase trabalha um passo do objetivo.',
-          `Como se joga: ${modelo.mecanica}.`,
           modelo.regra,
           'O progresso sempre na tela, como "Fase 1 de 3".',
           `Tela final com estrelas pelo desempenho, uma frase do que ${pessoa} aprendeu e o botão Jogar de novo.`,
@@ -747,7 +746,7 @@
           'Até cerca de 40 KB, com comentários curtos em português e sem erros no console.',
         ]),
         secao('Exemplo de referência', [
-          `Siga a estrutura deste esqueleto do jogo-modelo ${modelo.nome} (${window.MODELOS.link(modelo)}), em que ${modelo.mecanica}. Troque o tema, as perguntas e o visual pelo que foi pedido.`,
+          `Siga a estrutura deste esqueleto do jogo-modelo ${modelo.nome} (${window.MODELOS.link(modelo)}): ${modelo.mecanica}. Troque o tema, as perguntas e o visual pelo que foi pedido.`,
         ]) + '\n```html\n' + modelo.esqueleto + '\n```\n' + secao('Outros jogos-modelo', [`Todos os jogos-modelo, prontos para jogar: ${window.MODELOS.pagina}`]),
         secao('Antes de entregar', [
           'Jogue de cabeça do começo ao fim: confira cada resposta e cada conta, se todo botão funciona e se não sobrou erro no console.',
@@ -1119,7 +1118,7 @@
     const JEITOS = {
       jogo: {
         pergunta: 'Que tipo de jogo?',
-        frase: (jeito) => ` O jogo é de ${jeito}.`,
+        frase: (jeito) => ` Tipo de jogo: ${jeito}.`,
         // Cada um leva a um jogo-modelo (modelos.js, paraJeito), com a regra da tela dele
         infantil: ['tocar no que a voz pedir', 'jogo da memória com figuras', 'separar as figuras em grupos'],
         anos12: ['tocar na resposta certa', 'jogo da memória', 'separar em grupos', 'pôr em ordem'],
