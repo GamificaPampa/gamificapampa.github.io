@@ -33,7 +33,7 @@ window.ACOES = [
     texto: [
       'A equipe do Educador 5.0 e do GamificaEdu levou a oficina Aperte START para a Escola Tancredo Neves. Foram dois turnos, cada um com cerca de duas horas.',
       'Primeiro, a conversa sobre o que é gamificação, o que é um prompt e como montar um bom pedido com papel, tarefa, contexto e formato. Depois do café, a equipe criou e publicou um jogo ao vivo, do prompt ao QR Code.',
-      'Na prática, cada grupo criou um jogo para a própria turma, no seu computador, e a equipe passou de mesa em mesa. O que os professores disseram virou mudança no site na mesma semana: a Máquina de prompts ficou mais simples e o início do site, mais curto.',
+      'Na prática, cada grupo criou um jogo para a própria turma, no seu computador, e a equipe passou de mesa em mesa. O que os professores disseram virou mudança no site na mesma semana: a Máquina de prompts ficou mais estruturada e prática, e o início do site, mais curto.',
       'Obrigado ao corpo docente e à direção da escola pela acolhida.',
     ],
     fotos: [
