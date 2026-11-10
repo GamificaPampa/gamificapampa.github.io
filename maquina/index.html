@@ -444,6 +444,9 @@
             <pre id="quality-texto"></pre>
           </details>
           <button class="btn btn--small" type="button" id="quality-copy"><svg width="18" height="18" aria-hidden="true"><use href="#i-copy"/></svg>Copiar a segunda mensagem</button>
+          <h3><b>3</b>Se o jogo travar</h3>
+          <p>Jogue na Prévia do começo ao fim, errando de propósito. Se um botão não responder ou o jogo pular uma parte, mande esta mensagem na mesma conversa, trocando o trecho entre colchetes pelo que aconteceu.</p>
+          <button class="btn btn--small" type="button" id="travou-copy"><svg width="18" height="18" aria-hidden="true"><use href="#i-copy"/></svg>Copiar a mensagem do conserto</button>
         </div>
         <div class="quality" id="mais" hidden>
           <h3><b>2</b>Peça mais</h3>
@@ -695,8 +698,9 @@
     // do prompt-base. Missão, desafio final e revisar os erros vêm marcados
     const DIVERSAO = {
       missao: ({ adult }) => adult ? 'Uma missão tirada da vida real (um caso do trabalho, da casa ou da cidade), apresentada no início e retomada entre as fases e no fim.' : 'Uma missão curta, com um personagem que pede ajuda (como o Bit, o robô do GamificaPampa), no início, entre as fases e no fim.',
-      final: () => 'Depois da última fase, um desafio final que mistura tudo o que foi treinado, com uma tela própria e uma comemoração maior.',
-      revisar: () => 'Na tela final, a lista do que foi errado, cada item com a explicação certa, e um botão Treinar os erros, que joga só esses de novo.',
+      // No teste de 10/11 no ChatGPT, o desafio numa tela própria travou dois dos quatro jogos; como rodada da mesma tela, não trava
+      final: () => 'Depois da última fase, um desafio final que mistura tudo o que foi treinado. Faça dele uma quarta rodada na mesma tela do jogo, com as mesmas funções das fases: só mudam o título e a comemoração maior no fim.',
+      revisar: () => 'Na tela final, a lista do que foi errado, cada item com a explicação certa, e um botão Treinar os erros, que joga só esses de novo na mesma tela e com as mesmas funções das fases.',
       chances: () => '3 chances (corações) por fase; sem chances, a fase recomeça com uma dica, sem perder as fases já vencidas.',
       sequencia: () => 'Uma sequência de acertos: a cada 3 seguidos, uma estrela bônus e uma comemoração curta.',
       dica: ({ infantil }) => !infantil && 'Um botão Dica em cada desafio, que dá uma pista sem entregar a resposta e custa meia estrela.',
@@ -720,8 +724,8 @@
         pecas.length && secao('O que deixa o jogo divertido', pecas),
         secao(`Estilo visual: ${estilo.nome}`, [
           `O visual é ${estilo.frase}.`,
-          'Use exatamente este bloco no começo do <style>, sem mudar as cores, a fonte nem as regras:',
           adult && 'Visual adulto e respeitoso: nada de bichinhos, tom infantil ou elogio exagerado.',
+          'Use exatamente este bloco no começo do <style>, sem mudar as cores, a fonte nem as regras:',
         ]) + '\n```css\n' + window.ESTILOS.css(estilo) + '\n```\n' + secao('Como usar o estilo', [
           estilo.fonte && `Ponha no <head> o <link rel="stylesheet" href="${estilo.fonte}">. Sem internet, o jogo usa as fontes de reserva do bloco.`,
           'Use .cartao nas telas, .certo e .errado no retorno, e as variáveis do bloco (var(--destaque), var(--raio)) no resto do CSS.',
@@ -750,6 +754,8 @@
         ]) + '\n```html\n' + modelo.esqueleto + '\n```\n' + secao('Outros jogos-modelo', [`Todos os jogos-modelo, prontos para jogar: ${window.MODELOS.pagina}`]),
         secao('Antes de entregar', [
           'Jogue de cabeça do começo ao fim: confira cada resposta e cada conta, se todo botão funciona e se não sobrou erro no console.',
+          'Siga de cabeça o caminho dos botões: Jogar, cada fase, a passagem de uma fase para a outra, o desafio final, a tela final, o Treinar os erros e o Jogar de novo. Cada botão leva à tela seguinte, nenhum volta para uma fase já vencida, e o que controla a rodada (a fase, a pergunta, se já respondeu) volta ao começo quando uma rodada nova começa.',
+          'Os textos entre as fases falam da fase que acabou e da que vem, sem chamar de última uma fase que ainda não é.',
           'Escreva tudo em português do Brasil, com acentos.',
           paraApi ? 'Responda só com o arquivo HTML completo, num único bloco de código html, sem nada antes ou depois.' : 'Mostre o código completo num bloco de código HTML, sem criar arquivo para baixar. No fim, liste em poucas linhas o que você mudou.',
         ]),
@@ -1616,6 +1622,11 @@
     $('#quality-copy').addEventListener('click', async () => {
       const button = $('#quality-copy');
       flash(button, await copyText(qualityCurrent) ? 'Padrão copiado!' : 'Não deu para copiar');
+    });
+    // No teste de 10/11 no ChatGPT, os jogos que travaram tinham uma posição ou um "já respondeu" que não voltava ao começo
+    const TRAVOU = 'O jogo travou: [diga onde, por exemplo: depois da segunda pergunta da fase 1, ele foi direto para a tela final]. Encontre o erro e corrija. Confira o que guarda a fase, a pergunta e se já respondeu: cada um volta ao começo quando começa uma fase nova, o desafio final e o treino. Depois siga de cabeça todo o caminho dos botões, do Jogar ao Jogar de novo, e mostre o código completo corrigido num bloco de código HTML.';
+    $('#travou-copy').addEventListener('click', async () => {
+      flash($('#travou-copy'), await copyText(TRAVOU) ? 'Mensagem copiada!' : 'Não deu para copiar');
     });
     // O jogo vem como um arquivo HTML inteiro, às vezes dentro de um bloco de código. Sem o </html> no fim, ele veio cortado
     const extrairHTML = (texto) => {

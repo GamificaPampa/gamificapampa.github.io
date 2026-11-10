@@ -276,6 +276,14 @@ const FASES = [
 </html>`,
     },
   ];
+  // O caminho das telas vai escrito em todo esqueleto: no teste de 10/11 no ChatGPT, três dos quatro jogos travaram
+  // porque a posição da pergunta ou o "já respondeu" não voltavam ao começo numa fase nova, no desafio ou no treino
+  const FLUXO = `// O caminho das telas, igual em todo jogo:
+// comecar(): fase = 0, pergunta = 0, erros = [], acertos = 0, e mostra a primeira pergunta
+// avancar(): pergunta += 1; se a fase acabou, fase += 1 e pergunta = 0 (sem zerar, o jogo trava na fase seguinte)
+// cada rodada nova (fase, desafio final ou Treinar os erros) começa com "já respondeu" = falso e os botões ligados`;
+  for (const modelo of MODELOS) modelo.esqueleto = modelo.esqueleto.replace('</script>', `${FLUXO}
+</script>`);
   const paraTurma = (turma) => MODELOS.find((modelo) => modelo.turmas.includes(turma)) || MODELOS[1];
   // O tipo de jogo escolhido na máquina vale mais que a turma: "jogo da memória" leva à Memória das Frações
   const paraJeito = (jeito) => {
