@@ -66,6 +66,13 @@
     .ideas { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; color: var(--soft); font-weight: 600; font-size: 15px; }
     .ideas button { min-height: 40px; padding: 2px 14px; background: rgb(255 255 255 / .5); color: var(--ink); border: 3px dashed var(--ink); border-radius: 999px; font: 600 15px var(--font); cursor: pointer; }
     .ideas button:hover { background: var(--white); border-style: solid; }
+    .ideas button.epoca { background: #fff1a8; border-style: solid; }
+    .parecidos { margin: 0; font-weight: 600; font-size: 15px; }
+    .parecidos a { color: inherit; text-decoration: underline; text-underline-offset: 3px; }
+    .efeitos { width: 100%; padding: 10px 14px; border: 2px dashed currentColor; border-radius: 14px; font-size: 15px; }
+    .efeitos ul { margin: 6px 0 0; padding-left: 20px; }
+    .efeitos li + li { margin-top: 4px; }
+    .ideas.depois button { background: var(--white); border-style: solid; }
     .ideas button.sugestao { background: #e3d4ff; border-style: solid; text-align: left; }
     .privacy { display: flex; align-items: flex-start; gap: 10px; width: 100%; padding: 12px 14px; background: #ffe3ec; border: 3px solid var(--pink); border-radius: 16px; font-weight: 600; font-size: 15px; }
     .privacy { align-items: center; }
@@ -307,6 +314,10 @@
             <label class="chip"><input type="radio" name="aulas" value="1"><span>1 aula</span></label>
             <label class="chip"><input type="radio" name="aulas" value="3"><span>3 aulas, em sequência</span></label>
           </div>
+          <div class="linha" id="jeito-linha" hidden>
+            <span class="step__aviso" id="jeito-pergunta">De qual jeito?</span>
+            <span id="jeitos" style="display: contents"></span>
+          </div>
         </fieldset>
         <fieldset class="step" id="estilo-step" style="--c: #ffd23f" hidden>
           <legend>Com qual visual? <span class="step__note">O jogo sai com estas cores e esta letra</span></legend>
@@ -317,6 +328,8 @@
           <label class="step__title" for="tema"><span class="step__num">4</span><span id="tema-pergunta">Sobre qual tema?</span></label>
           <input class="theme" id="tema" name="tema" maxlength="80" autocomplete="off" placeholder="Escreva o tema da aula">
           <div class="ideas" id="ideas"></div>
+          <div class="ideas" id="epoca" hidden></div>
+          <p class="parecidos" id="parecidos" hidden><a id="parecidos-link" target="_blank" rel="noopener"></a></p>
           <p class="privacy"><svg width="38" height="38" aria-hidden="true"><use href="#i-queroquero"/></svg>Nunca escreva o nome ou dados dos alunos. Descreva a turma, não as pessoas.</p>
         </div>
 
@@ -365,6 +378,7 @@
               <label class="chip"><input type="checkbox" name="necessidade" value="auditiva"><span>Deficiência auditiva</span></label>
               <label class="chip"><input type="checkbox" name="necessidade" value="altas"><span>Altas habilidades</span></label>
               <p class="privacy"><svg width="38" height="38" aria-hidden="true"><use href="#i-queroquero"/></svg>Marque só a necessidade. Nunca escreva o nome nem a turma de quem tem.</p>
+              <div class="efeitos" id="efeitos" hidden><b>O que entra no prompt:</b><ul id="efeitos-lista"></ul></div>
             </fieldset>
             <div class="step">
               <label class="step__title" for="algo-mais">Algo mais que a IA precisa saber?</label>
@@ -424,6 +438,11 @@
           <h3><b>2</b>Peça mais</h3>
           <p>Depois da primeira resposta, mande uma destas na mesma conversa. A primeira confere e corrige o material; as outras fazem versões novas.</p>
           <ul class="mais" id="mais-lista"></ul>
+        </div>
+        <div class="quality" id="depois" hidden>
+          <h3><b>3</b>E depois?</h3>
+          <p>Crie o próximo material com a mesma turma e o mesmo tema. A máquina troca só o tipo.</p>
+          <div class="ideas depois" id="depois-lista"></div>
         </div>
       </section>
     </div>
@@ -1014,6 +1033,8 @@
       if (formato) formato += ' Responda em português do Brasil.';
       // A Tarefa pede o objetivo no topo: o que a turma vai conseguir fazer depois
       let tarefa = kind && theme ? kind.tarefa(theme, infantil, adult) : '';
+      const jeito = String(data.get('jeito') || '');
+      if (tarefa && jeito && JEITOS[tipoValor]) tarefa += JEITOS[tipoValor].frase(jeito);
       if (tarefa && kind.objetivo !== false) {
         tarefa += objetivo
           ? ` O objetivo é que ${infantil ? 'as crianças consigam' : adult ? 'os estudantes consigam' : 'a turma consiga'} ${objetivo}; escreva esse objetivo no topo.`
@@ -1047,6 +1068,162 @@
       eja1: ['ler', 'escrever', 'calcular', 'comparar', 'usar no dia a dia'],
       eja2: ['calcular', 'interpretar', 'comparar', 'argumentar', 'usar no dia a dia'],
     };
+    // Item 1 (09/11): o tema escrito à mão também acha a sugestão parecida. Compara as raízes (5 primeiras letras, sem
+    // acento) do tema com as do tema e do objetivo de cada sugestão: "Separação Silábica" acha "as sílabas"
+    const dobrar = (texto) => String(texto || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
+    const VAZIAS = new Set(['a', 'o', 'as', 'os', 'de', 'da', 'do', 'das', 'dos', 'e', 'em', 'no', 'na', 'nos', 'nas', 'um', 'uma', 'com', 'para', 'por', 'sobre', 'ao', 'aos', 'que']);
+    const raizes = (texto) => dobrar(texto).split(/[^a-z0-9]+/).filter((p) => p.length > 2 && !VAZIAS.has(p)).map((p) => p.slice(0, 5));
+    const parecida = (tema, lista) => {
+      const procura = raizes(tema);
+      if (!procura.length) return null;
+      let melhor = null;
+      let nota = 0;
+      for (const sugestao of lista) {
+        const doTema = new Set(raizes(sugestao.tema));
+        const doObjetivo = new Set(raizes(sugestao.objetivo));
+        const pontos = procura.reduce((soma, raiz) => soma + (doTema.has(raiz) ? 2 : doObjetivo.has(raiz) ? 1 : 0), 0);
+        if (pontos > nota) { nota = pontos; melhor = sugestao; }
+      }
+      return nota >= 2 ? melhor : null;
+    };
+    const daFaixaToda = (turma) => Object.values(window.IDEIAS || {}).flatMap((materia) => materia[FAIXAS[turma]] || []);
+
+    // Item 2: o tipo também sugere. No jogo, a mecânica; na atividade, os exercícios. Tudo pela faixa da turma
+    const faixaLarga = (turma) => { const faixa = FAIXAS[turma] || ''; return faixa.startsWith('finais') ? 'finais' : faixa.startsWith('eja') ? 'eja' : faixa; };
+    const JEITOS = {
+      jogo: {
+        pergunta: 'Que tipo de jogo?',
+        frase: (jeito) => ` O jogo é de ${jeito}.`,
+        infantil: ['memória com figuras', 'arrastar cada figura para o lugar certo', 'tocar no que a voz pedir'],
+        anos12: ['memória com figuras e palavras', 'arrastar e soltar', 'corrida de perguntas com estrelas'],
+        anos35: ['corrida de perguntas com fases', 'caça ao tesouro com pistas', 'arrastar para classificar'],
+        finais: ['desafio com tempo e níveis', 'escolhas com consequências', 'caça ao erro'],
+        medio: ['desafio com tempo e níveis', 'estudo de caso com escolhas', 'simulação com dados'],
+        eja: ['situações do dia a dia com escolhas', 'desafio de contas com tempo', 'perguntas e respostas em níveis'],
+      },
+      atividade: {
+        pergunta: 'Com quais exercícios?',
+        frase: (jeito) => ` Use exercícios de ${jeito}.`,
+        infantil: ['ligar', 'circular e pintar', 'contar e marcar'],
+        anos12: ['ligar e completar', 'caça-palavras', 'ordenar figuras'],
+        anos35: ['cruzadinha', 'problemas com desenho', 'verdadeiro ou falso com correção'],
+        finais: ['problemas em etapas', 'tabela para completar', 'leitura e análise de texto curto'],
+        medio: ['questões com texto-base', 'mapa conceitual para completar', 'estudo de caso'],
+        eja: ['situações do dia a dia', 'documento para preencher', 'contas do mercado e da casa'],
+      },
+    };
+    let jeitosAgora = '';
+    const mostrarJeitos = (tipo, turma) => {
+      const grupo = JEITOS[tipo];
+      const lista = grupo && grupo[faixaLarga(turma)];
+      $('#jeito-linha').hidden = !lista;
+      const chave = lista ? `${tipo}|${faixaLarga(turma)}` : '';
+      if (chave === jeitosAgora) return;
+      jeitosAgora = chave;
+      if (!lista) { $('#jeitos').replaceChildren(); return; }
+      $('#jeito-pergunta').textContent = grupo.pergunta;
+      const chip = (valor, texto) => {
+        const rotulo = Object.assign(document.createElement('label'), { className: 'chip' });
+        rotulo.append(Object.assign(document.createElement('input'), { type: 'radio', name: 'jeito', value: valor, checked: !valor }), Object.assign(document.createElement('span'), { textContent: texto }));
+        return rotulo;
+      };
+      $('#jeitos').replaceChildren(chip('', 'A IA escolhe'), ...lista.map((jeito) => chip(jeito, jeito)));
+    };
+
+    // Item 3: a data que está chegando (até 45 dias) vira uma sugestão de tema
+    const DATAS = [[3, 22, 'o Dia Mundial da Água'], [4, 19, 'o Dia dos Povos Indígenas'], [4, 22, 'o Dia da Terra'], [4, 23, 'o Dia Mundial do Livro'], [5, 1, 'o Dia do Trabalhador'], [5, 13, 'a abolição da escravatura'], [6, 5, 'o Dia do Meio Ambiente'], [8, 22, 'o Dia do Folclore'], [9, 7, 'a Independência do Brasil'], [9, 20, 'a Semana Farroupilha'], [9, 21, 'o Dia da Árvore'], [10, 12, 'o Dia das Crianças'], [11, 20, 'o Dia da Consciência Negra']];
+    const proximaData = (hoje = new Date()) => {
+      const inicio = new Date(hoje.getFullYear(), hoje.getMonth(), hoje.getDate());
+      const datas = DATAS.flatMap(([mes, dia, tema]) => [0, 1].map((ano) => ({ quando: new Date(inicio.getFullYear() + ano, mes - 1, dia), tema, dia, mes })));
+      const futuras = datas.filter((d) => d.quando >= inicio && (d.quando - inicio) / 86400000 <= 45).sort((a, b) => a.quando - b.quando);
+      return futuras[0] || null;
+    };
+    const EPOCA = proximaData();
+    const mostrarEpoca = (temIdeiasProprias) => {
+      const caixa = $('#epoca');
+      caixa.hidden = !EPOCA || temIdeiasProprias;
+      if (caixa.hidden || caixa.childElementCount) return;
+      const botao = Object.assign(document.createElement('button'), { type: 'button', className: 'epoca', textContent: `${EPOCA.tema} (${String(EPOCA.dia).padStart(2, '0')}/${String(EPOCA.mes).padStart(2, '0')})` });
+      botao.addEventListener('click', () => { form.elements.tema.value = EPOCA.tema; update(); });
+      caixa.replaceChildren(Object.assign(document.createElement('span'), { textContent: 'Da época:' }), botao);
+    };
+
+    // Item 5: prompts parecidos da Biblioteca. A lista vem da própria página da Biblioteca, lida uma vez,
+    // só com título, etapa e tarefa (sem rodar o código dela)
+    let biblioteca = null;
+    let lendoBiblioteca = false;
+    const lerBiblioteca = () => {
+      if (biblioteca || lendoBiblioteca) return;
+      lendoBiblioteca = true;
+      fetch('/recursos-pedagogicos/professores/oficina-prompts/biblioteca.html')
+        .then((resposta) => (resposta.ok ? resposta.text() : ''))
+        .then((html) => {
+          const bloco = (html.match(/const PROMPTS = \[([\s\S]*?)\r?\n\]/) || [])[1] || '';
+          biblioteca = [...bloco.matchAll(/title:\s*"([^"]*)"[\s\S]*?stage:\s*"([^"]*)"[\s\S]*?task:\s*"([^"]*)"/g)].map(([, titulo, etapa, tarefa]) => ({ etapa, raizes: new Set(raizes(`${titulo} ${tarefa}`)) }));
+        })
+        .catch(() => { biblioteca = []; })
+        .finally(() => update());
+    };
+    const mostrarParecidos = (etapa, tema) => {
+      const procura = raizes(tema);
+      if (!procura.length || !['infantil', 'iniciais', 'finais', 'medio', 'eja'].includes(etapa)) { $('#parecidos').hidden = true; return; }
+      if (!biblioteca) { lerBiblioteca(); $('#parecidos').hidden = true; return; }
+      const achadas = procura.filter((raiz) => biblioteca.some((p) => p.raizes.has(raiz)));
+      const total = achadas.length ? biblioteca.filter((p) => p.etapa === etapa && achadas.every((raiz) => p.raizes.has(raiz))).length : 0;
+      $('#parecidos').hidden = !total;
+      if (!total) return;
+      const link = $('#parecidos-link');
+      link.textContent = `${total} ${total === 1 ? 'prompt parecido que deu certo' : 'prompts parecidos que deram certo'}, na Biblioteca`;
+      link.href = `/recursos-pedagogicos/professores/oficina-prompts/biblioteca.html?etapa=${etapa}&busca=${encodeURIComponent(achadas.join(' '))}`;
+    };
+
+    // Item 4: algumas escolhas já vêm marcadas pela turma, e o professor troca se quiser. Só o que a máquina marcou
+    // sozinha sai quando a turma muda
+    let turmaDosPadroes = null;
+    const marcadosSozinhos = new Map();
+    const aplicarPadroes = () => {
+      // A turma lida agora, porque a etapa da Educação Infantil marca a turma no meio do update
+      const turma = new FormData(form).get('turma') || '';
+      if (turmaDosPadroes === null) { turmaDosPadroes = turma; return; }
+      if (turma === turmaDosPadroes) return;
+      turmaDosPadroes = turma;
+      const dados = new FormData(form);
+      for (const [nome, valor] of marcadosSozinhos) if (dados.get(nome) === valor) desmarcar(nome);
+      marcadosSozinhos.clear();
+      const padroes = turma === 'infantil' ? { tempo: '15', uso: 'projetado' } : {};
+      for (const [nome, valor] of Object.entries(padroes)) {
+        if (new FormData(form).get(nome)) continue;
+        marcar(nome, valor);
+        marcadosSozinhos.set(nome, valor);
+      }
+    };
+
+    // Item 7: o que cada necessidade marcada põe no prompt, para o professor ver o efeito e aprender a pedir
+    const mostrarEfeitos = () => {
+      const marcadas = new FormData(form).getAll('necessidade').filter((id) => NECESSIDADES[id]);
+      $('#efeitos').hidden = !marcadas.length;
+      $('#efeitos-lista').replaceChildren(...marcadas.map((id) => Object.assign(document.createElement('li'), { textContent: `${NECESSIDADES[id][0].charAt(0).toUpperCase()}${NECESSIDADES[id][0].slice(1)}: ${NECESSIDADES[id][1]}.` })));
+    };
+
+    // Item 6: com o prompt pronto, o próximo material sobre o mesmo tema, trocando só o tipo
+    const PROXIMOS = [['jogo', 'Agora um jogo'], ['quiz', 'Agora um quiz'], ['atividade', 'Agora uma atividade para imprimir'], ['plano', 'Agora um plano de aula'], ['historia', 'Agora uma história']];
+    let depoisAgora = '';
+    const mostrarDepois = (pronto, tipoValor) => {
+      $('#depois').hidden = !pronto;
+      if (!pronto || depoisAgora === tipoValor) return;
+      depoisAgora = tipoValor;
+      $('#depois-lista').replaceChildren(...PROXIMOS.filter(([tipo]) => tipo !== tipoValor).map(([tipo, texto]) => {
+        const botao = Object.assign(document.createElement('button'), { type: 'button', textContent: texto });
+        botao.addEventListener('click', () => {
+          marcar('tipo', tipo);
+          update();
+          $('#console').scrollIntoView({ behavior: reducedMotion ? 'auto' : 'smooth', block: 'start' });
+          bubble.textContent = 'Troquei o tipo e mantive a turma e o tema. Confira as peças e copie de novo.';
+        });
+        return botao;
+      }));
+    };
+
     const ideiasDaTabela = (materia, subject, turma) => {
       const tabela = window.IDEIAS || {};
       const faixa = FAIXAS[turma];
@@ -1151,7 +1328,7 @@
       $('#aulas-linha').hidden = tipo !== 'plano';
       // O estilo só aparece no jogo; sem escolha, o da turma: Caderno, sóbrio, na EJA, e GamificaPampa nas outras
       $('#estilo-step').hidden = tipo !== 'jogo';
-      if (tipo === 'jogo' && !data.get('estilo')) marcar('estilo', /^eja/.test(new FormData(form).get('turma') || '') ? 'caderno' : 'gamificapampa');
+      if (tipo === 'jogo' && !data.get('estilo')) marcar('estilo', /^(eja|em)/.test(new FormData(form).get('turma') || '') ? 'caderno' : 'gamificapampa');
       // O quiz diz quando vira o do Enem ou o do Encceja
       const quiz = form.querySelector('[name="tipo"][value="quiz"] + span');
       const turmaAgora = new FormData(form).get('turma');
@@ -1162,7 +1339,7 @@
     let lastIdeas;
     const update = () => {
       const etapaEscolhida = mostrarEscolhas();
-      const { text, kind, turma, subject, label, adult, theme, leitura, local, estilo, material, materiaValor } = read();
+      const { text, kind, turma, subject, label, adult, theme, leitura, local, estilo, material, materiaValor, etapa, tipoValor } = read();
       // A segunda mensagem aparece só no jogo, que é o pedido que vira HTML
       const isGame = kind === kinds.jogo;
       $('#quality').hidden = !isGame;
@@ -1244,12 +1421,18 @@
       // O objetivo e o erro comum seguem o tema: o da sugestão escolhida ou, sem ela, o da primeira da lista
       const sugestoes = ideas.length && typeof ideas[0] === 'object' ? ideas : [];
       const temaAgora = theme.toLowerCase();
-      const ideia = sugestoes.find((s) => s.tema.toLowerCase() === temaAgora) || null;
+      const ideia = sugestoes.find((s) => s.tema.toLowerCase() === temaAgora) || parecida(theme, sugestoes) || parecida(theme, daFaixaToda(turma));
       const exemplo = ideia || sugestoes[0];
       form.elements.objetivo.placeholder = `Por exemplo: ${exemplo ? exemplo.objetivo : 'comparar frações com o mesmo denominador'}`;
       form.elements.sabe.placeholder = `Por exemplo: ${exemplo ? `muitos ${exemplo.erro}` : 'já dividem em partes iguais, mas acham que 1/4 é maior que 1/3'}`;
       mostrarVerbos(FAIXAS[turma], ideia);
       mostrarErroComum(ideia);
+      mostrarEpoca(Boolean(kind && kind.ideas));
+      mostrarParecidos(etapa, theme);
+      mostrarJeitos(tipoValor, turma);
+      aplicarPadroes();
+      mostrarEfeitos();
+      mostrarDepois(Boolean(current.text), tipoValor);
       // A rubrica pergunta pelo trabalho a avaliar, e não pelo tema da aula
       const infantil = turma === 'infantil';
       $('#tema-pergunta').textContent = (kind && ((infantil && kind.perguntaInfantil) || kind.pergunta)) || 'Sobre qual tema?';

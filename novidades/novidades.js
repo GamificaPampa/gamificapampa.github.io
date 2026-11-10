@@ -17,6 +17,10 @@
 //     links: [['Jogar', '/recursos-pedagogicos/criancas/pasta-do-jogo/', 'jogar']] },
 // Sem dado de aluno, sem detalhe técnico: só o que muda para o professor.
 window.NOVIDADES = [
+  { data: '2026-11-09', titulo: 'A Máquina sugere pela sua turma', texto: 'Os temas, o objetivo, o erro comum e os verbos mudam com a turma e a matéria, e o tema escrito à mão também ganha sugestão. No jogo e na atividade, ela sugere o tipo de jogo e de exercício; com o prompt pronto, oferece o próximo material sobre o mesmo tema.',
+    icone: 'estrela', cor: 'yellow', links: [
+      ['Máquina de prompts', '/maquina/'],
+    ] },
   { data: '2026-11-09', titulo: 'Prévia antes de publicar e necessidades mais finas', texto: 'No Publicar meu jogo, o código cola com um toque e o jogo aparece numa prévia antes de ir para o ar. Na Máquina de prompts, dá para marcar só desatenção, só hiperatividade e o nível de apoio no TEA.',
     icone: 'controle', cor: 'mint', links: [
       ['Publicar meu jogo', '/publicador/', 'compartilhar'],
