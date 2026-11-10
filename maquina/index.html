@@ -66,6 +66,7 @@
     .ideas { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; color: var(--soft); font-weight: 600; font-size: 15px; }
     .ideas button { min-height: 40px; padding: 2px 14px; background: rgb(255 255 255 / .5); color: var(--ink); border: 3px dashed var(--ink); border-radius: 999px; font: 600 15px var(--font); cursor: pointer; }
     .ideas button:hover { background: var(--white); border-style: solid; }
+    .ideas button.sugestao { background: #e3d4ff; border-style: solid; text-align: left; }
     .privacy { display: flex; align-items: flex-start; gap: 10px; width: 100%; padding: 12px 14px; background: #ffe3ec; border: 3px solid var(--pink); border-radius: 16px; font-weight: 600; font-size: 15px; }
     .privacy { align-items: center; }
     .privacy svg { flex: none; }
@@ -202,6 +203,7 @@
 <script src="/identidade-visual/js/copiar.js"></script>
 <script src="estilos.js"></script>
 <script src="modelos.js"></script>
+<script src="ideias.js"></script>
 </head>
 <body class="ceu">
   <svg class="sprite" aria-hidden="true">
@@ -324,11 +326,12 @@
             <div class="step">
               <label class="step__title" for="objetivo">O que a turma deve conseguir fazer no fim?</label>
               <input class="theme" id="objetivo" name="objetivo" maxlength="120" autocomplete="off" placeholder="Por exemplo: comparar frações com o mesmo denominador">
-              <div class="ideas" id="verbos"><span>Comece com:</span><button type="button">identificar</button><button type="button">comparar</button><button type="button">explicar</button><button type="button">resolver</button><button type="button">criar</button></div>
+              <div class="ideas" id="verbos"></div>
             </div>
             <div class="step">
               <label class="step__title" for="sabe">O que a turma já sabe e onde costuma errar?</label>
               <textarea class="theme" id="sabe" name="sabe" maxlength="240" rows="2" placeholder="Por exemplo: já dividem em partes iguais, mas acham que 1/4 é maior que 1/3"></textarea>
+              <div class="ideas" id="erro-ideia" hidden></div>
               <p class="privacy"><svg width="38" height="38" aria-hidden="true"><use href="#i-queroquero"/></svg>Descreva o grupo, nunca uma pessoa. Nada de nome, laudo ou dado de aluno.</p>
             </div>
             <fieldset class="step">
@@ -1031,22 +1034,74 @@
 
     // Ideas for the theme follow the chosen subject, and in the EJA they come from adult life.
     // A kind with its own ideas (the rubric, whose theme is the work to assess) uses them instead.
-    const ideasFor = (subject, adult, kind, turma) => {
+    // Pedido do Arthur em 09/11: as sugestões mudam com a turma e a matéria. Elas vêm do ideias.js, por faixa da turma,
+    // cada uma com o objetivo e o erro comum da idade; sem a tabela (turma própria), ficam as listas daqui
+    const FAIXAS = { infantil: 'infantil', 1: 'anos12', 2: 'anos12', 3: 'anos35', 4: 'anos35', 5: 'anos35', 6: 'finais67', 7: 'finais67', 8: 'finais89', 9: 'finais89', em1: 'medio', em2: 'medio', em3: 'medio', eja1: 'eja1', eja2: 'eja2', eja3: 'eja2' };
+    const VERBOS = {
+      infantil: ['reconhecer', 'nomear', 'contar', 'relacionar', 'criar'],
+      anos12: ['identificar', 'ler', 'contar', 'comparar', 'escrever'],
+      anos35: ['identificar', 'comparar', 'explicar', 'resolver', 'criar'],
+      finais67: ['explicar', 'comparar', 'resolver', 'aplicar', 'criar'],
+      finais89: ['explicar', 'comparar', 'resolver', 'argumentar', 'aplicar'],
+      medio: ['analisar', 'interpretar', 'argumentar', 'relacionar', 'resolver'],
+      eja1: ['ler', 'escrever', 'calcular', 'comparar', 'usar no dia a dia'],
+      eja2: ['calcular', 'interpretar', 'comparar', 'argumentar', 'usar no dia a dia'],
+    };
+    const ideiasDaTabela = (materia, subject, turma) => {
+      const tabela = window.IDEIAS || {};
+      const faixa = FAIXAS[turma];
+      const chave = !materia ? 'geral' : tabela[materia] ? materia : subject && subject.key && tabela[subject.key] ? subject.key : '';
+      return (faixa && chave && tabela[chave] && tabela[chave][faixa]) || null;
+    };
+    const ideasFor = (subject, adult, kind, turma, materia) => {
       if (kind && kind.ideas) {
         if (turma === 'infantil') return kind.ideasInfantil || kind.ideas;
         if (adult) return kind.ideasAdulto || kind.ideas;
         return (['1', '2', '3', '4', '5'].includes(turma) && kind.ideasIniciais) || kind.ideas;
       }
+      const daTabela = ideiasDaTabela(materia, subject, turma);
+      if (daTabela) return daTabela;
       if (!adult) return subject ? subject.ideas : anyIdeas;
       const key = subject && (subject.key || Object.keys(subjects).find((id) => subjects[id] === subject));
       return adultIdeas[key] || (subject ? subject.ideas : adultIdeas.any);
+    };
+    // Os verbos da idade e, quando o tema é uma das sugestões, o objetivo e o erro comum dela, para usar com um toque
+    let verbosAgora = '';
+    const mostrarVerbos = (faixa, ideia) => {
+      const chave = `${faixa}|${ideia ? ideia.tema : ''}`;
+      if (chave === verbosAgora) return;
+      verbosAgora = chave;
+      const caixa = $('#verbos');
+      const botoes = [];
+      if (ideia) {
+        const sugestao = Object.assign(document.createElement('button'), { type: 'button', className: 'sugestao', textContent: `Usar: ${ideia.objetivo}` });
+        sugestao.addEventListener('click', () => { form.elements.objetivo.value = ideia.objetivo; update(); });
+        botoes.push(sugestao);
+      }
+      for (const verbo of VERBOS[faixa] || VERBOS.anos35) {
+        const botao = Object.assign(document.createElement('button'), { type: 'button', textContent: verbo });
+        botao.addEventListener('click', () => { form.elements.objetivo.value = `${verbo} `; form.elements.objetivo.focus(); update(); });
+        botoes.push(botao);
+      }
+      caixa.replaceChildren(Object.assign(document.createElement('span'), { textContent: ideia ? 'Sugestão:' : 'Comece com:' }), ...botoes);
+    };
+    let erroAgora = '';
+    const mostrarErroComum = (ideia) => {
+      const caixa = $('#erro-ideia');
+      caixa.hidden = !ideia;
+      if (!ideia || erroAgora === ideia.erro) return;
+      erroAgora = ideia.erro;
+      const botao = Object.assign(document.createElement('button'), { type: 'button', className: 'sugestao', textContent: `Usar: muitos ${ideia.erro}` });
+      botao.addEventListener('click', () => { form.elements.sabe.value = `Muitos ${ideia.erro}`; update(); });
+      caixa.replaceChildren(Object.assign(document.createElement('span'), { textContent: 'Erro comum:' }), botao);
     };
     const showIdeas = (ideas) => {
       const box = $('#ideas');
       box.replaceChildren(Object.assign(document.createElement('span'), { textContent: 'Ideias:' }));
       for (const idea of ideas) {
-        const button = Object.assign(document.createElement('button'), { type: 'button', textContent: idea });
-        button.addEventListener('click', () => { form.elements.tema.value = idea; update(); });
+        const tema = typeof idea === 'string' ? idea : idea.tema;
+        const button = Object.assign(document.createElement('button'), { type: 'button', textContent: tema });
+        button.addEventListener('click', () => { form.elements.tema.value = tema; update(); });
         box.append(button);
       }
     };
@@ -1107,7 +1162,7 @@
     let lastIdeas;
     const update = () => {
       const etapaEscolhida = mostrarEscolhas();
-      const { text, kind, turma, subject, label, adult, theme, leitura, local, estilo, material } = read();
+      const { text, kind, turma, subject, label, adult, theme, leitura, local, estilo, material, materiaValor } = read();
       // A segunda mensagem aparece só no jogo, que é o pedido que vira HTML
       const isGame = kind === kinds.jogo;
       $('#quality').hidden = !isGame;
@@ -1184,8 +1239,17 @@
       const subjectStep = $('#subject-step');
       subjectStep.disabled = turma === 'infantil';
       $('#subject-note').textContent = turma === 'infantil' ? 'Na Educação Infantil não precisa' : etapaEscolhida ? 'Se quiser' : 'Escolha a turma primeiro';
-      const ideas = ideasFor(subject, adult, kind, turma);
+      const ideas = ideasFor(subject, adult, kind, turma, materiaValor);
       if (ideas !== lastIdeas) { lastIdeas = ideas; showIdeas(ideas); }
+      // O objetivo e o erro comum seguem o tema: o da sugestão escolhida ou, sem ela, o da primeira da lista
+      const sugestoes = ideas.length && typeof ideas[0] === 'object' ? ideas : [];
+      const temaAgora = theme.toLowerCase();
+      const ideia = sugestoes.find((s) => s.tema.toLowerCase() === temaAgora) || null;
+      const exemplo = ideia || sugestoes[0];
+      form.elements.objetivo.placeholder = `Por exemplo: ${exemplo ? exemplo.objetivo : 'comparar frações com o mesmo denominador'}`;
+      form.elements.sabe.placeholder = `Por exemplo: ${exemplo ? `muitos ${exemplo.erro}` : 'já dividem em partes iguais, mas acham que 1/4 é maior que 1/3'}`;
+      mostrarVerbos(FAIXAS[turma], ideia);
+      mostrarErroComum(ideia);
       // A rubrica pergunta pelo trabalho a avaliar, e não pelo tema da aula
       const infantil = turma === 'infantil';
       $('#tema-pergunta').textContent = (kind && ((infantil && kind.perguntaInfantil) || kind.pergunta)) || 'Sobre qual tema?';
@@ -1337,15 +1401,6 @@
       flash($('#guardar'), gravarMeus(lista) ? 'Guardado!' : 'Não deu para guardar');
       renderRecent();
     });
-    // Os verbos começam o objetivo; o professor completa
-    for (const verbo of document.querySelectorAll('#verbos button')) {
-      verbo.addEventListener('click', () => {
-        const campo = form.elements.objetivo;
-        campo.value = `${verbo.textContent} `;
-        campo.focus();
-        update();
-      });
-    }
     $('#quality-copy').addEventListener('click', async () => {
       const button = $('#quality-copy');
       flash(button, await copyText(qualityCurrent) ? 'Padrão copiado!' : 'Não deu para copiar');
