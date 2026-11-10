@@ -17,6 +17,8 @@
 //     links: [['Jogar', '/recursos-pedagogicos/criancas/pasta-do-jogo/', 'jogar']] },
 // Sem dado de aluno, sem detalhe técnico: só o que muda para o professor.
 window.NOVIDADES = [
+  { data: '2026-11-09', titulo: 'Jogos com mais jeitos de jogar', texto: 'Na Máquina, o jogo agora pode ser de memória, de separar em grupos, de fuga com cadeados ou uma história com escolhas, cada um com um jogo-modelo para a IA seguir. E você marca o que deixa o jogo mais divertido: missão, desafio final, chances, modo dupla e mais.', icone: 'controle', cor: 'pink',
+    links: [['Abrir a Máquina', '/maquina/', 'conhecer'], ['Ver os jogos-modelo', '/maquina/modelos/', 'jogar']] },
   { data: '2026-11-09', titulo: 'A Máquina sugere pela sua turma', texto: 'Os temas, o objetivo, o erro comum e os verbos mudam com a turma e a matéria, e o tema escrito à mão também ganha sugestão. No jogo e na atividade, ela sugere o tipo de jogo e de exercício; com o prompt pronto, oferece o próximo material sobre o mesmo tema.',
     icone: 'estrela', cor: 'yellow', links: [
       ['Máquina de prompts', '/maquina/'],
