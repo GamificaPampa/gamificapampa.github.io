@@ -17,6 +17,11 @@
 //     links: [['Jogar', '/recursos-pedagogicos/criancas/pasta-do-jogo/', 'jogar']] },
 // Sem dado de aluno, sem detalhe técnico: só o que muda para o professor.
 window.NOVIDADES = [
+  { data: '2026-11-09', titulo: 'Prévia antes de publicar e necessidades mais finas', texto: 'No Publicar meu jogo, o código cola com um toque e o jogo aparece numa prévia antes de ir para o ar. Na Máquina de prompts, dá para marcar só desatenção, só hiperatividade e o nível de apoio no TEA.',
+    icone: 'controle', cor: 'mint', links: [
+      ['Publicar meu jogo', '/publicador/', 'compartilhar'],
+      ['Máquina de prompts', '/maquina/'],
+    ] },
   { data: '2026-11-09', titulo: 'Ações nas escolas', texto: 'Uma página com as oficinas, aulas e visitas do projeto nas escolas de Alegrete, cada uma com o relato e as fotos, e uma galeria com tudo. A primeira é a oficina na Escola Tancredo Neves.', icone: 'computador', cor: 'mint',
     links: [['Ver as ações', '/acoes/', 'conhecer']] },
   { data: '2026-11-08', titulo: 'Tudo para imprimir', texto: 'Uma página só com tudo o que vai para o papel: roteiros, folhas de atividades, certificado, medalhas, mapas, a folha das famílias, o guia e o baralho, com o número de folhas de cada um.', icone: 'prancheta', cor: 'orange',

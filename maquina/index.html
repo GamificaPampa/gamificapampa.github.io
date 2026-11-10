@@ -350,10 +350,14 @@
               <label class="chip"><input type="checkbox" name="extra" value="curto"><span>Resposta curta</span></label>
             </fieldset>
             <fieldset class="step">
-              <legend>Na turma há alunos com:</legend>
+              <legend>Na turma há alunos com: <span class="step__note">TEA nível 1, 2 ou 3: pouco apoio, apoio substancial ou apoio muito substancial</span></legend>
               <label class="chip"><input type="checkbox" name="extra" value="leitura"><span>Dificuldade de leitura</span></label>
-              <label class="chip"><input type="checkbox" name="necessidade" value="tea"><span>TEA</span></label>
               <label class="chip"><input type="checkbox" name="necessidade" value="tdah"><span>TDAH</span></label>
+              <label class="chip"><input type="checkbox" name="necessidade" value="desatencao"><span>Só desatenção</span></label>
+              <label class="chip"><input type="checkbox" name="necessidade" value="hiperatividade"><span>Só hiperatividade</span></label>
+              <label class="chip" title="Precisa de pouco apoio"><input type="checkbox" name="necessidade" value="tea1"><span>TEA nível 1</span></label>
+              <label class="chip" title="Precisa de apoio substancial"><input type="checkbox" name="necessidade" value="tea2"><span>TEA nível 2</span></label>
+              <label class="chip" title="Precisa de apoio muito substancial"><input type="checkbox" name="necessidade" value="tea3"><span>TEA nível 3</span></label>
               <label class="chip"><input type="checkbox" name="necessidade" value="visual"><span>Deficiência visual</span></label>
               <label class="chip"><input type="checkbox" name="necessidade" value="auditiva"><span>Deficiência auditiva</span></label>
               <label class="chip"><input type="checkbox" name="necessidade" value="altas"><span>Altas habilidades</span></label>
@@ -806,8 +810,13 @@
     };
 
     const NECESSIDADES = {
-      tea: ['autismo (TEA)', 'instruções literais, uma de cada vez, e uma rotina previsível'],
-      tdah: ['TDAH', 'tarefas curtas, uma instrução por vez e pausas para se mexer'],
+      // Feedback dos professores em 09/11: separar a desatenção da hiperatividade e os níveis de suporte do TEA
+      tdah: ['TDAH, com desatenção e hiperatividade', 'tarefas curtas, uma instrução por vez, pouca informação por página e pausas para se mexer'],
+      desatencao: ['déficit de atenção, sem hiperatividade', 'uma instrução por vez, tarefas curtas com começo e fim claros, pouca informação por página e destaque no que é mais importante'],
+      hiperatividade: ['hiperatividade e impulsividade, sem déficit de atenção', 'tarefas curtas, chances de se mexer e participar, como levantar, manipular e falar, pausas combinadas e regras claras de quando é a sua vez'],
+      tea1: ['autismo (TEA) nível 1, que precisa de pouco apoio', 'instruções literais e claras, rotina previsível, aviso antes de cada mudança e apoio nas atividades em grupo'],
+      tea2: ['autismo (TEA) nível 2, que precisa de apoio substancial', 'passos curtos com apoio visual descrito em palavras, uma instrução de cada vez, linguagem simples e literal e poucos estímulos na página'],
+      tea3: ['autismo (TEA) nível 3, que precisa de apoio muito substancial', 'uma versão bem simples, com uma tarefa por vez, rotina visual passo a passo, escolha entre duas figuras e a opção de responder apontando'],
       visual: ['deficiência visual', 'letra grande, bom contraste e imagens descritas em palavras'],
       auditiva: ['deficiência auditiva', 'instruções escritas e apoio visual, sem depender de som'],
       altas: ['altas habilidades', 'um desafio extra para ir além'],
