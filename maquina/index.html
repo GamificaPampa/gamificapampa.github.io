@@ -449,12 +449,12 @@
           <button class="btn btn--small" type="button" id="travou-copy"><svg width="18" height="18" aria-hidden="true"><use href="#i-copy"/></svg>Copiar a mensagem do conserto</button>
         </div>
         <div class="quality" id="mais" hidden>
-          <h3><b>2</b>Peça mais</h3>
-          <p>Depois da primeira resposta, mande uma destas na mesma conversa. A primeira confere e corrige o material; as outras fazem versões novas.</p>
+          <h3><b id="mais-numero">2</b>Peça mais</h3>
+          <p id="mais-intro">Depois da primeira resposta, mande uma destas na mesma conversa. A primeira confere e corrige o material; as outras fazem versões novas.</p>
           <ul class="mais" id="mais-lista"></ul>
         </div>
         <div class="quality" id="depois" hidden>
-          <h3><b>3</b>E depois?</h3>
+          <h3><b id="depois-numero">3</b>E depois?</h3>
           <p>Crie o próximo material com a mesma turma e o mesmo tema. A máquina troca só o tipo.</p>
           <div class="ideas depois" id="depois-lista"></div>
         </div>
@@ -732,7 +732,9 @@
         ]),
         secao('Qualidade didática', [
           `No erro, uma frase que explica por que a resposta escolhida está errada, não só "errou".`,
-          'As respostas erradas vêm de erros comuns de verdade sobre o tema.',
+          // Na rubrica de 09/11, os jogos deixavam a certa sempre na mesma letra e traziam erradas absurdas ("neve o ano todo")
+          'As respostas erradas vêm de erros comuns de verdade sobre o tema e parecem possíveis para quem ainda não aprendeu; nada de opção absurda, que se descarta sem pensar.',
+          'Embaralhe as opções em cada pergunta e a cada partida, para a resposta certa não ficar sempre no mesmo lugar.',
           'Pelo menos metade das perguntas pede para usar o tema numa situação, não só lembrar um nome.',
           infantil ? 'As crianças ainda não leem: cada instrução e cada pergunta tem um botão Ouvir, que lê o texto com a voz do aparelho (speechSynthesis com lang pt-BR), e as respostas são figuras grandes.'
             : leitura && `Frases curtas e um botão Ouvir em cada pergunta, que lê o texto com a voz do aparelho (speechSynthesis com lang pt-BR), para ${adult ? 'quem' : 'o aluno que'} tem dificuldade de ler.`,
@@ -778,10 +780,16 @@
       atividadeHistoria: { nome: 'Atividade da história', texto: 'Agora crie uma atividade para imprimir com base nessa história, para a mesma turma.' },
       versaoB: { nome: 'Versão B da folha', texto: 'Faça uma versão B da folha, com exercícios parecidos e números ou palavras diferentes, e o gabarito dela.' },
       resumo: { nome: 'Resumo em tópicos', texto: 'Agora transforme o texto adaptado num resumo em tópicos para o caderno, com até 6 itens.' },
+      // Para o jogo (ideia 3 de 10/11): cada pedido muda uma coisa só e devolve o jogo inteiro
+      maisFase: { nome: 'Mais uma fase', texto: 'Acrescente uma fase nova, mais difícil que a última, com o mesmo estilo e o mesmo jeito de jogar, e atualize o progresso e as estrelas. Mantenha o resto do jogo como está.' },
+      erradasDificeis: { nome: 'Erradas mais difíceis', texto: 'Troque as respostas erradas que dá para descartar sem pensar por erros comuns de verdade sobre o tema, que pareçam possíveis para quem ainda não aprendeu, e ajuste a explicação de cada uma. Mantenha o resto do jogo como está.' },
+      embaralharJogo: { nome: 'Embaralhar as opções', texto: 'Embaralhe as opções em cada pergunta e a cada partida, para a resposta certa não ficar sempre no mesmo lugar. Mantenha o resto do jogo como está.' },
+      projetor: { nome: 'Versão para o projetor', texto: 'Faça uma versão para jogar com a turma toda no projetor: letra e botões bem maiores, uma pergunta por tela, um botão Mostrar a resposta antes da explicação, para a turma discutir primeiro, e nada que dependa de toque rápido. Mantenha o tema, as perguntas e o estilo.' },
       lista: { nome: 'Lista para conferir', texto: 'Agora transforme a rubrica numa lista curta para a turma conferir o trabalho antes de entregar, escrita na primeira pessoa.' },
     };
-    // O jogo não entra: a segunda mensagem dele é o padrão de qualidade
+    // No jogo, o padrão de qualidade é a segunda mensagem, e o Peça mais vem depois, para mudar o jogo pronto
     const maisPorTipo = {
+      jogo: ['maisFase', 'erradasDificeis', 'embaralharJogo', 'projetor'],
       historia: ['atividadeHistoria', 'desafio', 'dificuldade', 'lugar'],
       quiz: ['embaralhar', 'abertas', 'desafio', 'dificuldade'],
       atividade: ['versaoB', 'desafio', 'dificuldade', 'lugar'],
@@ -794,8 +802,11 @@
     };
     // Como o material sai em página HTML (pedido do Arthur em 09/11), cada mensagem pede a página de volta
     const comPagina = (pedido) => ({ ...pedido, texto: `${pedido.texto} ${PAGINA_DE_VOLTA}` });
-    const pedidosPara = (tipo, local) => [pedidosMais.revisar(tipo), ...(maisPorTipo[tipo] || [])
-      .filter((id) => !(id === 'lugar' && local)).map((id) => pedidosMais[id])].map(comPagina);
+    const JOGO_DE_VOLTA = 'Mostre o código completo do jogo num único bloco de código HTML, sem criar arquivo.';
+    const pedidosPara = (tipo, local) => tipo === 'jogo'
+      ? maisPorTipo.jogo.map((id) => ({ ...pedidosMais[id], texto: `${pedidosMais[id].texto} ${JOGO_DE_VOLTA}` }))
+      : [pedidosMais.revisar(tipo), ...(maisPorTipo[tipo] || [])
+        .filter((id) => !(id === 'lugar' && local)).map((id) => pedidosMais[id])].map(comPagina);
     let maisAgora = '';
 
     // Criar aqui (item 2.4 da spec da retrospectiva de 06/11): manda o pedido pronto para a IA, pelo Worker da equipe
@@ -1416,10 +1427,15 @@
         if (!tinhaAlerta && !reducedMotion) replay(alerta, 'is-gritando');
       }
       copyButton.disabled = done < 4;
-      // Peça mais aparece com o prompt pronto, para todo tipo menos o jogo
+      // Peça mais aparece com o prompt pronto; no jogo, vem depois da segunda mensagem e do conserto
       const tipo = kind ? (Object.keys(kinds).find((id) => kinds[id] === kind) || 'proprio') : '';
-      const mostrarMais = done === 4 && tipo && tipo !== 'jogo';
+      const mostrarMais = done === 4 && tipo;
       $('#mais').hidden = !mostrarMais;
+      $('#mais-numero').textContent = tipo === 'jogo' ? '4' : '2';
+      $('#depois-numero').textContent = tipo === 'jogo' ? '5' : '3';
+      $('#mais-intro').textContent = tipo === 'jogo'
+        ? 'Com o jogo funcionando, mande uma destas na mesma conversa. Cada uma muda uma coisa e devolve o jogo inteiro: jogue de novo na Prévia antes de publicar.'
+        : 'Depois da primeira resposta, mande uma destas na mesma conversa. A primeira confere e corrige o material; as outras fazem versões novas.';
       const chaveMais = mostrarMais ? `${tipo}|${local}` : '';
       if (mostrarMais && chaveMais !== maisAgora) {
         $('#mais-lista').replaceChildren(...pedidosPara(tipo, local).map((pedido) => {
