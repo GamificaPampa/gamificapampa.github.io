@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sólido, Líquido ou Gasoso?</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;700&display=swap">
+<style>
+/* Estilo GamificaPampa, do GamificaPampa: use sem mudar */
+:root {
+  --fundo: #4fadf2; --fundo-2: #bfe5ff; --cartao: #ffffff; --texto: #2f2a4a; --destaque: #ffd23f;
+  --botao: #4fd6a6; --botao-texto: #2f2a4a; --borda: #2f2a4a;
+  --certo: #c9f5e3; --certo-texto: #14532d; --errado: #ffd6e0; --errado-texto: #7a1530;
+  --fonte: "Fredoka", "Trebuchet MS", "Segoe UI", system-ui, sans-serif; --raio: 18px; --linha: 4px solid var(--borda); --sombra: 0 6px 0 var(--borda);
+}
+body { margin: 0; background: var(--fundo); color: var(--texto); font: 600 20px/1.4 var(--fonte); }
+button { min-height: 48px; padding: 8px 20px; background: var(--botao); color: var(--botao-texto); border: var(--linha); border-radius: var(--raio); box-shadow: var(--sombra); font: 700 20px var(--fonte); cursor: pointer; }
+.cartao { background: var(--cartao); color: var(--texto); border: var(--linha); border-radius: var(--raio); padding: 20px; }
+.certo { background: var(--certo); color: var(--certo-texto); } .errado { background: var(--errado); color: var(--errado-texto); }
+body { background: linear-gradient(var(--fundo), var(--fundo-2)) fixed; }
+/* Do jogo: o cartão da vez em cima e os grupos embaixo, cada um com o que já entrou nele */
+* { box-sizing: border-box; }
+main { width: min(760px, 100% - 32px); margin: 24px auto; }
+h1 { margin: 0 0 8px; font-size: clamp(30px, 6vw, 44px); line-height: 1.1; }
+.tela { display: grid; gap: 16px; }
+.tela[hidden] { display: none; }
+.progresso { margin: 0; font-size: 18px; }
+.pergunta { margin: 0; font-size: 24px; line-height: 1.3; }
+.vez { justify-self: center; min-width: 240px; padding: 16px 24px; border: var(--linha); border-radius: var(--raio); background: var(--destaque); font-size: 26px; text-align: center; }
+.grupos { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 12px; }
+.grupo { display: grid; align-content: start; gap: 8px; padding: 12px; border: var(--linha); border-radius: var(--raio); background: var(--fundo-2); }
+.grupo button { width: 100%; }
+.grupo ul { display: grid; gap: 6px; margin: 0; padding: 0; list-style: none; font-size: 17px; }
+.grupo li { padding: 4px 10px; border-radius: 10px; background: var(--certo); color: var(--certo-texto); }
+.retorno { min-height: 64px; margin: 0; padding: 12px 16px; border-radius: var(--raio); }
+.retorno:empty { visibility: hidden; }
+.estrelas { font-size: 40px; letter-spacing: 6px; }
+button:focus-visible { outline: 4px solid var(--destaque); outline-offset: 3px; }
+button:disabled { cursor: default; opacity: .6; }
+@media (prefers-reduced-motion: no-preference) { .certo, .errado { animation: pulo .3s ease; } }
+@keyframes pulo { 50% { transform: scale(1.03); } }
+</style>
+</head>
+<body>
+<main>
+  <!-- Tela de início: o nome, o objetivo e as instruções em até 3 frases -->
+  <section class="tela cartao" id="inicio">
+    <h1>Sólido, Líquido ou Gasoso?</h1>
+    <p><b>Objetivo:</b> separar as coisas pelo estado da matéria e reconhecer quando ele muda.</p>
+    <p>Leia o cartão de cima e toque no grupo certo. Se errar, o jogo explica e o cartão volta para o fim da fila. São 3 fases.</p>
+    <button id="jogar">Jogar</button>
+  </section>
+
+  <!-- O cartão da vez e os grupos da fase -->
+  <section class="tela cartao" id="jogo" hidden>
+    <p class="progresso" id="progresso"></p>
+    <p class="pergunta" id="pergunta"></p>
+    <p class="vez" id="vez"></p>
+    <div class="grupos" id="grupos"></div>
+    <p class="retorno" id="retorno" role="status" aria-live="polite"></p>
+    <button id="proxima" hidden>Próxima fase</button>
+  </section>
+
+  <!-- Fim: estrelas, o que aprendeu e Jogar de novo -->
+  <section class="tela cartao" id="fim" hidden>
+    <h1>Fim de jogo!</h1>
+    <p class="estrelas" id="estrelas"></p>
+    <p id="resumo"></p>
+    <p>Você aprendeu que a mesma água pode ser sólida, líquida ou gasosa, conforme esquenta ou esfria.</p>
+    <button id="denovo">Jogar de novo</button>
+  </section>
+</main>
+<script>
+// Cada fase tem os grupos e os cartões. O "g" é o índice do grupo certo, e o "porque" explica onde o cartão fica
+const FASES = [
+  { nome: 'Sólido ou líquido', pedido: 'Em qual grupo fica?', grupos: ['Sólido', 'Líquido'], cartoes: [
+    { t: 'Pedra', g: 0, porque: 'A pedra tem forma própria: não muda de forma no pote. É sólida.' },
+    { t: 'Água da torneira', g: 1, porque: 'A água escorre e toma a forma do copo. É líquida.' },
+    { t: 'Cubo de gelo', g: 0, porque: 'O gelo é água sólida: tem forma própria até derreter.' },
+    { t: 'Leite', g: 1, porque: 'O leite escorre e toma a forma da caneca. É líquido.' } ] },
+  { nome: 'Os três estados', pedido: 'Agora são três grupos. Em qual fica?', grupos: ['Sólido', 'Líquido', 'Gasoso'], cartoes: [
+    { t: 'Vapor da chaleira', g: 2, porque: 'O vapor se espalha pelo ar e não tem forma. É gasoso.' },
+    { t: 'Óleo de cozinha', g: 1, porque: 'O óleo escorre e toma a forma da garrafa. É líquido.' },
+    { t: 'Ar do balão', g: 2, porque: 'O ar ocupa o balão inteiro e se espalha se ele furar. É gasoso.' },
+    { t: 'Tábua de madeira', g: 0, porque: 'A madeira tem forma própria. É sólida.' },
+    { t: 'Suco de laranja', g: 1, porque: 'O suco escorre e toma a forma do copo. É líquido.' } ] },
+  { nome: 'Quando o estado muda', pedido: 'O que aconteceu com a água ou com o alimento?', grupos: ['Derreteu', 'Evaporou', 'Congelou'], cartoes: [
+    { t: 'Sorvete esquecido no sol', g: 0, porque: 'Com o calor, o sorvete passou de sólido a líquido: derreteu.' },
+    { t: 'Roupa secando no varal', g: 1, porque: 'A água da roupa virou vapor e foi para o ar: evaporou.' },
+    { t: 'Água na forma de gelo do congelador', g: 2, porque: 'No frio, a água passou de líquida a sólida: congelou.' },
+    { t: 'Poça que sumiu depois da chuva', g: 1, porque: 'O sol esquentou a poça, e a água virou vapor: evaporou.' },
+    { t: 'Chocolate na mão quente', g: 0, porque: 'O calor da mão fez o chocolate passar de sólido a líquido: derreteu.' },
+    { t: 'Picolé feito em casa', g: 2, porque: 'O suco esfriou no congelador e passou de líquido a sólido: congelou.' } ] },
+];
+
+const $ = (id) => document.getElementById(id);
+let fase = 0, fila = [], acertos = 0, erros = 0;
+
+// O som do acerto e do erro, feito no próprio navegador (Web Audio), sem arquivo de fora
+let audio;
+const som = (certo) => {
+  try {
+    audio = audio || new AudioContext();
+    const osc = audio.createOscillator(), vol = audio.createGain();
+    osc.frequency.value = certo ? 660 : 220;
+    vol.gain.setValueAtTime(0.15, audio.currentTime);
+    vol.gain.exponentialRampToValueAtTime(0.001, audio.currentTime + 0.3);
+    osc.connect(vol).connect(audio.destination);
+    osc.start(); osc.stop(audio.currentTime + 0.3);
+  } catch (e) { /* sem som, o jogo continua */ }
+};
+
+const embaralhar = (lista) => {
+  for (let i = lista.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [lista[i], lista[j]] = [lista[j], lista[i]]; }
+  return lista;
+};
+const mostrar = (id) => { for (const tela of ['inicio', 'jogo', 'fim']) $(tela).hidden = tela !== id; };
+
+// A fase: um botão por grupo, com a lista do que já entrou nele embaixo
+const desenhar = () => {
+  const f = FASES[fase];
+  $('progresso').textContent = `Fase ${fase + 1} de ${FASES.length}: ${f.nome}`;
+  $('pergunta').textContent = f.pedido;
+  $('retorno').textContent = '';
+  $('retorno').className = 'retorno';
+  $('proxima').hidden = true;
+  fila = embaralhar([...f.cartoes]);
+  $('grupos').replaceChildren(...f.grupos.map((nome, g) => {
+    const caixa = document.createElement('div');
+    caixa.className = 'grupo';
+    const b = document.createElement('button');
+    b.textContent = nome;
+    b.addEventListener('click', () => colocar(g));
+    caixa.append(b, document.createElement('ul'));
+    return caixa;
+  }));
+  vez();
+};
+
+// O cartão da vez é o primeiro da fila
+const vez = () => {
+  $('vez').textContent = fila[0].t;
+  for (const b of $('grupos').querySelectorAll('button')) b.disabled = false;
+  $('grupos').querySelector('button').focus();
+};
+
+// Toca no grupo: certo, o cartão entra nele; errado, o jogo explica e o cartão volta para o fim da fila
+const colocar = (g) => {
+  const cartao = fila.shift();
+  if (cartao.g === g) {
+    acertos += 1;
+    $('grupos').children[g].querySelector('ul').append(Object.assign(document.createElement('li'), { textContent: cartao.t }));
+    $('retorno').className = 'retorno certo';
+    $('retorno').textContent = `✓ Certo! ${cartao.porque}`;
+  } else {
+    erros += 1;
+    fila.push(cartao);
+    $('retorno').className = 'retorno errado';
+    $('retorno').textContent = `✗ Ainda não. ${cartao.porque}`;
+  }
+  som(cartao.g === g);
+  if (fila.length) return vez();
+  $('vez').textContent = 'Tudo no lugar!';
+  for (const b of $('grupos').querySelectorAll('button')) b.disabled = true;
+  $('proxima').textContent = fase + 1 < FASES.length ? 'Próxima fase' : 'Ver o resultado';
+  $('proxima').hidden = false;
+  $('proxima').focus();
+};
+
+const avancar = () => {
+  fase += 1;
+  if (fase >= FASES.length) return terminar();
+  desenhar();
+};
+
+const terminar = () => {
+  const n = erros === 0 ? 3 : erros <= 3 ? 2 : 1;
+  $('estrelas').textContent = '★'.repeat(n) + '☆'.repeat(3 - n);
+  $('estrelas').setAttribute('aria-label', `${n} de 3 estrelas`);
+  $('resumo').textContent = `Você separou ${acertos} cartões, com ${erros} ${erros === 1 ? 'erro' : 'erros'} no caminho.`;
+  mostrar('fim');
+  $('denovo').focus();
+};
+
+$('jogar').addEventListener('click', () => { fase = acertos = erros = 0; mostrar('jogo'); desenhar(); });
+$('proxima').addEventListener('click', avancar);
+$('denovo').addEventListener('click', () => { mostrar('inicio'); $('jogar').focus(); });
+</script>
+</body>
+</html>

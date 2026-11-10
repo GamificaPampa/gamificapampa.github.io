@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Memória das Frações</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;700&display=swap">
+<style>
+/* Estilo GamificaPampa, do GamificaPampa: use sem mudar */
+:root {
+  --fundo: #4fadf2; --fundo-2: #bfe5ff; --cartao: #ffffff; --texto: #2f2a4a; --destaque: #ffd23f;
+  --botao: #4fd6a6; --botao-texto: #2f2a4a; --borda: #2f2a4a;
+  --certo: #c9f5e3; --certo-texto: #14532d; --errado: #ffd6e0; --errado-texto: #7a1530;
+  --fonte: "Fredoka", "Trebuchet MS", "Segoe UI", system-ui, sans-serif; --raio: 18px; --linha: 4px solid var(--borda); --sombra: 0 6px 0 var(--borda);
+}
+body { margin: 0; background: var(--fundo); color: var(--texto); font: 600 20px/1.4 var(--fonte); }
+button { min-height: 48px; padding: 8px 20px; background: var(--botao); color: var(--botao-texto); border: var(--linha); border-radius: var(--raio); box-shadow: var(--sombra); font: 700 20px var(--fonte); cursor: pointer; }
+.cartao { background: var(--cartao); color: var(--texto); border: var(--linha); border-radius: var(--raio); padding: 20px; }
+.certo { background: var(--certo); color: var(--certo-texto); } .errado { background: var(--errado); color: var(--errado-texto); }
+body { background: linear-gradient(var(--fundo), var(--fundo-2)) fixed; }
+/* Do jogo: as cartas em grade, viradas para baixo com um "?" */
+* { box-sizing: border-box; }
+main { width: min(720px, 100% - 32px); margin: 24px auto; }
+h1 { margin: 0 0 8px; font-size: clamp(30px, 6vw, 44px); line-height: 1.1; }
+.tela { display: grid; gap: 16px; }
+.tela[hidden] { display: none; }
+.progresso { margin: 0; font-size: 18px; }
+.pergunta { margin: 0; font-size: 26px; line-height: 1.3; }
+.cartas { display: grid; grid-template-columns: repeat(auto-fill, minmax(96px, 1fr)); gap: 10px; }
+.carta { display: grid; place-items: center; min-height: 110px; padding: 6px; font-size: 26px; }
+.carta.virada { background: var(--fundo-2); }
+.carta.par { background: var(--certo); color: var(--certo-texto); cursor: default; }
+.carta svg { width: 72px; height: 72px; }
+.carta:disabled { cursor: default; }
+.retorno { min-height: 64px; margin: 0; padding: 12px 16px; border-radius: var(--raio); }
+.retorno:empty { visibility: hidden; }
+.estrelas { font-size: 40px; letter-spacing: 6px; }
+button:focus-visible { outline: 4px solid var(--destaque); outline-offset: 3px; }
+@media (prefers-reduced-motion: no-preference) { .certo, .errado, .par { animation: pulo .3s ease; } }
+@keyframes pulo { 50% { transform: scale(1.04); } }
+</style>
+</head>
+<body>
+<main>
+  <!-- Tela de início: o nome, o objetivo e as instruções em até 3 frases -->
+  <section class="tela cartao" id="inicio">
+    <h1>Memória das Frações</h1>
+    <p><b>Objetivo:</b> ligar cada fração ao desenho dela e achar frações que valem o mesmo.</p>
+    <p>Vire duas cartas. Se as duas valem o mesmo, elas ficam abertas; se não, o jogo diz por quê. São 3 fases, com mais cartas a cada uma.</p>
+    <button id="jogar">Jogar</button>
+  </section>
+
+  <!-- As cartas da fase, com o progresso sempre visível -->
+  <section class="tela cartao" id="jogo" hidden>
+    <p class="progresso" id="progresso"></p>
+    <p class="pergunta" id="pergunta"></p>
+    <div class="cartas" id="cartas"></div>
+    <p class="retorno" id="retorno" role="status" aria-live="polite"></p>
+    <button id="proxima" hidden>Próxima fase</button>
+  </section>
+
+  <!-- Fim: estrelas, o que aprendeu e Jogar de novo -->
+  <section class="tela cartao" id="fim" hidden>
+    <h1>Fim de jogo!</h1>
+    <p class="estrelas" id="estrelas"></p>
+    <p id="resumo"></p>
+    <p>Você aprendeu que frações diferentes podem valer o mesmo pedaço, como 1/2 e 2/4.</p>
+    <button id="denovo">Jogar de novo</button>
+  </section>
+</main>
+<script>
+// Cada par tem duas cartas que valem o mesmo. Uma carta é um número (t) ou um desenho (pizza: [partes pintadas, partes])
+// e diz em palavras o que mostra (diz), para o retorno do erro e para quem usa leitor de tela
+const FASES = [
+  { nome: 'Número e desenho', pedido: 'Ache o desenho de cada fração.', pares: [
+    [{ t: '1/2', diz: '1/2, um de 2 pedaços' }, { pizza: [1, 2], diz: 'o desenho com 1 de 2 pedaços pintado' }],
+    [{ t: '1/3', diz: '1/3, um de 3 pedaços' }, { pizza: [1, 3], diz: 'o desenho com 1 de 3 pedaços pintado' }],
+    [{ t: '1/4', diz: '1/4, um de 4 pedaços' }, { pizza: [1, 4], diz: 'o desenho com 1 de 4 pedaços pintado' }] ] },
+  { nome: 'Mais pedaços pintados', pedido: 'Agora o desenho tem mais de um pedaço pintado.', pares: [
+    [{ t: '2/3', diz: '2/3, dois de 3 pedaços' }, { pizza: [2, 3], diz: 'o desenho com 2 de 3 pedaços pintados' }],
+    [{ t: '3/4', diz: '3/4, três de 4 pedaços' }, { pizza: [3, 4], diz: 'o desenho com 3 de 4 pedaços pintados' }],
+    [{ t: '2/5', diz: '2/5, dois de 5 pedaços' }, { pizza: [2, 5], diz: 'o desenho com 2 de 5 pedaços pintados' }],
+    [{ t: '5/6', diz: '5/6, cinco de 6 pedaços' }, { pizza: [5, 6], diz: 'o desenho com 5 de 6 pedaços pintados' }] ] },
+  { nome: 'Valem o mesmo', pedido: 'Ache as frações que valem o mesmo pedaço.', pares: [
+    [{ t: '1/2', diz: '1/2, a metade' }, { t: '2/4', diz: '2/4, também a metade' }],
+    [{ t: '1/3', diz: '1/3, um terço' }, { t: '2/6', diz: '2/6, também um terço' }],
+    [{ t: '3/4', diz: '3/4, três quartos' }, { t: '6/8', diz: '6/8, também três quartos' }],
+    [{ t: '1/5', diz: '1/5, um quinto' }, { t: '2/10', diz: '2/10, também um quinto' }],
+    [{ t: '2/3', diz: '2/3, dois terços' }, { t: '4/6', diz: '4/6, também dois terços' }] ] },
+];
+
+const $ = (id) => document.getElementById(id);
+let fase = 0, cartas = [], abertas = [], achados = 0, tentativas = 0, erros = 0;
+
+// O som do acerto e do erro, feito no próprio navegador (Web Audio), sem arquivo de fora
+let audio;
+const som = (certo) => {
+  try {
+    audio = audio || new AudioContext();
+    const osc = audio.createOscillator(), vol = audio.createGain();
+    osc.frequency.value = certo ? 660 : 220;
+    vol.gain.setValueAtTime(0.15, audio.currentTime);
+    vol.gain.exponentialRampToValueAtTime(0.001, audio.currentTime + 0.3);
+    osc.connect(vol).connect(audio.destination);
+    osc.start(); osc.stop(audio.currentTime + 0.3);
+  } catch (e) { /* sem som, o jogo continua */ }
+};
+
+// A pizza em SVG: um círculo dividido em partes iguais, com as primeiras pintadas
+const pizza = ([pintadas, partes]) => {
+  const fatias = Array.from({ length: partes }, (_, i) => {
+    const a = (i / partes) * 2 * Math.PI - Math.PI / 2, b = ((i + 1) / partes) * 2 * Math.PI - Math.PI / 2;
+    const p = (ang) => `${(50 + 44 * Math.cos(ang)).toFixed(1)} ${(50 + 44 * Math.sin(ang)).toFixed(1)}`;
+    return `<path d="M50 50 L${p(a)} A44 44 0 0 1 ${p(b)} Z" fill="${i < pintadas ? '#ffd23f' : '#fff'}" stroke="#2f2a4a" stroke-width="3"/>`;
+  });
+  return `<svg viewBox="0 0 100 100" aria-hidden="true">${fatias.join('')}</svg>`;
+};
+
+// A frase do retorno começa com letra maiúscula
+const maiuscula = (texto) => texto.charAt(0).toUpperCase() + texto.slice(1);
+
+const embaralhar = (lista) => {
+  for (let i = lista.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [lista[i], lista[j]] = [lista[j], lista[i]]; }
+  return lista;
+};
+
+const mostrar = (id) => { for (const tela of ['inicio', 'jogo', 'fim']) $(tela).hidden = tela !== id; };
+
+// A fase: as cartas dos pares, embaralhadas e viradas para baixo
+const desenhar = () => {
+  const f = FASES[fase];
+  $('progresso').textContent = `Fase ${fase + 1} de ${FASES.length}: ${f.nome}`;
+  $('pergunta').textContent = f.pedido;
+  $('retorno').textContent = '';
+  $('retorno').className = 'retorno';
+  $('proxima').hidden = true;
+  abertas = []; achados = 0;
+  cartas = embaralhar(f.pares.flatMap((par, n) => par.map((lado) => ({ ...lado, par: n }))));
+  $('cartas').replaceChildren(...cartas.map((carta, i) => {
+    const b = document.createElement('button');
+    b.className = 'carta';
+    b.textContent = '?';
+    b.setAttribute('aria-label', `Carta ${i + 1}, virada para baixo`);
+    b.addEventListener('click', () => virar(i, b));
+    carta.botao = b;
+    return b;
+  }));
+  $('cartas').querySelector('button').focus();
+};
+
+const abrir = (carta) => {
+  carta.botao.innerHTML = carta.pizza ? pizza(carta.pizza) : carta.t;
+  carta.botao.setAttribute('aria-label', carta.diz);
+};
+const fechar = (carta) => {
+  carta.botao.textContent = '?';
+  carta.botao.classList.remove('virada', 'errado');
+  carta.botao.setAttribute('aria-label', 'Carta virada para baixo');
+};
+
+// Vira a carta; com duas abertas, confere se valem o mesmo e explica o erro
+const virar = (i, botao) => {
+  const carta = cartas[i];
+  if (abertas.length === 2 || abertas.includes(carta) || botao.classList.contains('par')) return;
+  // As duas erradas da jogada anterior fecham quando a próxima carta é virada
+  for (const outra of cartas) if (outra.botao.classList.contains('errado')) fechar(outra);
+  abrir(carta);
+  botao.classList.add('virada');
+  abertas.push(carta);
+  if (abertas.length < 2) return;
+  tentativas += 1;
+  const [a, b] = abertas;
+  if (a.par === b.par) {
+    for (const c of abertas) { c.botao.classList.remove('virada'); c.botao.classList.add('par'); c.botao.disabled = true; }
+    achados += 1;
+    $('retorno').className = 'retorno certo';
+    $('retorno').textContent = `✓ Certo! ${maiuscula(a.diz)} e ${b.diz} valem o mesmo.`;
+    som(true);
+    if (achados === FASES[fase].pares.length) {
+      $('proxima').textContent = fase + 1 < FASES.length ? 'Próxima fase' : 'Ver o resultado';
+      $('proxima').hidden = false;
+      $('proxima').focus();
+    }
+  } else {
+    erros += 1;
+    for (const c of abertas) c.botao.classList.add('errado');
+    $('retorno').className = 'retorno errado';
+    $('retorno').textContent = `✗ Ainda não. ${maiuscula(a.diz)} não vale o mesmo que ${b.diz}. Conte os pedaços pintados e o total.`;
+    som(false);
+  }
+  abertas = [];
+};
+
+const avancar = () => {
+  fase += 1;
+  if (fase >= FASES.length) return terminar();
+  desenhar();
+};
+
+// Estrelas pelo número de erros: poucos erros, mais estrelas
+const terminar = () => {
+  const n = erros <= 2 ? 3 : erros <= 6 ? 2 : 1;
+  $('estrelas').textContent = '★'.repeat(n) + '☆'.repeat(3 - n);
+  $('estrelas').setAttribute('aria-label', `${n} de 3 estrelas`);
+  $('resumo').textContent = `Você achou todos os pares em ${tentativas} jogadas, com ${erros} ${erros === 1 ? 'erro' : 'erros'}.`;
+  mostrar('fim');
+  $('denovo').focus();
+};
+
+$('jogar').addEventListener('click', () => { fase = tentativas = erros = 0; mostrar('jogo'); desenhar(); });
+$('proxima').addEventListener('click', avancar);
+$('denovo').addEventListener('click', () => { mostrar('inicio'); $('jogar').focus(); });
+</script>
+</body>
+</html>

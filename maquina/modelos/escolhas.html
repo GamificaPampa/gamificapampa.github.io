@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Um Mês com o Salário</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;700&display=swap">
+<style>
+/* Estilo GamificaPampa, do GamificaPampa: use sem mudar */
+:root {
+  --fundo: #4fadf2; --fundo-2: #bfe5ff; --cartao: #ffffff; --texto: #2f2a4a; --destaque: #ffd23f;
+  --botao: #4fd6a6; --botao-texto: #2f2a4a; --borda: #2f2a4a;
+  --certo: #c9f5e3; --certo-texto: #14532d; --errado: #ffd6e0; --errado-texto: #7a1530;
+  --fonte: "Fredoka", "Trebuchet MS", "Segoe UI", system-ui, sans-serif; --raio: 18px; --linha: 4px solid var(--borda); --sombra: 0 6px 0 var(--borda);
+}
+body { margin: 0; background: var(--fundo); color: var(--texto); font: 600 20px/1.4 var(--fonte); }
+button { min-height: 48px; padding: 8px 20px; background: var(--botao); color: var(--botao-texto); border: var(--linha); border-radius: var(--raio); box-shadow: var(--sombra); font: 700 20px var(--fonte); cursor: pointer; }
+.cartao { background: var(--cartao); color: var(--texto); border: var(--linha); border-radius: var(--raio); padding: 20px; }
+.certo { background: var(--certo); color: var(--certo-texto); } .errado { background: var(--errado); color: var(--errado-texto); }
+body { background: linear-gradient(var(--fundo), var(--fundo-2)) fixed; }
+/* Do jogo: o painel do mês em cima, a situação e as escolhas */
+* { box-sizing: border-box; }
+main { width: min(720px, 100% - 32px); margin: 24px auto; }
+h1 { margin: 0 0 8px; font-size: clamp(30px, 6vw, 44px); line-height: 1.1; }
+.tela { display: grid; gap: 16px; }
+.tela[hidden] { display: none; }
+.progresso { margin: 0; font-size: 18px; }
+.painel { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin: 0; }
+.painel div { padding: 8px 10px; border: var(--linha); border-radius: 14px; background: var(--fundo-2); text-align: center; }
+.painel dt { font-size: 15px; }
+.painel dd { margin: 0; font-size: 22px; }
+.pergunta { margin: 0; font-size: 24px; line-height: 1.35; }
+.opcoes { display: grid; gap: 12px; }
+.opcoes button { width: 100%; text-align: left; }
+.opcoes button:disabled { cursor: default; }
+.retorno { min-height: 64px; margin: 0; padding: 12px 16px; border-radius: var(--raio); }
+.retorno:empty { visibility: hidden; }
+.lembrar { display: grid; gap: 8px; margin: 0; padding-left: 22px; font-size: 18px; }
+.estrelas { font-size: 40px; letter-spacing: 6px; }
+button:focus-visible { outline: 4px solid var(--destaque); outline-offset: 3px; }
+@media (max-width: 420px) { .painel dd { font-size: 18px; } }
+@media (prefers-reduced-motion: no-preference) { .certo, .errado { animation: pulo .3s ease; } }
+@keyframes pulo { 50% { transform: scale(1.03); } }
+</style>
+</head>
+<body>
+<main>
+  <!-- Tela de início: a situação, o objetivo e as instruções em até 3 frases -->
+  <section class="tela cartao" id="inicio">
+    <h1>Um Mês com o Salário</h1>
+    <p><b>Objetivo:</b> tomar decisões de dinheiro do dia a dia e ver o efeito de cada uma no mês.</p>
+    <p>Você cuida das contas da casa este mês. As contas fixas já foram pagas, e sobraram R$ 600. Em cada situação, escolha o que fazer e veja o que acontece com o dinheiro livre, a reserva e as dívidas.</p>
+    <button id="jogar">Começar o mês</button>
+  </section>
+
+  <!-- Uma situação por tela, com o painel do mês sempre visível -->
+  <section class="tela cartao" id="jogo" hidden>
+    <p class="progresso" id="progresso"></p>
+    <dl class="painel" aria-label="Como está o mês">
+      <div><dt>Livre</dt><dd id="livre"></dd></div>
+      <div><dt>Reserva</dt><dd id="reserva"></dd></div>
+      <div><dt>Dívidas</dt><dd id="divida"></dd></div>
+    </dl>
+    <p class="pergunta" id="pergunta"></p>
+    <div class="opcoes" id="opcoes"></div>
+    <p class="retorno" id="retorno" role="status" aria-live="polite"></p>
+    <button id="proxima" hidden>Continuar</button>
+  </section>
+
+  <!-- Fim: estrelas, como ficou o mês e o que vale lembrar das escolhas que custaram caro -->
+  <section class="tela cartao" id="fim" hidden>
+    <h1>Fim do mês!</h1>
+    <p class="estrelas" id="estrelas"></p>
+    <p id="resumo"></p>
+    <div id="revisar" hidden>
+      <p><b>Vale lembrar:</b></p>
+      <ul class="lembrar" id="lembrar"></ul>
+    </div>
+    <p>Você viu que a escolha mais barata hoje pode custar mais no mês que vem.</p>
+    <button id="denovo">Jogar de novo</button>
+  </section>
+</main>
+<script>
+// Cada fase é uma parte do mês, com situações. Cada escolha mexe no dinheiro (livre, reserva, divida),
+// diz o que aconteceu e, se custou caro, o que vale lembrar
+const FASES = [
+  { nome: 'No mercado', situacoes: [
+    { texto: 'A família usa 5 kg de arroz no mês. O pacote de 1 kg custa R$ 6, e o de 5 kg, R$ 25.', escolhas: [
+      { t: 'Levar o pacote de 5 kg', boa: true, efeito: { livre: -25 }, porque: 'Cada quilo saiu a R$ 5. Comprar o pacote maior vale quando você vai usar tudo.' },
+      { t: 'Levar 5 pacotes de 1 kg', efeito: { livre: -30 }, porque: 'Os mesmos 5 kg custaram R$ 30, R$ 5 a mais.', lembrar: 'Compare o preço por quilo ou por litro, não o preço do pacote.' } ] },
+    { texto: 'Promoção: leve 3 e pague 2 num sabão de R$ 9 que a família quase não usa.', escolhas: [
+      { t: 'Levar os 3 por R$ 18', efeito: { livre: -18 }, porque: 'Saíram R$ 18 do mês por algo que vai ficar parado no armário.', lembrar: 'Desconto em algo que você não ia comprar não é economia.' },
+      { t: 'Não levar agora', boa: true, efeito: {}, porque: 'Promoção só vale para o que você precisa. Os R$ 18 ficaram no mês.' } ] } ] },
+  { nome: 'Crediário e cartão', situacoes: [
+    { texto: 'A geladeira estragou. Uma nova custa R$ 1.800 à vista ou 10 vezes de R$ 230. O técnico cobra R$ 250 para consertar.', escolhas: [
+      { t: 'Comprar a nova em 10 vezes de R$ 230', efeito: { livre: -230, divida: 2070 }, porque: 'No fim, a geladeira custa R$ 2.300: R$ 500 de juros. Ainda faltam 9 parcelas.', lembrar: 'Some todas as parcelas antes de comprar: a diferença para o preço à vista são os juros.' },
+      { t: 'Consertar por R$ 250', boa: true, efeito: { livre: -250 }, porque: 'O conserto custou bem menos que os juros da nova. Vale pedir orçamento antes de trocar.' } ] },
+    { texto: 'A fatura do cartão veio R$ 200. Dá para pagar só o mínimo, R$ 30.', escolhas: [
+      { t: 'Pagar só o mínimo', efeito: { livre: -30, divida: 190 }, porque: 'Os R$ 170 que faltam entram no rotativo e viram R$ 190 no mês que vem, com juros.', lembrar: 'O rotativo do cartão tem um dos juros mais altos: pague a fatura inteira sempre que der.' },
+      { t: 'Pagar a fatura inteira', boa: true, efeito: { livre: -200 }, porque: 'Pagando tudo, não há juros. O cartão ajuda quando a fatura cabe no mês.' } ] } ] },
+  { nome: 'Fim do mês', situacoes: [
+    { texto: 'Chega uma mensagem: "Você ganhou um prêmio! Pague R$ 50 de taxa para receber."', escolhas: [
+      { t: 'Pagar a taxa', efeito: { livre: -50 }, porque: 'Era golpe: o prêmio não existe, e os R$ 50 não voltam.', lembrar: 'Prêmio de verdade não cobra taxa antes. Não pague e não clique no link.' },
+      { t: 'Apagar a mensagem', boa: true, efeito: {}, porque: 'Prêmio que cobra taxa antes é golpe. O dinheiro ficou com você.' } ] },
+    { texto: 'Ainda sobrou um pouco. O que fazer?', escolhas: [
+      { t: 'Guardar R$ 50 numa reserva', boa: true, efeito: { livre: -50, reserva: 50 }, porque: 'Uma reserva, mesmo pequena, evita o crediário no próximo imprevisto.' },
+      { t: 'Gastar R$ 100 no fim de semana', efeito: { livre: -100 }, porque: 'O fim de semana foi bom, mas o próximo imprevisto vai virar dívida.', lembrar: 'Guardar um pouco todo mês cria uma reserva para os imprevistos.' } ] } ] },
+];
+
+const $ = (id) => document.getElementById(id);
+const real = (valor) => `${valor < 0 ? '−' : ''}R$ ${Math.abs(valor).toLocaleString('pt-BR')}`;
+let fase = 0, situacao = 0, boas = 0, dinheiro = {}, lembrar = [];
+
+// O som da escolha boa e da que custou caro, feito no próprio navegador (Web Audio)
+let audio;
+const som = (certo) => {
+  try {
+    audio = audio || new AudioContext();
+    const osc = audio.createOscillator(), vol = audio.createGain();
+    osc.frequency.value = certo ? 660 : 220;
+    vol.gain.setValueAtTime(0.15, audio.currentTime);
+    vol.gain.exponentialRampToValueAtTime(0.001, audio.currentTime + 0.3);
+    osc.connect(vol).connect(audio.destination);
+    osc.start(); osc.stop(audio.currentTime + 0.3);
+  } catch (e) { /* sem som, o jogo continua */ }
+};
+
+const mostrar = (id) => { for (const tela of ['inicio', 'jogo', 'fim']) $(tela).hidden = tela !== id; };
+const painel = () => {
+  $('livre').textContent = real(dinheiro.livre);
+  $('reserva').textContent = real(dinheiro.reserva);
+  $('divida').textContent = real(dinheiro.divida);
+};
+
+const desenhar = () => {
+  const f = FASES[fase], s = f.situacoes[situacao];
+  $('progresso').textContent = `Parte ${fase + 1} de ${FASES.length}: ${f.nome}`;
+  $('pergunta').textContent = s.texto;
+  $('retorno').textContent = '';
+  $('retorno').className = 'retorno';
+  $('proxima').hidden = true;
+  painel();
+  $('opcoes').replaceChildren(...s.escolhas.map((esc) => {
+    const b = document.createElement('button');
+    b.textContent = esc.t;
+    b.addEventListener('click', () => escolher(esc, b));
+    return b;
+  }));
+  $('opcoes').querySelector('button').focus();
+};
+
+// A escolha muda o painel e mostra a consequência; a que custou caro guarda o que vale lembrar para o fim
+const escolher = (esc, botao) => {
+  for (const [conta, valor] of Object.entries(esc.efeito)) dinheiro[conta] += valor;
+  if (esc.boa) boas += 1; else lembrar.push(esc.lembrar);
+  for (const b of $('opcoes').querySelectorAll('button')) b.disabled = true;
+  botao.classList.add(esc.boa ? 'certo' : 'errado');
+  $('retorno').className = `retorno ${esc.boa ? 'certo' : 'errado'}`;
+  $('retorno').textContent = `${esc.boa ? '✓ Boa escolha!' : '✗ Essa custou caro.'} ${esc.porque}`;
+  som(Boolean(esc.boa));
+  painel();
+  $('proxima').hidden = false;
+  $('proxima').focus();
+};
+
+const avancar = () => {
+  situacao += 1;
+  if (situacao >= FASES[fase].situacoes.length) { fase += 1; situacao = 0; }
+  if (fase >= FASES.length) return terminar();
+  desenhar();
+};
+
+// Estrelas pelas boas escolhas; a lista do que vale lembrar só aparece se alguma escolha custou caro
+const terminar = () => {
+  const total = FASES.reduce((soma, f) => soma + f.situacoes.length, 0);
+  const n = boas === total ? 3 : boas >= total / 2 ? 2 : 1;
+  $('estrelas').textContent = '★'.repeat(n) + '☆'.repeat(3 - n);
+  $('estrelas').setAttribute('aria-label', `${n} de 3 estrelas`);
+  $('resumo').textContent = `Você fez ${boas} de ${total} boas escolhas e terminou o mês com ${real(dinheiro.livre)} livres, ${real(dinheiro.reserva)} de reserva e ${real(dinheiro.divida)} de dívidas.`;
+  $('lembrar').replaceChildren(...lembrar.map((texto) => Object.assign(document.createElement('li'), { textContent: texto })));
+  $('revisar').hidden = !lembrar.length;
+  mostrar('fim');
+  $('denovo').focus();
+};
+
+$('jogar').addEventListener('click', () => {
+  fase = situacao = boas = 0; dinheiro = { livre: 600, reserva: 0, divida: 0 }; lembrar = [];
+  mostrar('jogo'); desenhar();
+});
+$('proxima').addEventListener('click', avancar);
+$('denovo').addEventListener('click', () => { mostrar('inicio'); $('jogar').focus(); });
+</script>
+</body>
+</html>

@@ -323,6 +323,17 @@
           <legend>Com qual visual? <span class="step__note">O jogo sai com estas cores e esta letra</span></legend>
           <div class="estilos" id="estilos"></div>
         </fieldset>
+        <fieldset class="step" id="diversao-step" style="--c: #ffb3c7" hidden>
+          <legend>O que deixa o jogo divertido? <span class="step__note">Marque o que quiser</span></legend>
+          <label class="chip"><input type="checkbox" name="diversao" value="missao" checked><span>Uma missão</span></label>
+          <label class="chip"><input type="checkbox" name="diversao" value="final" checked><span>Desafio final</span></label>
+          <label class="chip"><input type="checkbox" name="diversao" value="revisar" checked><span>Revisar os erros no fim</span></label>
+          <label class="chip"><input type="checkbox" name="diversao" value="chances"><span>Chances</span></label>
+          <label class="chip"><input type="checkbox" name="diversao" value="sequencia"><span>Sequência de acertos</span></label>
+          <label class="chip" data-sem-infantil><input type="checkbox" name="diversao" value="dica"><span>Dica que custa estrela</span></label>
+          <label class="chip"><input type="checkbox" name="diversao" value="dupla"><span>Modo dupla</span></label>
+          <label class="chip" data-sem-infantil><input type="checkbox" name="diversao" value="tempo"><span>Contra o relógio</span></label>
+        </fieldset>
 
         <div class="step" style="--c: #c9f5e3">
           <label class="step__title" for="tema"><span class="step__num">4</span><span id="tema-pergunta">Sobre qual tema?</span></label>
@@ -680,19 +691,34 @@
     // instrução por linha. No Canvas, ele é a segunda mensagem, porque o Canvas recusa jogo pedido num prompt longo;
     // no Criar aqui, ele vai como a parte fixa (instrução de sistema), e o pedido do professor vai à parte
     const secao = (titulo, linhas) => [`## ${titulo}`, ...linhas.filter(Boolean).map((linha) => `- ${linha}`)].join('\n');
-    const promptBase = ({ infantil, adult, leitura, turma, estilo, paraApi }) => {
-      const modelo = window.MODELOS.paraTurma(turma);
-      const outros = window.MODELOS.lista.filter((m) => m !== modelo).map((m) => `${m.nome} (${window.MODELOS.link(m)})`).join(' e ');
+    // As peças de diversão (pedido do Arthur em 09/11, porque os jogos saíam simples demais): cada uma vira uma linha
+    // do prompt-base. Missão, desafio final e revisar os erros vêm marcados
+    const DIVERSAO = {
+      missao: ({ adult }) => adult ? 'Uma missão tirada da vida real (um caso do trabalho, da casa ou da cidade), apresentada no início e retomada entre as fases e no fim.' : 'Uma missão curta, com um personagem que pede ajuda (como o Bit, o robô do GamificaPampa), no início, entre as fases e no fim.',
+      final: () => 'Depois da última fase, um desafio final que mistura tudo o que foi treinado, com uma tela própria e uma comemoração maior.',
+      revisar: () => 'Na tela final, a lista do que foi errado, cada item com a explicação certa, e um botão Treinar os erros, que joga só esses de novo.',
+      chances: () => '3 chances (corações) por fase; sem chances, a fase recomeça com uma dica, sem perder as fases já vencidas.',
+      sequencia: () => 'Uma sequência de acertos: a cada 3 seguidos, uma estrela bônus e uma comemoração curta.',
+      dica: ({ infantil }) => !infantil && 'Um botão Dica em cada desafio, que dá uma pista sem entregar a resposta e custa meia estrela.',
+      dupla: () => 'Um modo dupla, escolhido no início: dois jogadores se revezam no mesmo aparelho, cada um com o seu placar (Jogador 1 e Jogador 2, sem pedir nomes).',
+      tempo: ({ infantil }) => !infantil && 'Um modo Contra o relógio que começa desligado: na tela de início, um botão liga o tempo para quem quiser.',
+    };
+    const promptBase = ({ infantil, adult, leitura, turma, estilo, paraApi, jeito = '', diversao = [] }) => {
+      const modelo = window.MODELOS.paraJeito(jeito) || window.MODELOS.paraTurma(turma);
       const pessoa = adult ? 'o estudante' : infantil ? 'a criança' : 'o aluno';
+      const pecas = diversao.filter((id) => DIVERSAO[id]).map((id) => DIVERSAO[id]({ infantil, adult })).filter(Boolean);
+      const comTempo = diversao.includes('tempo') && !infantil;
       return [
         paraApi ? 'Você cria jogos educativos em HTML para professores usarem na aula. Siga este padrão em todo jogo.' : 'Agora reescreva o jogo seguindo este padrão, sem mudar o tema nem o objetivo.',
         secao('Como o jogo funciona', [
           'Tela de início com o nome do jogo, o objetivo numa frase e as instruções em até 3 frases, com o botão Jogar.',
           '3 fases, da mais fácil à mais difícil; cada fase trabalha um passo do objetivo.',
-          'Uma pergunta ou desafio por tela, com no máximo 4 opções.',
+          `Como se joga: ${modelo.mecanica}.`,
+          modelo.regra,
           'O progresso sempre na tela, como "Fase 1 de 3".',
           `Tela final com estrelas pelo desempenho, uma frase do que ${pessoa} aprendeu e o botão Jogar de novo.`,
         ]),
+        pecas.length && secao('O que deixa o jogo divertido', pecas),
         secao(`Estilo visual: ${estilo.nome}`, [
           `O visual é ${estilo.frase}.`,
           'Use exatamente este bloco no começo do <style>, sem mudar as cores, a fonte nem as regras:',
@@ -708,7 +734,7 @@
           infantil ? 'As crianças ainda não leem: cada instrução e cada pergunta tem um botão Ouvir, que lê o texto com a voz do aparelho (speechSynthesis com lang pt-BR), e as respostas são figuras grandes.'
             : leitura && `Frases curtas e um botão Ouvir em cada pergunta, que lê o texto com a voz do aparelho (speechSynthesis com lang pt-BR), para ${adult ? 'quem' : 'o aluno que'} tem dificuldade de ler.`,
           'Pouca coisa na tela ao mesmo tempo: nada pisca nem se mexe enquanto se pensa; animação só no acerto e no erro, de até meio segundo, e nenhuma quando o aparelho pede menos movimento (prefers-reduced-motion).',
-          !adult && 'Sem tempo correndo: cada um responde no seu ritmo.',
+          comTempo ? 'O relógio só corre no modo Contra o relógio; desligado, cada um responde no seu ritmo.' : !adult && 'Sem tempo correndo: cada um responde no seu ritmo.',
           'Letra de pelo menos 18 px e de 24 px na pergunta, que é o maior texto da tela; botões do mesmo tamanho e sempre no mesmo lugar.',
           'Certo e errado com cor, ícone e palavra, nunca só com a cor.',
         ]),
@@ -722,13 +748,13 @@
         ]),
         secao('Exemplo de referência', [
           `Siga a estrutura deste esqueleto do jogo-modelo ${modelo.nome} (${window.MODELOS.link(modelo)}), em que ${modelo.mecanica}. Troque o tema, as perguntas e o visual pelo que foi pedido.`,
-        ]) + '\n```html\n' + modelo.esqueleto + '\n```\n' + secao('Outros jogos-modelo', [`Para ver como ficam prontos: ${outros}.`]),
+        ]) + '\n```html\n' + modelo.esqueleto + '\n```\n' + secao('Outros jogos-modelo', [`Todos os jogos-modelo, prontos para jogar: ${window.MODELOS.pagina}`]),
         secao('Antes de entregar', [
           'Jogue de cabeça do começo ao fim: confira cada resposta e cada conta, se todo botão funciona e se não sobrou erro no console.',
           'Escreva tudo em português do Brasil, com acentos.',
           paraApi ? 'Responda só com o arquivo HTML completo, num único bloco de código html, sem nada antes ou depois.' : 'Mostre o código completo num bloco de código HTML, sem criar arquivo para baixar. No fim, liste em poucas linhas o que você mudou.',
         ]),
-      ].join('\n\n');
+      ].filter(Boolean).join('\n\n');
     };
 
     // Peça mais (Fase 2 da spec): mensagens para mandar na mesma conversa depois da primeira resposta.
@@ -1094,12 +1120,13 @@
       jogo: {
         pergunta: 'Que tipo de jogo?',
         frase: (jeito) => ` O jogo é de ${jeito}.`,
-        infantil: ['memória com figuras', 'arrastar cada figura para o lugar certo', 'tocar no que a voz pedir'],
-        anos12: ['memória com figuras e palavras', 'arrastar e soltar', 'corrida de perguntas com estrelas'],
-        anos35: ['corrida de perguntas com fases', 'caça ao tesouro com pistas', 'arrastar para classificar'],
-        finais: ['desafio com tempo e níveis', 'escolhas com consequências', 'caça ao erro'],
-        medio: ['desafio com tempo e níveis', 'estudo de caso com escolhas', 'simulação com dados'],
-        eja: ['situações do dia a dia com escolhas', 'desafio de contas com tempo', 'perguntas e respostas em níveis'],
+        // Cada um leva a um jogo-modelo (modelos.js, paraJeito), com a regra da tela dele
+        infantil: ['tocar no que a voz pedir', 'jogo da memória com figuras', 'separar as figuras em grupos'],
+        anos12: ['tocar na resposta certa', 'jogo da memória', 'separar em grupos', 'pôr em ordem'],
+        anos35: ['quiz em fases', 'jogo da memória', 'separar em grupos', 'fuga com cadeados', 'pôr em ordem'],
+        finais: ['fuga com cadeados', 'história com escolhas', 'separar em grupos', 'pôr em ordem', 'quiz em fases'],
+        medio: ['história com escolhas', 'fuga com cadeados', 'jogo da memória de conceitos', 'pôr em ordem', 'quiz em fases'],
+        eja: ['situações do dia a dia com escolhas', 'fuga com cadeados', 'separar em grupos', 'quiz em fases'],
       },
       atividade: {
         pergunta: 'Com quais exercícios?',
@@ -1328,6 +1355,8 @@
       $('#aulas-linha').hidden = tipo !== 'plano';
       // O estilo só aparece no jogo; sem escolha, o da turma: Caderno, sóbrio, na EJA, e GamificaPampa nas outras
       $('#estilo-step').hidden = tipo !== 'jogo';
+      $('#diversao-step').hidden = tipo !== 'jogo';
+      for (const chip of form.querySelectorAll('#diversao-step [data-sem-infantil]')) chip.hidden = etapa === 'infantil';
       if (tipo === 'jogo' && !data.get('estilo')) marcar('estilo', /^(eja|em)/.test(new FormData(form).get('turma') || '') ? 'caderno' : 'gamificapampa');
       // O quiz diz quando vira o do Enem ou o do Encceja
       const quiz = form.querySelector('[name="tipo"][value="quiz"] + span');
@@ -1344,7 +1373,8 @@
       const isGame = kind === kinds.jogo;
       $('#quality').hidden = !isGame;
       if (isGame) {
-        const opcoes = { infantil: turma === 'infantil', adult, leitura, turma, estilo };
+        const escolhas = new FormData(form);
+        const opcoes = { infantil: turma === 'infantil', adult, leitura, turma, estilo, jeito: escolhas.get('jeito') || '', diversao: escolhas.getAll('diversao') };
         const textNow = promptBase(opcoes);
         baseApi = promptBase({ ...opcoes, paraApi: true });
         if (textNow !== qualityCurrent) {

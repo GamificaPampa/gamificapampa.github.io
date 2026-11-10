@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Fuga do Laboratório</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;700&display=swap">
+<style>
+/* Estilo GamificaPampa, do GamificaPampa: use sem mudar */
+:root {
+  --fundo: #4fadf2; --fundo-2: #bfe5ff; --cartao: #ffffff; --texto: #2f2a4a; --destaque: #ffd23f;
+  --botao: #4fd6a6; --botao-texto: #2f2a4a; --borda: #2f2a4a;
+  --certo: #c9f5e3; --certo-texto: #14532d; --errado: #ffd6e0; --errado-texto: #7a1530;
+  --fonte: "Fredoka", "Trebuchet MS", "Segoe UI", system-ui, sans-serif; --raio: 18px; --linha: 4px solid var(--borda); --sombra: 0 6px 0 var(--borda);
+}
+body { margin: 0; background: var(--fundo); color: var(--texto); font: 600 20px/1.4 var(--fonte); }
+button { min-height: 48px; padding: 8px 20px; background: var(--botao); color: var(--botao-texto); border: var(--linha); border-radius: var(--raio); box-shadow: var(--sombra); font: 700 20px var(--fonte); cursor: pointer; }
+.cartao { background: var(--cartao); color: var(--texto); border: var(--linha); border-radius: var(--raio); padding: 20px; }
+.certo { background: var(--certo); color: var(--certo-texto); } .errado { background: var(--errado); color: var(--errado-texto); }
+body { background: linear-gradient(var(--fundo), var(--fundo-2)) fixed; }
+/* Do jogo: o cadeado com um espaço por enigma, o enigma e as opções */
+* { box-sizing: border-box; }
+main { width: min(720px, 100% - 32px); margin: 24px auto; }
+h1 { margin: 0 0 8px; font-size: clamp(30px, 6vw, 44px); line-height: 1.1; }
+.tela { display: grid; gap: 16px; }
+.tela[hidden] { display: none; }
+.progresso { margin: 0; font-size: 18px; }
+.missao { margin: 0; padding: 10px 14px; border-radius: var(--raio); background: var(--fundo-2); }
+.cadeado { display: flex; justify-content: center; gap: 10px; margin: 0; padding: 0; list-style: none; }
+.cadeado li { display: grid; place-items: center; width: 64px; height: 76px; border: var(--linha); border-radius: 14px; background: var(--fundo-2); font-size: 38px; }
+.cadeado li.aberto { background: var(--destaque); }
+.pergunta { margin: 0; font-size: 26px; line-height: 1.3; }
+.opcoes { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 12px; }
+.opcoes button:disabled { cursor: default; opacity: .6; }
+.retorno { min-height: 64px; margin: 0; padding: 12px 16px; border-radius: var(--raio); }
+.retorno:empty { visibility: hidden; }
+.estrelas { font-size: 40px; letter-spacing: 6px; }
+button:focus-visible { outline: 4px solid var(--destaque); outline-offset: 3px; }
+@media (prefers-reduced-motion: no-preference) { .certo, .errado, .aberto { animation: pulo .3s ease; } }
+@keyframes pulo { 50% { transform: scale(1.06); } }
+</style>
+</head>
+<body>
+<main>
+  <!-- Tela de início: a missão, o objetivo e as instruções em até 3 frases -->
+  <section class="tela cartao" id="inicio">
+    <h1>Fuga do Laboratório</h1>
+    <p><b>Objetivo:</b> resolver multiplicações, divisões e problemas de duas etapas.</p>
+    <p>O Bit ficou preso no laboratório, atrás de 3 portas com cadeado. Cada enigma certo mostra um número do segredo. Se errar, você ganha uma pista e tenta de novo. Com os 3 números, a porta abre.</p>
+    <button id="jogar">Jogar</button>
+  </section>
+
+  <!-- Uma porta por fase: o cadeado em cima, o enigma e as opções -->
+  <section class="tela cartao" id="jogo" hidden>
+    <p class="progresso" id="progresso"></p>
+    <p class="missao" id="missao"></p>
+    <ol class="cadeado" id="cadeado" aria-label="Números do segredo"></ol>
+    <p class="pergunta" id="pergunta"></p>
+    <div class="opcoes" id="opcoes"></div>
+    <p class="retorno" id="retorno" role="status" aria-live="polite"></p>
+    <button id="proxima" hidden>Próximo enigma</button>
+  </section>
+
+  <!-- Fim: estrelas, o que aprendeu e Jogar de novo -->
+  <section class="tela cartao" id="fim" hidden>
+    <h1>O Bit está livre!</h1>
+    <p class="estrelas" id="estrelas"></p>
+    <p id="resumo"></p>
+    <p>Você aprendeu a escolher entre somar, tirar, multiplicar e dividir lendo o que o problema pede.</p>
+    <button id="denovo">Jogar de novo</button>
+  </section>
+</main>
+<script>
+// Cada porta tem 3 enigmas, e a resposta certa de cada um é um número de 0 a 9: ele vira um número do segredo.
+// As opções erradas vêm de erros comuns e dão uma pista sem entregar a resposta, porque o jogador tenta de novo
+const FASES = [
+  { nome: 'Tabuada', missao: 'Porta 1: o cadeado da entrada.', enigmas: [
+    { texto: 'Quanto é 3 × 3?', opcoes: [
+      { t: '9', certa: true, porque: '3 × 3 são 3 grupos de 3: 3 + 3 + 3 = 9.' },
+      { t: '6', porque: '6 é 3 + 3. Multiplicar é somar o 3 três vezes.' },
+      { t: '12', porque: '12 é 3 × 4. Aqui são 3 grupos de 3.' } ] },
+    { texto: 'Uma caixa tem 2 fileiras de 4 ovos. Quantos ovos há na caixa?', opcoes: [
+      { t: '8', certa: true, porque: '2 fileiras iguais de 4: 2 × 4 = 8.' },
+      { t: '6', porque: '6 é 2 + 4. Fileiras iguais pedem multiplicar.' },
+      { t: '4', porque: '4 é só uma fileira. Conte as 2 fileiras.' } ] },
+    { texto: 'Quanto é 5 × 1?', opcoes: [
+      { t: '5', certa: true, porque: 'Qualquer número vezes 1 continua o mesmo: 5.' },
+      { t: '6', porque: '6 é 5 + 1. Multiplicar por 1 é pegar o número uma vez só.' },
+      { t: '1', porque: '5 × 1 é um grupo de 5, e não de 1.' } ] } ] },
+  { nome: 'Divisão', missao: 'Porta 2: o cadeado do armário de tubos.', enigmas: [
+    { texto: '12 balas repartidas igualmente entre 4 crianças. Quantas balas cada uma ganha?', opcoes: [
+      { t: '3', certa: true, porque: 'Repartir igualmente é dividir: 12 ÷ 4 = 3.' },
+      { t: '8', porque: '8 é 12 − 4, que é tirar. Repartir igualmente é dividir.' },
+      { t: '4', porque: '4 é o número de crianças. Divida as 12 balas entre elas.' } ] },
+    { texto: 'Quanto é 18 ÷ 3?', opcoes: [
+      { t: '6', certa: true, porque: '3 × 6 = 18, então 18 ÷ 3 = 6.' },
+      { t: '5', porque: '3 × 5 = 15, não 18. Procure na tabuada do 3 o número que dá 18.' },
+      { t: '15', porque: '15 é 18 − 3. Dividir é ver quantas vezes o 3 cabe no 18.' } ] },
+    { texto: '7 figurinhas repartidas igualmente entre 2 amigos. Quantas sobram?', opcoes: [
+      { t: '1', certa: true, porque: 'Cada amigo ganha 3 (2 × 3 = 6), e sobra 7 − 6 = 1.' },
+      { t: '3', porque: '3 é o que cada amigo ganha. A pergunta é o que sobra.' },
+      { t: '0', porque: '7 é ímpar: repartido em 2 partes iguais, sempre sobra alguma coisa.' } ] } ] },
+  { nome: 'Duas etapas', missao: 'Porta 3: a última, para fora do laboratório.', enigmas: [
+    { texto: 'Ana comprou 3 pacotes com 2 lápis e já tinha 1 lápis. Com quantos lápis ela ficou?', opcoes: [
+      { t: '7', certa: true, porque: 'Primeiro os pacotes: 3 × 2 = 6. Depois o que ela tinha: 6 + 1 = 7.' },
+      { t: '6', porque: '6 são só os lápis dos pacotes. Falta o lápis que ela já tinha.' },
+      { t: '9', porque: 'Primeiro multiplique os pacotes pelos lápis de cada um, depois some o que ela tinha.' } ] },
+    { texto: 'Um ônibus leva 4 grupos de 5 alunos. Descem 18 alunos. Quantos ficam?', opcoes: [
+      { t: '2', certa: true, porque: 'Primeiro o total: 4 × 5 = 20. Depois os que descem: 20 − 18 = 2.' },
+      { t: '9', porque: '9 é 4 + 5. Os grupos são iguais: multiplique, depois tire os que desceram.' },
+      { t: '3', porque: 'Quase. Confira o total de alunos, 4 × 5, e tire os 18.' } ] },
+    { texto: 'O triplo de um número é 12. Qual é o número?', opcoes: [
+      { t: '4', certa: true, porque: 'Triplo é 3 vezes. Se 3 × ? = 12, o número é 12 ÷ 3 = 4.' },
+      { t: '9', porque: '9 é 12 − 3. Se 12 é o triplo, divida por 3.' },
+      { t: '6', porque: '6 é a metade de 12. Se 12 é o triplo, divida por 3, e não por 2.' } ] } ] },
+];
+
+const $ = (id) => document.getElementById(id);
+let fase = 0, enigma = 0, acertos = 0, erros = 0, errouEste = false;
+
+// O som do acerto e do erro, feito no próprio navegador (Web Audio), sem arquivo de fora
+let audio;
+const som = (certo) => {
+  try {
+    audio = audio || new AudioContext();
+    const osc = audio.createOscillator(), vol = audio.createGain();
+    osc.frequency.value = certo ? 660 : 220;
+    vol.gain.setValueAtTime(0.15, audio.currentTime);
+    vol.gain.exponentialRampToValueAtTime(0.001, audio.currentTime + 0.3);
+    osc.connect(vol).connect(audio.destination);
+    osc.start(); osc.stop(audio.currentTime + 0.3);
+  } catch (e) { /* sem som, o jogo continua */ }
+};
+
+const mostrar = (id) => { for (const tela of ['inicio', 'jogo', 'fim']) $(tela).hidden = tela !== id; };
+
+// O cadeado: um espaço por enigma, com "?" até o enigma ser resolvido
+const desenharCadeado = () => {
+  const f = FASES[fase];
+  $('cadeado').replaceChildren(...f.enigmas.map((e, i) => {
+    const li = document.createElement('li');
+    const resolvido = i < enigma;
+    li.textContent = resolvido ? e.opcoes.find((o) => o.certa).t : '?';
+    li.className = resolvido ? 'aberto' : '';
+    li.setAttribute('aria-label', resolvido ? `Número ${i + 1}: ${li.textContent}` : `Número ${i + 1}: ainda fechado`);
+    return li;
+  }));
+};
+
+const desenhar = () => {
+  const f = FASES[fase], e = f.enigmas[enigma];
+  $('progresso').textContent = `Porta ${fase + 1} de ${FASES.length}: ${f.nome}. Enigma ${enigma + 1} de ${f.enigmas.length}`;
+  $('missao').textContent = f.missao;
+  $('pergunta').textContent = e.texto;
+  $('retorno').textContent = '';
+  $('retorno').className = 'retorno';
+  $('proxima').hidden = true;
+  errouEste = false;
+  desenharCadeado();
+  $('opcoes').replaceChildren(...e.opcoes.map((op) => {
+    const b = document.createElement('button');
+    b.textContent = op.t;
+    b.addEventListener('click', () => responder(op, b));
+    return b;
+  }));
+  $('opcoes').querySelector('button').focus();
+};
+
+// Errou: explica e deixa tentar de novo, sem a opção errada. Acertou: o número entra no cadeado
+const responder = (op, botao) => {
+  som(Boolean(op.certa));
+  $('retorno').className = `retorno ${op.certa ? 'certo' : 'errado'}`;
+  $('retorno').textContent = `${op.certa ? '✓ Certo!' : '✗ Ainda não.'} ${op.porque}`;
+  if (!op.certa) {
+    erros += 1;
+    errouEste = true;
+    botao.disabled = true;
+    botao.classList.add('errado');
+    return;
+  }
+  if (!errouEste) acertos += 1;
+  for (const b of $('opcoes').querySelectorAll('button')) b.disabled = true;
+  botao.classList.add('certo');
+  enigma += 1;
+  desenharCadeado();
+  const abriu = enigma >= FASES[fase].enigmas.length;
+  if (abriu) $('retorno').textContent += ` A porta ${fase + 1} abriu!`;
+  $('proxima').textContent = !abriu ? 'Próximo enigma' : fase + 1 < FASES.length ? 'Ir para a próxima porta' : 'Sair do laboratório';
+  $('proxima').hidden = false;
+  $('proxima').focus();
+};
+
+const avancar = () => {
+  if (enigma >= FASES[fase].enigmas.length) { fase += 1; enigma = 0; }
+  if (fase >= FASES.length) return terminar();
+  desenhar();
+};
+
+// Estrelas pelos enigmas certos na primeira tentativa
+const terminar = () => {
+  const total = FASES.reduce((soma, f) => soma + f.enigmas.length, 0);
+  const n = acertos === total ? 3 : acertos >= total / 2 ? 2 : 1;
+  $('estrelas').textContent = '★'.repeat(n) + '☆'.repeat(3 - n);
+  $('estrelas').setAttribute('aria-label', `${n} de 3 estrelas`);
+  $('resumo').textContent = `Você resolveu ${acertos} de ${total} enigmas na primeira tentativa.`;
+  mostrar('fim');
+  $('denovo').focus();
+};
+
+$('jogar').addEventListener('click', () => { fase = enigma = acertos = erros = 0; mostrar('jogo'); desenhar(); });
+$('proxima').addEventListener('click', avancar);
+$('denovo').addEventListener('click', () => { mostrar('inicio'); $('jogar').focus(); });
+</script>
+</body>
+</html>
