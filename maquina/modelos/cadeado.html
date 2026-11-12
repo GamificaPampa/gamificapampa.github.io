@@ -147,6 +147,16 @@ const desenharCadeado = () => {
   }));
 };
 
+// Embaralha uma cópia das opções, para a certa não ficar sempre no mesmo lugar
+const embaralhar = (lista) => {
+  const copia = [...lista];
+  for (let i = copia.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [copia[i], copia[j]] = [copia[j], copia[i]];
+  }
+  return copia;
+};
+
 const desenhar = () => {
   const f = FASES[fase], e = f.enigmas[enigma];
   $('progresso').textContent = `Porta ${fase + 1} de ${FASES.length}: ${f.nome}. Enigma ${enigma + 1} de ${f.enigmas.length}`;
@@ -157,7 +167,7 @@ const desenhar = () => {
   $('proxima').hidden = true;
   errouEste = false;
   desenharCadeado();
-  $('opcoes').replaceChildren(...e.opcoes.map((op) => {
+  $('opcoes').replaceChildren(...embaralhar(e.opcoes).map((op) => {
     const b = document.createElement('button');
     b.textContent = op.t;
     b.addEventListener('click', () => responder(op, b));

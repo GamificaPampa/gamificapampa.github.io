@@ -113,6 +113,16 @@ const som = (certo) => {
 };
 const mostrar = (id) => { for (const tela of ['inicio', 'jogo', 'fim']) $(tela).hidden = tela !== id; };
 
+// Embaralha uma cópia das opções, para a certa não ficar sempre no mesmo lugar
+const embaralhar = (lista) => {
+  const copia = [...lista];
+  for (let i = copia.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [copia[i], copia[j]] = [copia[j], copia[i]];
+  }
+  return copia;
+};
+
 const desenhar = () => {
   const p = FASES[fase].perguntas[pergunta];
   $('progresso').textContent = `Fase ${fase + 1} de ${FASES.length}: ${FASES[fase].nome}`;
@@ -120,7 +130,7 @@ const desenhar = () => {
   $('retorno').textContent = '';
   $('retorno').className = 'retorno';
   $('proxima').hidden = true;
-  $('figuras').replaceChildren(...p.opcoes.map((op) => {
+  $('figuras').replaceChildren(...embaralhar(p.opcoes).map((op) => {
     const b = document.createElement('button');
     b.innerHTML = op.fig;
     b.setAttribute('aria-label', op.nome);

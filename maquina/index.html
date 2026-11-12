@@ -445,7 +445,7 @@
           </details>
           <button class="btn btn--small" type="button" id="quality-copy"><svg width="18" height="18" aria-hidden="true"><use href="#i-copy"/></svg>Copiar a segunda mensagem</button>
           <h3><b>3</b>Se o jogo travar</h3>
-          <p>Jogue na Prévia do começo ao fim, errando de propósito. Se um botão não responder ou o jogo pular uma parte, mande esta mensagem na mesma conversa, trocando o trecho entre colchetes pelo que aconteceu.</p>
+          <p>Jogue na Prévia do começo ao fim, errando de propósito. Se um botão não responder ou o jogo pular uma parte, mande esta mensagem na mesma conversa, trocando o trecho entre colchetes pelo que aconteceu. Se ele disser que não tem mais o código, abra uma conversa nova, cole o código do jogo e depois a mensagem.</p>
           <button class="btn btn--small" type="button" id="travou-copy"><svg width="18" height="18" aria-hidden="true"><use href="#i-copy"/></svg>Copiar a mensagem do conserto</button>
         </div>
         <div class="quality" id="mais" hidden>
@@ -659,7 +659,7 @@
         name: 'Sequência didática',
         papel: 'que planeja aulas ativas e encadeadas',
         tarefa: (theme) => `Crie uma sequência didática de 3 aulas sobre ${theme}, com o material de cada aula.`,
-        formato: 'Para cada aula: objetivo, passo a passo com o tempo de cada parte, o material e o que observar para saber se a turma aprendeu. As aulas avançam: a 1 apresenta, a 2 pratica e a 3 aplica. Aula 1: uma atividade para imprimir com gabarito. Aula 2: um quiz de 8 perguntas com gabarito, sem usar o teste interativo, com perguntas de lembrar e de explicar. Aula 3: a ideia de um jogo em uma frase, para eu pedir depois. Descreva as imagens entre parênteses. Antes de entregar, confira se cada pergunta tem uma só resposta certa.',
+        formato: 'Para cada aula: objetivo, passo a passo com o tempo de cada parte, o material e o que observar para saber se a turma aprendeu. As aulas avançam: a 1 apresenta, a 2 pratica e a 3 aplica. Aula 1: uma atividade para imprimir com gabarito. Aula 2: um quiz de 8 perguntas com gabarito, sem usar o teste interativo, com perguntas de lembrar e de explicar e alternativas erradas que venham de erros comuns de verdade. Aula 3: a ideia de um jogo em uma frase, para eu pedir depois. Descreva as imagens entre parênteses. Antes de entregar, confira se cada pergunta tem uma só resposta certa.',
         tip: 'Para o jogo da aula 3, abra uma conversa nova e mande primeiro só a ideia curta. O jogo vem num bloco de código, com a Prévia para jogar.',
       },
       // O tema é o trabalho que vai ser avaliado. Na Educação Infantil a rubrica vira registro de observação, sem nota,
@@ -781,7 +781,7 @@
       versaoB: { nome: 'Versão B da folha', texto: 'Faça uma versão B da folha, com exercícios parecidos e números ou palavras diferentes, e o gabarito dela.' },
       resumo: { nome: 'Resumo em tópicos', texto: 'Agora transforme o texto adaptado num resumo em tópicos para o caderno, com até 6 itens.' },
       // Para o jogo (ideia 3 de 10/11): cada pedido muda uma coisa só e devolve o jogo inteiro
-      maisFase: { nome: 'Mais uma fase', texto: 'Acrescente uma fase nova, mais difícil que a última, com o mesmo estilo e o mesmo jeito de jogar, e atualize o progresso e as estrelas. Mantenha o resto do jogo como está.' },
+      maisFase: { nome: 'Mais uma fase', texto: 'Acrescente uma fase nova, mais difícil que a última, mas sem passar do que a turma desse ano estuda, com o mesmo estilo e o mesmo jeito de jogar, e atualize o progresso e as estrelas. Mantenha o resto do jogo como está.' },
       erradasDificeis: { nome: 'Erradas mais difíceis', texto: 'Troque as respostas erradas que dá para descartar sem pensar por erros comuns de verdade sobre o tema, que pareçam possíveis para quem ainda não aprendeu, e ajuste a explicação de cada uma. Mantenha o resto do jogo como está.' },
       embaralharJogo: { nome: 'Embaralhar as opções', texto: 'Embaralhe as opções em cada pergunta e a cada partida, para a resposta certa não ficar sempre no mesmo lugar. Mantenha o resto do jogo como está.' },
       projetor: { nome: 'Versão para o projetor', texto: 'Faça uma versão para jogar com a turma toda no projetor: letra e botões bem maiores, uma pergunta por tela, um botão Mostrar a resposta antes da explicação, para a turma discutir primeiro, e nada que dependa de toque rápido. Mantenha o tema, as perguntas e o estilo.' },

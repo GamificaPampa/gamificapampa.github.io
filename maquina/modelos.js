@@ -70,7 +70,7 @@ const FASES = [
       { fig: '<svg>...</svg>', nome: 'círculo azul', porque: 'Esse é azul. Procure o amarelo, como o sol.' } ] } ] },
   // mais 2 fases, cada uma um pouco mais difícil
 ];
-// desenhar(): mostra a pergunta, fala o texto e cria os botões das figuras
+// desenhar(): mostra a pergunta, fala o texto e cria os botões das figuras, em ordem embaralhada
 // responder(op): desliga os botões, marca .certo ou .errado, mostra ✓ ou ✗ com op.porque, fala e toca o som
 // avancar(): próxima pergunta ou fase; no fim, as estrelas
 // som(certo): Web Audio, um tom curto; falar(texto): speechSynthesis em pt-BR
@@ -103,7 +103,7 @@ const FASES = [
   // mais 2 fases, do fácil ao difícil; as erradas vêm de erros comuns
 ];
 let fase = 0, pergunta = 0, acertos = 0, total = 0;
-// desenhar(): "Fase X de 3", a pergunta e um <button> por opção; o foco vai para a primeira
+// desenhar(): "Fase X de 3", a pergunta e um <button> por opção, em ordem embaralhada; o foco vai para a primeira
 // responder(op, botao): desliga as opções, .certo ou .errado, "✓ Certo!" ou "✗ Ainda não." + op.porque, som
 // avancar(): próxima pergunta, próxima fase ou terminar(): 3, 2 ou 1 estrelas e o total de acertos
 </script>
@@ -231,7 +231,7 @@ const FASES = [
       { t: '6', porque: '6 é 3 + 3. Multiplicar é somar o 3 três vezes.' } ] } ] },  // a pista não entrega a resposta
   // mais 2 portas, do fácil ao difícil; toda resposta certa é um número de 0 a 9
 ];
-// desenhar(): o cadeado com os números já achados, o enigma e as opções
+// desenhar(): o cadeado com os números já achados, o enigma e as opções em ordem embaralhada
 // responder(op, botao): errado, "✗ Ainda não." + a pista de op.porque, e só aquele botão desliga; certo, o número entra no cadeado;
 //   com os 3 números, "A porta abriu!" e o botão leva à próxima porta
 // no fim, estrelas pelos enigmas certos na primeira tentativa
