@@ -17,6 +17,7 @@
 //     links: [['Jogar', '/recursos-pedagogicos/criancas/pasta-do-jogo/', 'jogar']] },
 // Sem dado de aluno, sem detalhe técnico: só o que muda para o professor.
 window.NOVIDADES = [
+  { data: '2026-11-12', titulo: 'Oficina na Escola Raymundo Carvalho', texto: 'Nas Ações, o relato e as fotos da oficina de 09/11, com os professores da tarde: do prompt ao jogo pronto, ao vivo, com o ChatGPT.', icone: 'computador', cor: 'yellow', links: [['Ver a ação', '/acoes/#2026-11-09-raymundo-carvalho', 'conhecer']] },
   { data: '2026-11-10', titulo: 'O publicador confere o jogo', texto: 'Antes de publicar, o publicador lê o código e avisa o que costuma dar errado: resposta certa sempre no mesmo lugar, coisa puxada da internet, objetivo faltando, código cortado. Cada aviso traz o pedido pronto para mandar ao ChatGPT. E, na Máquina, o jogo ganhou o Peça mais: mais uma fase, erradas mais difíceis, embaralhar e versão para o projetor.', icone: 'jogo', cor: 'mint',
     links: [['Publicar meu jogo', '/publicador/', 'compartilhar'], ['Abrir a máquina', '/maquina/', 'conhecer']] },
   { data: '2026-11-09', titulo: 'Jogos com mais jeitos de jogar', texto: 'Na Máquina, o jogo agora pode ser de memória, de separar em grupos, de fuga com cadeados ou uma história com escolhas, cada um com um jogo-modelo para a IA seguir. E você marca o que deixa o jogo mais divertido: missão, desafio final, chances, modo dupla e mais.', icone: 'controle', cor: 'pink',

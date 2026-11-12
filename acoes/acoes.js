@@ -24,6 +24,31 @@
 // Depois, acrescente um item em novidades/novidades.js com o link /acoes/#<id>.
 window.ACOES = [
   {
+    id: '2026-11-09-raymundo-carvalho',
+    data: '2026-11-09',
+    tipo: 'oficina',
+    titulo: 'Oficina na Escola Raymundo Carvalho',
+    local: 'Escola Raymundo Carvalho, Alegrete',
+    resumo: 'Uma tarde com os professores da escola, do prompt ao jogo pronto para a turma.',
+    texto: [
+      'A equipe do Educador 5.0 e do GamificaEdu levou a oficina Aperte START para a Escola Raymundo Carvalho, no turno da tarde.',
+      'Primeiro, a conversa sobre o que é gamificação, o que é um prompt e como montar um bom pedido com papel, tarefa, contexto e formato. Depois, a equipe mostrou ao vivo o caminho do prompt ao jogo: o ChatGPT criou um jogo de separação silábica com elementos de Alegrete e do Pampa, e o site foi para a tela da sala, com o QR Code para abrir no celular.',
+      'Na prática, os professores criaram jogos para as próprias turmas, com a equipe por perto para ajudar.',
+      'Obrigado ao corpo docente e à direção da escola pela acolhida.',
+    ],
+    fotos: [
+      'Os professores da tarde acompanham a conversa, com o chimarrão na mesa',
+      'A sala da oficina, com a equipe à frente',
+      'O ChatGPT cria, ao vivo, um jogo de separação silábica',
+      'O QR Code do site na tela, para abrir no celular',
+      'O início do site do GamificaPampa na tela da sala',
+    ],
+    links: [
+      ['Abrir a máquina', '/maquina/', 'conhecer'],
+      ['Publicar meu jogo', '/publicador/', 'compartilhar'],
+    ],
+  },
+  {
     id: '2026-11-04-tancredo-neves',
     data: '2026-11-04',
     tipo: 'oficina',
