@@ -120,6 +120,10 @@ document.querySelectorAll('dialog.ficha').forEach((sheet) => {
 // Sending the contact form to Formspree in the background, so the message arrives
 // without the visitor opening an e-mail app. Without JavaScript, the form still posts normally.
 const mailer = document.forms.mailer;
+// Vindo do convite da página de Ações (/?assunto=oficina#contato), a mensagem já chega com o pedido da oficina
+if (new URLSearchParams(location.search).get('assunto') === 'oficina' && !mailer.elements.mensagem.value) {
+  mailer.elements.mensagem.value = 'Queremos receber a oficina do GamificaPampa na nossa escola.';
+}
 mailer.addEventListener('submit', async (event) => {
   event.preventDefault();
   const button = mailer.querySelector('button[type="submit"]');

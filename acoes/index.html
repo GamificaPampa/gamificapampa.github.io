@@ -83,6 +83,11 @@
     .visor__botao .icone { width: 24px; height: 24px; }
 
     .vazio { padding: 18px 20px; font-weight: 600; }
+    .convite { display: flex; gap: 22px; align-items: center; padding: 22px 26px; margin: 28px 0 24px; }
+    .convite img { flex: none; }
+    .convite h2 { margin: 0 0 6px; }
+    .convite p { margin: 0 0 16px; }
+    @media (max-width: 560px) { .convite { flex-direction: column; text-align: center; } }
     .fim { display: flex; flex-wrap: wrap; gap: 14px; padding-bottom: clamp(140px, 18vw, 220px); }
     .foot { position: relative; padding: 0 16px 28px; font-weight: 600; text-align: center; }
   </style>
@@ -115,6 +120,15 @@
     <section class="galeria" aria-labelledby="titulo-galeria">
       <h2 id="titulo-galeria">Galeria</h2>
       <ul class="galeria__grade" id="galeria"></ul>
+    </section>
+
+    <section class="convite card" aria-labelledby="titulo-convite">
+      <img src="/identidade-visual/mascote/bit-acenando.svg" width="96" height="96" alt="">
+      <div>
+        <h2 id="titulo-convite">Leve a oficina para a sua escola</h2>
+        <p>A equipe vai até a escola, pública ou privada, com a oficina Aperte START: cerca de duas horas para os professores saírem com um jogo feito com IA para a própria turma.</p>
+        <a class="btn btn--falar" href="/?assunto=oficina#contato"><span data-icone="balao"></span>Falar com a equipe</a>
+      </div>
     </section>
 
     <p class="fim">
