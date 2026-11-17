@@ -783,13 +783,13 @@
       // Para o jogo (ideia 3 de 10/11): cada pedido muda uma coisa só e devolve o jogo inteiro
       maisFase: { nome: 'Mais uma fase', texto: 'Acrescente uma fase nova, mais difícil que a última, mas sem passar do que a turma desse ano estuda, com o mesmo estilo e o mesmo jeito de jogar, e atualize o progresso e as estrelas. Mantenha o resto do jogo como está.' },
       erradasDificeis: { nome: 'Erradas mais difíceis', texto: 'Troque as respostas erradas que dá para descartar sem pensar por erros comuns de verdade sobre o tema, que pareçam possíveis para quem ainda não aprendeu, e ajuste a explicação de cada uma. Mantenha o resto do jogo como está.' },
-      embaralharJogo: { nome: 'Embaralhar as opções', texto: 'Embaralhe as opções em cada pergunta e a cada partida, para a resposta certa não ficar sempre no mesmo lugar. Mantenha o resto do jogo como está.' },
       projetor: { nome: 'Versão para o projetor', texto: 'Faça uma versão para jogar com a turma toda no projetor: letra e botões bem maiores, uma pergunta por tela, um botão Mostrar a resposta antes da explicação, para a turma discutir primeiro, e nada que dependa de toque rápido. Mantenha o tema, as perguntas e o estilo.' },
       lista: { nome: 'Lista para conferir', texto: 'Agora transforme a rubrica numa lista curta para a turma conferir o trabalho antes de entregar, escrita na primeira pessoa.' },
     };
     // No jogo, o padrão de qualidade é a segunda mensagem, e o Peça mais vem depois, para mudar o jogo pronto
     const maisPorTipo = {
-      jogo: ['maisFase', 'erradasDificeis', 'embaralharJogo', 'projetor'],
+      // Sem o Embaralhar: o padrão do jogo já pede, e no teste de 16/11 foi o único pedido que quebrou o código
+      jogo: ['maisFase', 'erradasDificeis', 'projetor'],
       historia: ['atividadeHistoria', 'desafio', 'dificuldade', 'lugar'],
       quiz: ['embaralhar', 'abertas', 'desafio', 'dificuldade'],
       atividade: ['versaoB', 'desafio', 'dificuldade', 'lugar'],
@@ -1470,7 +1470,7 @@
       $('#mais-numero').textContent = tipo === 'jogo' ? '4' : '2';
       $('#depois-numero').textContent = tipo === 'jogo' ? '5' : '3';
       $('#mais-intro').textContent = tipo === 'jogo'
-        ? 'Com o jogo funcionando, mande uma destas na mesma conversa. Cada uma muda uma coisa e devolve o jogo inteiro: jogue de novo na Prévia antes de publicar.'
+        ? 'Com o jogo funcionando, mande uma destas na mesma conversa, um pedido por vez. Depois de cada um, jogue na Prévia e baixe a versão que funcionou. Se ele disser que não tem mais o código, abra uma conversa nova e cole sempre o código mais novo, porque ele volta ao código colado.'
         : 'Depois da primeira resposta, mande uma destas na mesma conversa. A primeira confere e corrige o material; as outras fazem versões novas.';
       const chaveMais = mostrarMais ? `${tipo}|${local}` : '';
       if (mostrarMais && chaveMais !== maisAgora) {
