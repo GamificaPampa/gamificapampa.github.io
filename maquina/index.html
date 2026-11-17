@@ -291,9 +291,12 @@
           <label class="chip" data-etapas="medio"><input type="radio" name="materia" value="fisica"><span>Física</span></label>
           <label class="chip" data-etapas="medio"><input type="radio" name="materia" value="quimica"><span>Química</span></label>
           <label class="chip" data-etapas="iniciais finais medio eja outra"><input type="radio" name="materia" value="historia"><span>História</span></label>
-          <label class="chip" data-etapas="iniciais finais eja outra"><input type="radio" name="materia" value="geografia"><span>Geografia</span></label>
-          <label class="chip" data-etapas="iniciais outra"><input type="radio" name="materia" value="arte"><span>Arte</span></label>
-          <label class="chip" data-etapas="finais"><input type="radio" name="materia" value="ingles"><span>Inglês</span></label>
+          <label class="chip" data-etapas="iniciais finais medio eja outra"><input type="radio" name="materia" value="geografia"><span>Geografia</span></label>
+          <label class="chip" data-etapas="iniciais finais medio outra"><input type="radio" name="materia" value="arte"><span>Arte</span></label>
+          <label class="chip" data-etapas="finais medio"><input type="radio" name="materia" value="ingles"><span>Inglês</span></label>
+          <label class="chip" data-etapas="finais medio"><input type="radio" name="materia" value="educacao-fisica"><span>Educação Física</span></label>
+          <label class="chip" data-etapas="medio"><input type="radio" name="materia" value="filosofia"><span>Filosofia</span></label>
+          <label class="chip" data-etapas="medio"><input type="radio" name="materia" value="sociologia"><span>Sociologia</span></label>
           <span class="linha" id="minhas-materia" style="display: contents"></span>
           <label class="chip" data-fixa><input type="radio" name="materia" value="outra"><span>Outra</span></label>
           <input class="theme" id="materia-outra" name="materia_outra" maxlength="40" autocomplete="off" placeholder="Qual matéria? Por exemplo: Ensino Religioso" aria-label="Qual matéria" hidden>
@@ -309,12 +312,12 @@
           <span class="linha" id="minhas-tipo" style="display: contents"></span>
           <label class="chip" data-fixa><input type="radio" name="tipo" value="outro"><span>Outro</span></label>
           <input class="theme" id="tipo-outro" name="tipo_outro" maxlength="40" autocomplete="off" placeholder="O que criar? Por exemplo: caça-palavras" aria-label="O que criar" hidden>
-          <div class="linha" id="aulas-linha" hidden>
-            <span class="step__aviso">Quantas aulas?</span>
+          <div class="linha" id="aulas-linha" role="radiogroup" aria-labelledby="aulas-pergunta" hidden>
+            <span class="step__aviso" id="aulas-pergunta">Quantas aulas?</span>
             <label class="chip"><input type="radio" name="aulas" value="1"><span>1 aula</span></label>
             <label class="chip"><input type="radio" name="aulas" value="3"><span>3 aulas, em sequência</span></label>
           </div>
-          <div class="linha" id="jeito-linha" hidden>
+          <div class="linha" id="jeito-linha" role="radiogroup" aria-labelledby="jeito-pergunta" hidden>
             <span class="step__aviso" id="jeito-pergunta">De qual jeito?</span>
             <span id="jeitos" style="display: contents"></span>
           </div>
@@ -517,7 +520,7 @@
       </div>
       <div class="how__links">
         <a class="btn btn--jogar" href="https://gamificapampa.github.io/recursos-pedagogicos/professores/oficina-prompts/jogo.html"><svg width="22" height="22" aria-hidden="true"><use href="#tri"/></svg>Jogo do Prompt</a>
-        <a class="btn btn--conhecer" href="https://gamificapampa.github.io/recursos-pedagogicos/professores/oficina-prompts/construtor.html"><svg width="22" height="22" aria-hidden="true"><use href="#i-lupa"/></svg>Construtor de prompts</a>
+        <a class="btn btn--conhecer" href="https://gamificapampa.github.io/recursos-pedagogicos/professores/oficina-prompts/biblioteca.html"><svg width="22" height="22" aria-hidden="true"><use href="#i-lupa"/></svg>Biblioteca de prompts</a>
         <a class="btn btn--conhecer" href="https://gamificapampa.github.io/recursos-pedagogicos/professores/oficina-prompts/curso.html"><svg width="22" height="22" aria-hidden="true"><use href="#i-lupa"/></svg>Curso da Oficina</a>
         <a class="btn btn--conhecer" href="https://gamificapampa.github.io/recursos-pedagogicos/professores/oficina-prompts/frases.html"><svg width="22" height="22" aria-hidden="true"><use href="#i-lupa"/></svg>Frases que salvam</a>
       </div>
@@ -691,7 +694,7 @@
     let baseApi = '';
 
     // O prompt-base do jogo (itens 2.5.4.1 a 2.5.4.4 da spec da retrospectiva de 06/11): seções com títulos e uma
-    // instrução por linha. No Canvas, ele é a segunda mensagem, porque o Canvas recusa jogo pedido num prompt longo;
+    // instrução por linha. No ChatGPT e no Gemini, ele é a segunda mensagem (o Canvas do Gemini recusa jogo pedido num prompt longo);
     // no Criar aqui, ele vai como a parte fixa (instrução de sistema), e o pedido do professor vai à parte
     const secao = (titulo, linhas) => [`## ${titulo}`, ...linhas.filter(Boolean).map((linha) => `- ${linha}`)].join('\n');
     // As peças de diversão (pedido do Arthur em 09/11, porque os jogos saíam simples demais): cada uma vira uma linha
@@ -1097,7 +1100,7 @@
           ? ` O objetivo é que ${infantil ? 'as crianças consigam' : adult ? 'os estudantes consigam' : 'a turma consiga'} ${objetivo}; escreva esse objetivo no topo.`
           : ` No topo, escreva numa frase o objetivo: o que ${infantil ? 'as crianças vão' : adult ? 'os estudantes vão' : 'a turma vai'} conseguir fazer depois.`;
       }
-      // "O ChatGPT me pergunta antes" (Fase 3, testado no Gemini): na Fase 0 ele perguntou e esperou nas 3 vezes. Fica fora do jogo, por causa do Canvas
+      // "O ChatGPT me pergunta antes" (Fase 3, testado no Gemini): na Fase 0 ele perguntou e esperou nas 3 vezes. Fica fora do jogo, que já vem em duas mensagens
       if (formato && tipoId !== 'jogo' && data.get('perguntar')) {
         formato += ' Antes de criar, faça até 3 perguntas sobre a minha turma, o objetivo e onde a turma costuma errar, e espere as minhas respostas.';
       }
@@ -1879,15 +1882,27 @@
     // Os campos que o quero-quero vigia e onde mais aparece dado de aluno (material, o que a turma já sabe, algo mais e
     // a outra turma) não ficam guardados no aparelho. A outra turma sem dado de aluno já vira botão nas opções guardadas
     Lembrar.campos('maquina', [...form.elements].filter((campo) => !['material', 'sabe', 'algo-mais', 'turma-outra'].includes(campo.id) && campo.type !== 'file'));
+    // A "Outra turma" volta sem o texto (ele não fica guardado): vale o botão da última turma escrita, ou nada marcado
+    if (new FormData(form).get('etapa') === 'outra' && !$('#turma-outra').value.trim()) {
+      const ultima = (lerMinhas().etapa || [])[0];
+      if (ultima) marcar('etapa', `minha:${ultima}`); else desmarcar('etapa');
+    }
     // Quem já preencheu o passo 6 numa visita anterior encontra ele aberto
     if (['objetivo', 'sabe', 'mais'].some((nome) => form.elements[nome].value.trim()) || ['uso', 'tempo', 'perguntar', 'extra'].some((nome) => new FormData(form).get(nome))) $('#completo').open = true;
     // No celular, o console com o Copiar fica depois das perguntas: uma barra no pé da tela traz o Copiar e as peças prontas
     Copiar.barraFixa({ observar: document.querySelector('#console .actions'), copiar: copyButton, contador: $('#count') });
-    $('#reset').addEventListener('click', () => { anexo.vez++; anexo.lendo = false; form.reset(); $('#material').value = ''; mostrarAnexo(''); Lembrar.guardar('maquina', {}); update(); form.querySelector('[name="etapa"]').focus(); });
+    $('#reset').addEventListener('click', () => { anexo.vez++; anexo.lendo = false; form.reset(); $('#material').value = ''; mostrarAnexo(''); Lembrar.guardar('maquina', {}); Lembrar.guardar('maquina-jeito', ''); update(); form.querySelector('[name="etapa"]').focus(); });
     form.addEventListener('input', update);
     form.addEventListener('change', update);
     form.addEventListener('submit', (event) => event.preventDefault());
     update();
+    // O "De qual jeito?" é criado no update(), depois do Lembrar.campos: fica guardado à parte e volta aqui
+    const jeitoGuardado = Lembrar.ler('maquina-jeito', '');
+    if (jeitoGuardado) {
+      const opcao = [...form.querySelectorAll('[name="jeito"]')].find((campo) => campo.value === jeitoGuardado);
+      if (opcao) { opcao.checked = true; update(); }
+    }
+    form.addEventListener('change', (evento) => { if (evento.target.name === 'jeito') Lembrar.guardar('maquina-jeito', evento.target.value); });
     renderRecent();
   </script>
 </body>

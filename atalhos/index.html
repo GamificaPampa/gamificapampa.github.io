@@ -63,7 +63,7 @@
 <script>
 (() => {
   const icone = (nome) => (window.Icones ? Icones.svg(nome) : '');
-  const cores = { 'Jogos': 'var(--blue)', 'Jogos por matéria': 'var(--orange)', 'Aula com as crianças': 'var(--yellow)', 'Oficina de Prompts': 'var(--mint)' };
+  const cores = { 'Jogos': 'var(--blue)', 'Jogos por matéria': 'var(--orange)', 'Aula com as crianças': 'var(--yellow)', 'Oficina de Prompts': 'var(--mint)', 'Do projeto': 'var(--pink)' };
   const grupos = {};
   for (const [atalho, [grupo, rotulo, , qr]] of Object.entries(ATALHOS)) {
     if (rotulo) (grupos[grupo] ||= []).push([atalho, rotulo, qr || 'qr/' + atalho + '.svg']);

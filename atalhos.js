@@ -47,8 +47,8 @@ const ATALHOS = {
   chatgpt: ['', '', 'https://chatgpt.com/'],
   gemini: ['', '', 'https://gemini.google.com/app'],
   jogos: ['', '', 'https://gamificapampa.github.io/turma/'],
-  novidades: ['Oficina de Prompts', 'Novidades do site', 'https://gamificapampa.github.io/novidades/'],
-  acoes: ['Oficina de Prompts', 'Ações nas escolas, com relatos e fotos', 'https://gamificapampa.github.io/acoes/'],
+  novidades: ['Do projeto', 'Novidades do site', 'https://gamificapampa.github.io/novidades/'],
+  acoes: ['Do projeto', 'Ações nas escolas, com relatos e fotos', 'https://gamificapampa.github.io/acoes/'],
 };
 
 // Outros nomes que levam ao mesmo atalho: o nome inteiro do jogo e o jeito como as pessoas falam

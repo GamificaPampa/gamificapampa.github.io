@@ -219,10 +219,10 @@ const BUSCA_EXTRA = {
   'Certificado de Programador(a) Mirim': 'diploma',
   'Tudo para imprimir': 'pdf papel folhas impressão impressora a4 roteiro atividades',
   'Jogos para a turma': 'projetor celular qr crianças',
-  'Publicar meu jogo': 'canvas link qr github hospedar',
+  'Publicar meu jogo': 'link qr hospedar galeria sem conta enviar html',
   'Kit sem internet (zip)': 'offline sem rede baixar zip notebook',
   'Novidades': 'o que mudou novo',
-  'Ações nas escolas': 'acoes oficinas visitas relatos fotos galeria encontros formação tancredo neves',
+  'Ações nas escolas': 'acoes oficinas visitas relatos fotos galeria encontros formação tancredo neves raymundo carvalho convite levar oficina escola',
   'Links curtos com QR': 'atalhos endereço curto',
   'Fale com a equipe': 'contato levar escola formação',
 };
@@ -249,6 +249,8 @@ if (campo && lista) {
     lista.hidden = !buscando;
     achados = [];
     escolhido = 0;
+    campo.setAttribute('aria-expanded', String(buscando));
+    campo.removeAttribute('aria-activedescendant');
     if (!buscando) { lista.replaceChildren(); return; }
     // Cada palavra digitada tem de começar uma palavra da página: "gem" acha Gems, mas não "imagem"
     achados = indiceBusca.filter((item) => palavras.every((p) => item.palavras.some((w) => w.startsWith(p))))
@@ -256,6 +258,7 @@ if (campo && lista) {
       .sort((a, b) => b.nota - a.nota).slice(0, 8).map(({ item }) => item);
     lista.replaceChildren(...achados.map((item, i) => {
       const li = document.createElement('li');
+      li.setAttribute('role', 'presentation');
       const link = Object.assign(document.createElement('a'), { className: 'busca__item', href: item.href, id: `busca-${i}` });
       link.setAttribute('role', 'option');
       link.setAttribute('aria-selected', String(i === escolhido));
@@ -266,11 +269,13 @@ if (campo && lista) {
       li.append(link);
       return li;
     }));
-    if (!achados.length) lista.append(Object.assign(document.createElement('li'), { className: 'busca__vazio', textContent: 'Nada com essas palavras. Tente outra, ou apague para ver todas as páginas.' }));
+    if (!achados.length) lista.append(Object.assign(document.createElement('li'), { className: 'busca__vazio', role: 'presentation', textContent: 'Nada com essas palavras. Tente outra, ou apague para ver todas as páginas.' }));
+    else campo.setAttribute('aria-activedescendant', 'busca-0');
   };
   const marcar = (i) => {
     escolhido = (i + achados.length) % achados.length;
     lista.querySelectorAll('.busca__item').forEach((link, k) => link.setAttribute('aria-selected', String(k === escolhido)));
+    campo.setAttribute('aria-activedescendant', `busca-${escolhido}`);
     lista.querySelector(`#busca-${escolhido}`)?.scrollIntoView({ block: 'nearest' });
   };
   const abrirBusca = () => {

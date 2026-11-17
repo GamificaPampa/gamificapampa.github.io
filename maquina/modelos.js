@@ -1,5 +1,5 @@
-/* Os jogos-modelo da Máquina de prompts (item 2.5.4.3 da spec da retrospectiva de 06/11): três jogos de um arquivo só,
-   no padrão do prompt-base e no estilo GamificaPampa, em /maquina/modelos/. O prompt de um jogo leva o link dos três e o
+/* Os jogos-modelo da Máquina de prompts (item 2.5.4.3 da spec da retrospectiva de 06/11): sete jogos de um arquivo só,
+   no padrão do prompt-base e no estilo GamificaPampa, em /maquina/modelos/. O prompt de um jogo leva o link dos modelos e o
    esqueleto do mais parecido com o pedido, escolhido pela turma. O esqueleto mostra a estrutura, não o conteúdo:
    a IA troca o tema, as perguntas e o estilo.
 

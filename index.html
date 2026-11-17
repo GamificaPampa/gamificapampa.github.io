@@ -66,7 +66,7 @@ p, li, blockquote {
         <button class="nav__mapa" id="mapa-button" type="button" aria-expanded="false" aria-controls="mapa" title="Todas as páginas e a busca (Ctrl K)">Todas as páginas<span class="nav__seta" aria-hidden="true"></span></button>
           <div class="mapa" id="mapa" hidden>
             <div class="mapa__busca" role="search">
-              <label class="busca__caixa"><svg width="24" height="24" aria-hidden="true"><use href="#i-lupa"/></svg><input id="busca-campo" type="search" placeholder="O que você quer fazer hoje?" autocomplete="off" aria-label="Buscar no site" aria-controls="busca-lista"><kbd>Ctrl K</kbd></label>
+              <label class="busca__caixa"><svg width="24" height="24" aria-hidden="true"><use href="#i-lupa"/></svg><input id="busca-campo" type="search" placeholder="O que você quer fazer hoje?" autocomplete="off" aria-label="Buscar no site" role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="busca-lista"><kbd>Ctrl K</kbd></label>
               <ul class="busca__lista" id="busca-lista" role="listbox" aria-label="Páginas encontradas" hidden></ul>
             </div>
             <section class="mapa__grupo" style="--c: var(--blue)">
@@ -270,7 +270,7 @@ p, li, blockquote {
   </footer>
 
   <script src="/identidade-visual/js/paisagem.js" defer></script>
-  <script src="script.js?v=31" defer></script>
+  <script src="script.js?v=32" defer></script>
 <script src="/identidade-visual/js/objetos.js" defer></script>
 </body>
 </html>
