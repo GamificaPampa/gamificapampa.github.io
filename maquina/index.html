@@ -896,17 +896,26 @@
       [/\bmatr[ií]cula\b/i, 'uma matrícula'],
     ];
     const CAMPOS_VIGIADOS = [['tema', 'Tema'], ['objetivo', 'Objetivo'], ['sabe', 'O que a turma já sabe'], ['algo-mais', 'Algo mais'], ['material', 'Material'], ['turma-outra', 'Outra turma']];
-    const dadoDeAluno = () => CAMPOS_VIGIADOS.flatMap(([id, nome]) => {
-      const texto = (document.getElementById(id) || {}).value || '';
-      return texto ? PRIVACIDADE.filter(([padrao]) => padrao.test(texto)).map(([, oque]) => `${oque} em "${nome}"`) : [];
-    });
+    const temDadoDeAluno = (texto) => PRIVACIDADE.some(([padrao]) => padrao.test(texto));
+    const dadoDeAluno = (ignorar = []) => [
+      ...CAMPOS_VIGIADOS.filter(([id]) => !ignorar.includes(id)).flatMap(([id, nome]) => {
+        const texto = (document.getElementById(id) || {}).value || '';
+        return texto ? PRIVACIDADE.filter(([padrao]) => padrao.test(texto)).map(([, oque]) => `${oque} em "${nome}"`) : [];
+      }),
+      // As opções guardadas também vão para o prompt (o Papel diz "da turma ..."): a marcada é conferida como os campos
+      ...['etapa', 'materia', 'tipo'].flatMap((nome) => {
+        const valor = String(new FormData(form).get(nome) || '');
+        return valor.startsWith('minha:') ? PRIVACIDADE.filter(([padrao]) => padrao.test(valor.slice(6))).map(([, oque]) => `${oque} na opção "${valor.slice(6)}"`) : [];
+      }),
+    ];
 
     // Anexar arquivo: o texto de Word, ODT, PDF e .txt é lido aqui, no aparelho, e vai para o campo do material,
     // onde o professor confere e apaga nomes. Foto, PDF escaneado e arquivo grande o professor anexa no ChatGPT,
     // e o prompt diz para usar o arquivo anexado.
     const MAXIMO_MATERIAL = 6000;
     const PDFJS = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/';
-    const anexo = { nome: '', naConversa: false, lendo: false };
+    // vez: cada leitura nova ou o Começar de novo aumenta; uma leitura velha que termina depois não volta para o campo
+    const anexo = { nome: '', naConversa: false, lendo: false, vez: 0 };
     const lerDoZip = async (arquivo, interno) => {
       const bytes = new Uint8Array(await arquivo.arrayBuffer());
       const dv = new DataView(bytes.buffer);
@@ -946,7 +955,8 @@
     const textoDoPdf = async (arquivo) => {
       const pdf = await (await carregarPdf()).getDocument({ data: new Uint8Array(await arquivo.arrayBuffer()) }).promise;
       let texto = '';
-      for (let pagina = 1; pagina <= pdf.numPages && texto.length <= MAXIMO_MATERIAL; pagina++) {
+      // No máximo 30 páginas: num PDF escaneado o texto nunca chega ao limite, e ler tudo trava a aba
+      for (let pagina = 1; pagina <= Math.min(pdf.numPages, 30) && texto.length <= MAXIMO_MATERIAL; pagina++) {
         const { items } = await (await pdf.getPage(pagina)).getTextContent();
         texto += items.map((item) => item.str + (item.hasEOL ? '\n' : '')).join('') + '\n\n';
       }
@@ -971,18 +981,23 @@
     const anexar = async (arquivo) => {
       if (!arquivo) return;
       const extensao = (arquivo.name.split('.').pop() || '').toLowerCase();
+      const vez = ++anexo.vez;
       anexo.lendo = true;
       mostrarAnexo(arquivo.name, 'Lendo o arquivo...');
       let texto = '';
       let motivo = '';
+      const ehTexto = ['txt', 'md'].includes(extensao) || arquivo.type === 'text/plain';
       try {
         if (arquivo.type.startsWith('image/')) motivo = 'foto';
-        else if (['txt', 'md'].includes(extensao) || arquivo.type === 'text/plain') texto = await arquivo.text();
+        // Um .txt de mais de 1 MB passa muito das 6 mil letras: nem lê, para não travar a aba
+        else if (ehTexto && arquivo.size > 1e6) motivo = 'grande';
+        else if (ehTexto) texto = await arquivo.text();
         else if (extensao === 'docx') texto = textoDoWord(await lerDoZip(arquivo, 'word/document.xml'));
         else if (extensao === 'odt') texto = textoDoOdt(await lerDoZip(arquivo, 'content.xml'));
         else if (extensao === 'pdf') { texto = await textoDoPdf(arquivo); if (!texto.trim()) motivo = 'escaneado'; }
         else motivo = 'formato';
       } catch { motivo = 'erro'; }
+      if (vez !== anexo.vez) return;
       texto = texto.replace(/\r/g, '').replace(/[ \t\u00a0]+/g, ' ').replace(/ *\n */g, '\n').replace(/\n{3,}/g, '\n\n').trim();
       if (!motivo && !texto) motivo = 'erro';
       if (!motivo && texto.length > MAXIMO_MATERIAL) motivo = 'grande';
@@ -994,7 +1009,7 @@
     };
     $('#anexar').addEventListener('click', () => $('#anexo').click());
     $('#anexo').addEventListener('change', (event) => { anexar(event.target.files[0]); event.target.value = ''; });
-    $('#anexo-tirar').addEventListener('click', () => { if (!anexo.naConversa) $('#material').value = ''; mostrarAnexo(''); update(); $('#anexar').focus(); });
+    $('#anexo-tirar').addEventListener('click', () => { anexo.vez++; anexo.lendo = false; if (!anexo.naConversa) $('#material').value = ''; mostrarAnexo(''); update(); $('#anexar').focus(); });
     // Também dá para soltar o arquivo em cima do campo
     $('#material').addEventListener('dragover', (event) => { if (event.dataTransfer.types.includes('Files')) event.preventDefault(); });
     $('#material').addEventListener('drop', (event) => { if (event.dataTransfer.files.length) { event.preventDefault(); anexar(event.dataTransfer.files[0]); } });
@@ -1342,6 +1357,10 @@
     const marcar = (nome, valor) => { const campo = [...form.querySelectorAll(`[name="${nome}"]`)].find((c) => c.value === valor); if (campo) campo.checked = true; };
     const desmarcar = (nome) => { for (const campo of form.querySelectorAll(`[name="${nome}"]`)) campo.checked = false; };
     // A turma em duas linhas: as etapas e, escolhida uma, só ela, os anos dela e o Trocar a turma
+    let etapasPeloTeclado = false;
+    $('#etapas').addEventListener('keydown', (evento) => { if (evento.key.startsWith('Arrow')) etapasPeloTeclado = true; });
+    $('#etapas').addEventListener('pointerdown', () => { etapasPeloTeclado = false; });
+    $('#etapas').addEventListener('focusout', (evento) => { if (etapasPeloTeclado && !(evento.relatedTarget && evento.relatedTarget.name === 'etapa')) { etapasPeloTeclado = false; update(); } });
     const mostrarEscolhas = () => {
       const data = new FormData(form);
       let etapa = data.get('etapa') || '';
@@ -1351,7 +1370,10 @@
       const anosDaEtapa = ['iniciais', 'finais', 'medio', 'eja'].includes(etapa) ? etapa : '';
       const turmaMarcada = new FormData(form).get('turma') || '';
       if (turmaMarcada && ETAPA_DA_TURMA(turmaMarcada) !== etapa) desmarcar('turma');
-      for (const label of $('#etapas').querySelectorAll('label')) label.hidden = Boolean(etapa) && !label.querySelector('input').checked;
+      // Com o mouse, a etapa escolhida esconde as outras na hora. Pelo teclado, as setas andam entre elas: as outras
+      // só somem quando o foco sai do grupo, senão a primeira seta escondia o resto e não dava para chegar ao Ensino Médio
+      const andandoPeloTeclado = etapasPeloTeclado && document.activeElement && document.activeElement.name === 'etapa';
+      for (const label of $('#etapas').querySelectorAll('label')) label.hidden = Boolean(etapa) && !andandoPeloTeclado && !label.querySelector('input').checked;
       $('#trocar-etapa').hidden = !etapa;
       $('#anos').hidden = !anosDaEtapa;
       for (const label of $('#anos').querySelectorAll('label')) label.hidden = label.dataset.etapa !== anosDaEtapa;
@@ -1382,7 +1404,16 @@
     };
 
     let lastIdeas;
+    // O prompt é montado (read) antes de mostrarJeitos e aplicarPadroes, que ainda podem mudar o formulário. Quando
+    // mudam (o "E depois?" troca o tipo e os jeitos, as ideias preenchem campos), roda de novo, para o prompt não levar
+    // pedaço da escolha anterior. No clique do professor isso já acontecia sem querer: o input e o change chamam o update
+    const estadoDoForm = () => JSON.stringify([...form.elements].map((campo) => [campo.name, campo.type === 'checkbox' || campo.type === 'radio' ? campo.checked : campo.value, campo.disabled]));
     const update = () => {
+      const antes = estadoDoForm();
+      atualizar();
+      if (estadoDoForm() !== antes) atualizar();
+    };
+    const atualizar = () => {
       const etapaEscolhida = mostrarEscolhas();
       const { text, kind, turma, subject, label, adult, theme, leitura, local, estilo, material, materiaValor, etapa, tipoValor } = read();
       // A segunda mensagem aparece só no jogo, que é o pedido que vira HTML
@@ -1422,10 +1453,15 @@
       const tinhaAlerta = !alerta.hidden;
       alerta.hidden = !achados.length;
       if (achados.length) {
-        alerta.innerHTML = '<svg width="38" height="38" aria-hidden="true"><use href="#i-queroquero"/></svg><span></span>';
-        alerta.lastChild.textContent = `O quero-quero gritou: parece que há dado de aluno (${achados.join(', ')}). Apague antes de copiar. Se não for, pode seguir.`;
+        const mensagem = `O quero-quero gritou: parece que há dado de aluno (${achados.join(', ')}). Apague antes de copiar. Se não for, pode seguir.`;
+        // Refazer o aviso a cada tecla faria o leitor de tela ler tudo de novo: só muda quando o texto muda
+        if (alerta.dataset.mensagem !== mensagem) {
+          alerta.dataset.mensagem = mensagem;
+          alerta.innerHTML = '<svg width="38" height="38" aria-hidden="true"><use href="#i-queroquero"/></svg><span></span>';
+          alerta.lastChild.textContent = mensagem;
+        }
         if (!tinhaAlerta && !reducedMotion) replay(alerta, 'is-gritando');
-      }
+      } else delete alerta.dataset.mensagem;
       copyButton.disabled = done < 4;
       // Peça mais aparece com o prompt pronto; no jogo, vem depois da segunda mensagem e do conserto
       const tipo = kind ? (Object.keys(kinds).find((id) => kinds[id] === kind) || 'proprio') : '';
@@ -1457,7 +1493,8 @@
       $('#criar').hidden = !CRIAR_AQUI.url;
       // O arquivo que vai anexado na conversa não chega ao Criar aqui
       $('#criar').disabled = done < 4 || criando || anexo.naConversa;
-      $('#count').textContent = done === 4 ? 'Prompt pronto! As 4 peças estão no lugar.' : `${done} de 4 peças prontas`;
+      const contagem = done === 4 ? 'Prompt pronto! As 4 peças estão no lugar.' : `${done} de 4 peças prontas`;
+      if ($('#count').textContent !== contagem) $('#count').textContent = contagem;
       $('#count').classList.toggle('is-ready', done === 4);
       // O carimbo de pronto cai uma vez, quando a quarta peça entra
       const carimbo = $('#carimbo-pronto');
@@ -1553,6 +1590,8 @@
       form.elements[campo].addEventListener('change', () => {
         const texto = form.elements[campo].value.trim().replace(/\s+/g, ' ');
         if (texto.length < 2) return;
+        // Com cara de dado de aluno (o quero-quero grita), a opção não fica guardada no aparelho
+        if (temDadoDeAluno(texto)) return;
         const minhas = lerMinhas();
         minhas[nome] = [texto, ...(minhas[nome] || []).filter((t) => t !== texto)].slice(0, 5);
         guardarMinhas(minhas);
@@ -1626,7 +1665,7 @@
     // Guardar em Meus prompts: o prompt (e a segunda mensagem, no jogo), sem o material colado, que pode ter dado de aluno
     $('#guardar').addEventListener('click', () => {
       if (!current.text) return;
-      const achados = dadoDeAluno();
+      const achados = dadoDeAluno(['material']);
       if (achados.length && !confirm(`Parece que há dado de aluno: ${achados.join(', ')}. Nada disso deve ficar guardado. Guardar mesmo assim?`)) return;
       const lista = lerMeus();
       if (lista.length >= 200) { flash($('#guardar'), 'A lista está cheia'); return; }
@@ -1837,12 +1876,14 @@
     $('#teste-fechar').addEventListener('click', () => { $('#teste').hidden = true; });
     // O site lembra a última turma, matéria, tipo, tema e ajustes neste aparelho; Começar de novo esquece
     desenharMinhas();
-    Lembrar.campos('maquina', [...form.elements].filter((campo) => campo.id !== 'material' && campo.type !== 'file'));
+    // Os campos que o quero-quero vigia e onde mais aparece dado de aluno (material, o que a turma já sabe, algo mais e
+    // a outra turma) não ficam guardados no aparelho. A outra turma sem dado de aluno já vira botão nas opções guardadas
+    Lembrar.campos('maquina', [...form.elements].filter((campo) => !['material', 'sabe', 'algo-mais', 'turma-outra'].includes(campo.id) && campo.type !== 'file'));
     // Quem já preencheu o passo 6 numa visita anterior encontra ele aberto
     if (['objetivo', 'sabe', 'mais'].some((nome) => form.elements[nome].value.trim()) || ['uso', 'tempo', 'perguntar', 'extra'].some((nome) => new FormData(form).get(nome))) $('#completo').open = true;
     // No celular, o console com o Copiar fica depois das perguntas: uma barra no pé da tela traz o Copiar e as peças prontas
     Copiar.barraFixa({ observar: document.querySelector('#console .actions'), copiar: copyButton, contador: $('#count') });
-    $('#reset').addEventListener('click', () => { form.reset(); $('#material').value = ''; mostrarAnexo(''); Lembrar.guardar('maquina', {}); update(); form.querySelector('[name="etapa"]').focus(); });
+    $('#reset').addEventListener('click', () => { anexo.vez++; anexo.lendo = false; form.reset(); $('#material').value = ''; mostrarAnexo(''); Lembrar.guardar('maquina', {}); update(); form.querySelector('[name="etapa"]').focus(); });
     form.addEventListener('input', update);
     form.addEventListener('change', update);
     form.addEventListener('submit', (event) => event.preventDefault());
