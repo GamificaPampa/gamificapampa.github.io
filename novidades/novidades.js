@@ -17,6 +17,8 @@
 //     links: [['Jogar', '/recursos-pedagogicos/criancas/pasta-do-jogo/', 'jogar']] },
 // Sem dado de aluno, sem detalhe técnico: só o que muda para o professor.
 window.NOVIDADES = [
+  { data: '2026-11-18', titulo: 'Raio-X do prompt', texto: 'Cole um prompt seu e veja na hora se ele tem Papel, Tarefa, Contexto e Formato, se escapou nome de estudante e o que costuma dar errado com a IA. Você sai com o prompt melhorado, pronto para copiar. Nada é enviado: tudo acontece no seu aparelho.', icone: 'lupa', cor: 'purple',
+    links: [['Fazer o Raio-X', '/recursos-pedagogicos/professores/oficina-prompts/raio-x.html', 'conhecer']] },
   { data: '2026-11-16', titulo: 'Um robô joga o seu jogo antes de publicar', texto: 'No Publicar meu jogo, um robô joga sozinho, sem som, enquanto você confere a prévia. Ele avisa se o jogo travou, se deu erro no meio da partida ou se o Jogar de novo não recomeça, e já traz o pedido de conserto para mandar ao ChatGPT.', icone: 'jogo', cor: 'blue',
     links: [['Publicar meu jogo', '/publicador/', 'compartilhar']] },
   { data: '2026-11-12', titulo: 'Oficina na Escola Raymundo Carvalho', texto: 'Nas Ações, o relato e as fotos da oficina de 09/11, com os professores da tarde: do prompt ao jogo pronto, ao vivo, com o ChatGPT.', icone: 'computador', cor: 'yellow', links: [['Ver a ação', '/acoes/#2026-11-09-raymundo-carvalho', 'conhecer']] },
