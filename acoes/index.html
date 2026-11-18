@@ -175,7 +175,7 @@
 
   const ordenadas = [...ACOES].sort((a, b) => b.data.localeCompare(a.data));
   // Todas as fotos em fila, para o visor andar de uma para a outra
-  const todas = ordenadas.flatMap((acao) => acao.fotos.map((legenda, i) => ({ acao, legenda, grande: pasta(acao) + arquivo(i), mini: pasta(acao) + 'mini/' + arquivo(i) })));
+  const todas = ordenadas.flatMap((acao) => (acao.fotos || []).map((legenda, i) => ({ acao, legenda, grande: pasta(acao) + arquivo(i), mini: pasta(acao) + 'mini/' + arquivo(i) })));
 
   const miniatura = (foto, classe) => {
     const botao = criar('button', 'miniatura ' + (classe || ''));
@@ -265,6 +265,7 @@
   }
 
   // Os filtros só aparecem quando há mais de um tipo de ação
+  let filtroAtual = 'todas';
   const tipos = [...new Set(ordenadas.map((a) => a.tipo))].filter((t) => TIPOS[t]);
   const filtros = document.getElementById('filtros');
   if (tipos.length > 1) {
@@ -278,6 +279,7 @@
       botao.setAttribute('aria-pressed', String(valor === 'todas'));
       botao.addEventListener('click', () => {
         filtros.querySelectorAll('button').forEach((b) => b.setAttribute('aria-pressed', String(b === botao)));
+        filtroAtual = valor;
         document.querySelectorAll('.acao, #galeria li').forEach((el) => { el.hidden = valor !== 'todas' && el.dataset.tipo !== valor; });
       });
       filtros.append(botao);
@@ -288,16 +290,22 @@
   const visor = document.getElementById('visor');
   const fotoGrande = document.getElementById('visor-foto');
   const legenda = document.getElementById('visor-legenda');
-  let atual = 0;
+  // As setas andam só pelas fotos do tipo filtrado (Oficinas, Aulas ou Visitas)
+  let atual = 0, lista = todas;
   const mostrar = (i) => {
-    atual = (i + todas.length) % todas.length;
-    const foto = todas[atual];
+    atual = (i + lista.length) % lista.length;
+    const foto = lista[atual];
     fotoGrande.src = foto.grande;
     fotoGrande.alt = foto.legenda;
     legenda.textContent = foto.legenda;
-    legenda.append(criar('small', '', `${foto.acao.titulo}, ${dataLonga(foto.acao.data)} · ${atual + 1} de ${todas.length}`));
+    legenda.append(criar('small', '', `${foto.acao.titulo}, ${dataLonga(foto.acao.data)} · ${atual + 1} de ${lista.length}`));
   };
-  function abrir(i) { mostrar(i); if (!visor.open) visor.showModal(); }
+  function abrir(i) {
+    const foto = todas[i];
+    lista = todas.filter((f) => filtroAtual === 'todas' || f.acao.tipo === filtroAtual);
+    mostrar(Math.max(0, lista.indexOf(foto)));
+    if (!visor.open) visor.showModal();
+  }
   document.getElementById('visor-antes').addEventListener('click', () => mostrar(atual - 1));
   document.getElementById('visor-depois').addEventListener('click', () => mostrar(atual + 1));
   document.getElementById('visor-fechar').addEventListener('click', () => visor.close());

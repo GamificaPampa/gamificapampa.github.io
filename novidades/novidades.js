@@ -49,7 +49,7 @@ window.NOVIDADES = [
     links: [['Abrir a máquina', '/maquina/', 'conhecer']] },
   { data: '2026-11-06', titulo: 'Página dos projetos', texto: 'O Educador 5.0 e o GamificaEdu ganharam páginas próprias, com a ficha inteira e os materiais de cada projeto. O início do site ficou mais curto.', icone: 'livros', cor: 'mint',
     links: [['Ver os projetos', '/projetos/', 'conhecer']] },
-  { data: '2026-11-05', titulo: 'Peça mais e Deixar mais completo', texto: 'Com o prompt pronto, a Máquina dá mensagens para pedir mais ao Gemini: revisar como especialista, mais desafio, versão para quem tem dificuldade e outras. No passo 6, você conta o objetivo, o que a turma já sabe e quanto tempo tem.',
+  { data: '2026-11-05', titulo: 'Peça mais e Deixar mais completo', texto: 'Com o prompt pronto, a Máquina dá mensagens para pedir mais ao Gemini: revisar como especialista, mais desafio, versão para quem tem dificuldade e outras. No passo 5, Deixar mais completo, você conta o objetivo, o que a turma já sabe e quanto tempo tem.',
     icone: 'livros', cor: 'purple', links: [
       ['Máquina de prompts', '/maquina/'],
     ] },
@@ -136,7 +136,7 @@ window.NOVIDADES = [
     ] },
   { data: '2026-10-25', titulo: 'Ensino Médio e Enem', texto: 'Gem do Ensino Médio e do Enem, módulo extra no curso e questões no estilo do Enem na Máquina e na Biblioteca. Mais cinco jogos de exemplo: Lâmpada do Bit, Quem Pensou Isso?, Dados em Jogo, Escolas Literárias e Monte a Redação.',
     icone: 'enem', cor: 'purple', links: [
-      ['Gems prontos', '/recursos-pedagogicos/professores/oficina-prompts/gems.html'],
+      ['Assistentes do Bit', '/recursos-pedagogicos/professores/oficina-prompts/gems.html'],
       ['Máquina de prompts', '/maquina/'],
       ['Jogos para a turma', '/turma/', 'jogar'],
     ] },
@@ -147,7 +147,7 @@ window.NOVIDADES = [
     ] },
   { data: '2026-10-17', titulo: 'Gem do Bit e Medalhas do Bit', texto: 'Um Gem com a ajuda do Bit dentro do Gemini e medalhas para imprimir e premiar a turma.',
     icone: 'trofeu', cor: 'pink', links: [
-      ['Gems prontos', '/recursos-pedagogicos/professores/oficina-prompts/gems.html'],
+      ['Assistentes do Bit', '/recursos-pedagogicos/professores/oficina-prompts/gems.html'],
       ['Medalhas do Bit', '/recursos-pedagogicos/professores/medalhas/', 'baixar'],
     ] },
 ];
