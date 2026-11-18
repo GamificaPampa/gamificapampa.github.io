@@ -38,6 +38,7 @@ const ATALHOS = {
   biblioteca: ['Oficina de Prompts', 'Biblioteca de prompts', OFICINA + 'biblioteca.html'],
   frases: ['Oficina de Prompts', 'Frases que salvam', OFICINA + 'frases.html'],
   'raio-x': ['Oficina de Prompts', 'Raio-X do prompt', OFICINA + 'raio-x.html'],
+  conferir: ['Oficina de Prompts', 'Conferir a resposta da IA', OFICINA + 'conferir.html'],
   adaptar: ['Oficina de Prompts', 'Adaptador de atividades', OFICINA + 'adaptar.html'],
   baralho: ['Oficina de Prompts', 'Baralho de prompts para imprimir', OFICINA + 'baralho.html'],
   gems: ['Oficina de Prompts', 'Assistentes do Bit', OFICINA + 'gems.html'],
