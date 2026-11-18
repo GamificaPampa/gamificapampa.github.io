@@ -616,8 +616,8 @@
         papel: 'que cria jogos educativos para o navegador',
         objetivo: false,
         tarefa: (theme) => `Crie um jogo em HTML sobre ${theme} para jogar no navegador, em que cada fase treine uma parte do tema, da mais fácil à mais difícil.`,
-        formato: 'Faça tudo num único arquivo HTML, com o CSS e o JavaScript dentro dele e sem nada de fora, que funcione no celular e no computador. Quero botões grandes, 3 fases, som no acerto, estrelas no final e, no erro, uma frase que explica o conceito.',
-        formatoAdulto: 'Faça tudo num único arquivo HTML, com o CSS e o JavaScript dentro dele e sem nada de fora, que funcione no celular e no computador. Quero botões grandes, visual adulto e sem bichinhos, 3 fases, som no acerto, a pontuação no final e, no erro, uma frase que explica o conceito.',
+        formato: 'Faça tudo num único arquivo HTML, com o CSS e o JavaScript dentro dele, sem imagens nem bibliotecas de fora, que funcione no celular e no computador. Quero botões grandes, 3 fases, som no acerto, estrelas no final e, no erro, uma frase que explica o conceito.',
+        formatoAdulto: 'Faça tudo num único arquivo HTML, com o CSS e o JavaScript dentro dele, sem imagens nem bibliotecas de fora, que funcione no celular e no computador. Quero botões grandes, visual adulto e sem bichinhos, 3 fases, som no acerto, a pontuação no final e, no erro, uma frase que explica o conceito.',
         tip: 'No ChatGPT, o jogo vem num bloco de código: toque em Prévia para jogar ali mesmo. Depois mande a segunda mensagem, com o visual e o padrão do jogo. Para publicar, abra a Prévia, toque na seta de baixar no alto do bloco e ganhe um link e um QR Code em gamificapampa.github.io/publicador.',
       },
       atividade: {
@@ -770,7 +770,7 @@
     // Peça mais (Fase 2 da spec): mensagens para mandar na mesma conversa depois da primeira resposta.
     // A revisão diz o que conferir, porque na Fase 0 "revise como especialista" sozinho não melhorou a nota.
     const comAlternativas = ['quiz', 'enem', 'encceja', 'sequencia'];
-    const PAGINA_HTML = 'Entregue o material como uma página HTML completa, num único bloco de código html, para eu baixar pelo botão do bloco e abrir no navegador, imprimir ou projetar: um só arquivo, com o CSS dentro e nada de fora, letra de pelo menos 16 px, boa para imprimir em A4 e, se houver gabarito, com ele começando numa folha nova na impressão. Não anexe arquivo.';
+    const PAGINA_HTML = 'Entregue o material como uma página HTML completa, num único bloco de código html, para eu baixar pelo botão do bloco e abrir no navegador, imprimir ou projetar: um só arquivo, com o CSS dentro e nada de fora, letra de pelo menos 16 px, boa para imprimir em A4 e, se houver gabarito, com ele começando numa folha nova na impressão. Não gere arquivo para baixar.';
     const PAGINA_DE_VOLTA = 'Entregue de novo a página HTML completa, num único bloco de código html.';
     const pedidosMais = {
       revisar: (tipo) => ({ nome: 'Revisar como especialista', texto: `Agora revise o material como um(a) coordenador(a) pedagógico(a) exigente. Confira o objetivo, os erros comuns, cada conta e cada fato${comAlternativas.includes(tipo) ? ', e se a resposta certa muda de letra entre as questões' : ''}. Aponte os 3 pontos mais fracos e entregue a versão corrigida inteira, sem citar códigos da BNCC.` }),
@@ -854,7 +854,11 @@
     // As opções que o professor escreve (Outra turma, Outra matéria, Outro tipo): a turma vira um grupo próprio,
     // a matéria aproveita as ideias de uma que a máquina já conhece, e o tipo ganha um formato com os mesmos cuidados
     const semAcento = (texto) => String(texto).normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().trim();
-    const turmaPropria = (texto) => ({ name: texto, year: `da turma ${texto},`, age: `a turma ${texto}; considere a idade típica dessa turma`, propria: true });
+    const turmaPropria = (texto) => {
+      // "Turma do AEE" não vira "da turma Turma do AEE"
+      const nome = /^turma\b/i.test(texto) ? `turma${texto.slice(5)}` : `turma ${texto}`;
+      return { name: texto, year: `da ${nome},`, age: `a ${nome}; considere a idade típica dessa turma`, propria: true };
+    };
     const materiaPropria = (texto) => {
       const chave = Object.keys(subjects).find((id) => semAcento(subjects[id].name) === semAcento(texto) || semAcento(subjects[id].name).startsWith(semAcento(texto)) || id === semAcento(texto).replace(/\s+/g, '-'));
       return { name: texto, ideas: chave ? subjects[chave].ideas : anyIdeas, key: chave };
@@ -864,7 +868,7 @@
       if (!tiposProprios.has(texto)) tiposProprios.set(texto, {
         name: texto,
         papel: 'que cria materiais claros, que fazem a turma pensar',
-        tarefa: (theme) => `Crie este material sobre ${theme}: ${texto}.`,
+        tarefa: (theme) => `Crie ${texto} sobre ${theme}.`,
         formato: 'Organize o material para usar direto na aula: instruções curtas para a turma, do mais fácil ao mais difícil, perguntas de lembrar, de aplicar e de explicar, e no fim o gabarito ou o que esperar de uma boa resposta. Descreva as imagens entre parênteses. Antes de entregar, confira cada conta e cada fato e se o material trabalha o objetivo.',
         tip: 'Um material do seu jeito: confira se a IA entendeu o pedido e, se não, explique melhor na mesma conversa.',
       });
@@ -881,9 +885,9 @@
       tdah: ['TDAH, com desatenção e hiperatividade', 'tarefas curtas, uma instrução por vez, pouca informação por página e pausas para se mexer'],
       desatencao: ['déficit de atenção, sem hiperatividade', 'uma instrução por vez, tarefas curtas com começo e fim claros, pouca informação por página e destaque no que é mais importante'],
       hiperatividade: ['hiperatividade e impulsividade, sem déficit de atenção', 'tarefas curtas, chances de se mexer e participar, como levantar, manipular e falar, pausas combinadas e regras claras de quando é a sua vez'],
-      tea1: ['autismo (TEA) nível 1, que precisa de pouco apoio', 'instruções literais e claras, rotina previsível, aviso antes de cada mudança e apoio nas atividades em grupo'],
-      tea2: ['autismo (TEA) nível 2, que precisa de apoio substancial', 'passos curtos com apoio visual descrito em palavras, uma instrução de cada vez, linguagem simples e literal e poucos estímulos na página'],
-      tea3: ['autismo (TEA) nível 3, que precisa de apoio muito substancial', 'uma versão bem simples, com uma tarefa por vez, rotina visual passo a passo, escolha entre duas figuras e a opção de responder apontando'],
+      tea1: ['autismo (TEA) nível 1, de pouco apoio', 'instruções literais e claras, rotina previsível, aviso antes de cada mudança e apoio nas atividades em grupo'],
+      tea2: ['autismo (TEA) nível 2, de apoio substancial', 'passos curtos com apoio visual descrito em palavras, uma instrução de cada vez, linguagem simples e literal e poucos estímulos na página'],
+      tea3: ['autismo (TEA) nível 3, de apoio muito substancial', 'uma versão bem simples, com uma tarefa por vez, rotina visual passo a passo, escolha entre duas figuras e a opção de responder apontando'],
       visual: ['deficiência visual', 'letra grande, bom contraste e imagens descritas em palavras'],
       auditiva: ['deficiência auditiva', 'instruções escritas e apoio visual, sem depender de som'],
       altas: ['altas habilidades', 'um desafio extra para ir além'],
@@ -1050,7 +1054,7 @@
       }
       let contexto = group ? `É para ${group.age}.` : '';
       if (adult) contexto += adultContext;
-      if (contexto && extras.includes('leitura')) contexto += adult ? ' Alguns estudantes têm dificuldade de leitura.' : ' Alguns alunos têm dificuldade de leitura.';
+      if (contexto && extras.includes('leitura') && !infantil) contexto += adult ? ' Alguns estudantes têm dificuldade de leitura.' : ' Alguns alunos têm dificuldade de leitura.';
       if (contexto && extras.includes('local')) contexto += ' Use exemplos do dia a dia de Alegrete e do Pampa gaúcho.';
       // Os erros comuns entram como conteúdo, mesmo que o professor não saiba quais são
       if (contexto && kind && kind.erros !== false) {
@@ -1066,27 +1070,28 @@
       const tempo = data.get('tempo');
       const usos = { projetado: 'projetado no quadro, para a turma toda', impresso: `impresso, uma folha por ${adult ? 'estudante' : 'aluno'}`, celular: 'no celular, em duplas', grupos: 'em grupos de 4' };
       const tempos = { 15: 'em 15 minutos', 50: 'numa aula de 50 minutos', 100: 'em duas aulas de 50 minutos' };
-      const usoFrase = usos[data.get('uso')] || '';
+      // Jogo impresso não existe; o plano de 3 aulas já é a sequência, então no plano não vale "2 aulas" de tempo
+      const usoFrase = (tipoId === 'jogo' && data.get('uso') === 'impresso') ? '' : usos[data.get('uso')] || '';
       // No plano, o tempo troca os 50 minutos do Formato; na sequência, as 3 aulas já dizem o tempo
       const tempoNoContexto = tempo && !['plano', 'sequencia', 'rubrica'].includes(tipoId) ? tempos[tempo] : '';
       if (contexto && sabe) contexto += ` Sobre a turma: ${sabe}.`;
       // As necessidades da turma (do antigo Construtor), cada uma com a adaptação concreta
       const necessidades = data.getAll('necessidade').filter((id) => NECESSIDADES[id]);
-      if (contexto && necessidades.length) contexto += ` Há ${adult ? 'estudantes' : 'alunos'} com ${necessidades.map((id) => `${NECESSIDADES[id][0]} (${NECESSIDADES[id][1]})`).join('; ')}.`;
+      if (contexto && necessidades.length) contexto += ` Há ${adult ? 'estudantes' : 'alunos'} com ${necessidades.map((id) => `${NECESSIDADES[id][0]} (adapte com ${NECESSIDADES[id][1]})`).join('; ')}.`;
       const mais = limpo('mais');
       if (contexto && mais) contexto += ` ${mais.charAt(0).toUpperCase()}${mais.slice(1)}.`;
       if (contexto && (usoFrase || tempoNoContexto)) contexto += ` O material vai ser usado ${[usoFrase, tempoNoContexto].filter(Boolean).join(', ')}.`;
       let formato = kind ? (infantil && kind.formatoInfantil) || (adult && kind.formatoAdulto) || kind.formato : '';
-      if (formato && tipoId === 'plano' && tempo) {
+      if (formato && tipoId === 'plano' && tempo && tempo !== '100') {
         const tempoPlano = { 15: 'uma atividade de 15 minutos', 50: 'uma aula de 50 minutos', 100: 'duas aulas de 50 minutos' }[tempo];
         formato = formato.replace('uma aula de 50 minutos', tempoPlano).replace('somam 50 minutos', `somam ${tempo} minutos`);
       }
       // No ChatGPT gratuito, o arquivo para baixar gasta a cota de análise de dados; sem cota, ele não entrega o jogo (teste de 09/11)
       if (formato && kind === kinds.jogo) formato += ` O visual: ${estilo.frase}. Mostre o código completo num bloco de código HTML, sem criar arquivo.`;
-      if (formato && extras.includes('curto')) formato += ' Seja breve: a resposta deve caber numa página.';
+      if (formato && extras.includes('curto') && !['jogo', 'sequencia'].includes(tipoId)) formato += ' Seja breve: a resposta deve caber numa página.';
       if (formato && kind !== kinds.jogo && !formato.includes('BNCC')) formato += ' Não cite códigos da BNCC.';
       // No teste de 09/11 no ChatGPT, o material de imprimir veio com emojis e, no Enem, com um quadro interativo em inglês
-      if (formato && kind !== kinds.jogo) formato += ' Sem emojis e sem quadros interativos.';
+      if (formato && kind !== kinds.jogo) formato += formato.includes('interativo') ? ' Sem emojis.' : ' Sem emojis e sem quadros interativos.';
       // Pedido do Arthur em 09/11: todo material sai como página HTML para baixar. O pedido é o bloco de código, e não
       // um arquivo anexado: no ChatGPT gratuito, o arquivo gasta a cota de análise de dados e pode não vir (teste de 09/11)
       if (formato && kind !== kinds.jogo) formato += ` ${PAGINA_HTML}`;
@@ -1095,6 +1100,9 @@
       let tarefa = kind && theme ? kind.tarefa(theme, infantil, adult) : '';
       const jeito = String(data.get('jeito') || '');
       if (tarefa && jeito && JEITOS[tipoValor]) tarefa += JEITOS[tipoValor].frase(jeito);
+      if (tarefa && tipoId === 'jogo' && objetivo) {
+        tarefa += ` O objetivo do jogo é que ${infantil ? 'as crianças consigam' : adult ? 'os estudantes consigam' : 'a turma consiga'} ${objetivo}; mostre esse objetivo na tela de início.`;
+      }
       if (tarefa && kind.objetivo !== false) {
         tarefa += objetivo
           ? ` O objetivo é que ${infantil ? 'as crianças consigam' : adult ? 'os estudantes consigam' : 'a turma consiga'} ${objetivo}; escreva esse objetivo no topo.`
@@ -1164,7 +1172,7 @@
       },
       atividade: {
         pergunta: 'Com quais exercícios?',
-        frase: (jeito) => ` Use exercícios de ${jeito}.`,
+        frase: (jeito) => ` Use estes exercícios: ${jeito}.`,
         infantil: ['ligar', 'circular e pintar', 'contar e marcar'],
         anos12: ['ligar e completar', 'caça-palavras', 'ordenar figuras'],
         anos35: ['cruzadinha', 'problemas com desenho', 'verdadeiro ou falso com correção'],
@@ -1251,7 +1259,8 @@
       const dados = new FormData(form);
       for (const [nome, valor] of marcadosSozinhos) if (dados.get(nome) === valor) desmarcar(nome);
       marcadosSozinhos.clear();
-      const padroes = turma === 'infantil' ? { tempo: '15', uso: 'projetado' } : {};
+      const tipoAgora = new FormData(form).get('tipo') || '';
+      const padroes = turma === 'infantil' ? { tempo: '15', ...(['jogo', 'historia'].includes(tipoAgora) ? { uso: 'projetado' } : {}) } : {};
       for (const [nome, valor] of Object.entries(padroes)) {
         if (new FormData(form).get(nome)) continue;
         marcar(nome, valor);
@@ -1299,6 +1308,9 @@
       }
       const daTabela = ideiasDaTabela(materia, subject, turma);
       if (daTabela) return daTabela;
+      // Matéria escrita à mão: as sugestões gerais da faixa, em vez das de outra matéria
+      const geralDaFaixa = window.IDEIAS && window.IDEIAS.geral && window.IDEIAS.geral[FAIXAS[turma]];
+      if (subject && !subject.key && geralDaFaixa) return geralDaFaixa;
       if (!adult) return subject ? subject.ideas : anyIdeas;
       const key = subject && (subject.key || Object.keys(subjects).find((id) => subjects[id] === subject));
       return adultIdeas[key] || (subject ? subject.ideas : adultIdeas.any);
@@ -1493,6 +1505,15 @@
       // No passo 6, o que não muda nada para o tipo escolhido fica apagado
       $('#perguntar-step').disabled = tipo === 'jogo';
       $('#tempo-step').disabled = ['sequencia', 'rubrica'].includes(tipo);
+      const esconder = (nome, valor, sim) => {
+        const campo = form.querySelector(`[name="${nome}"][value="${valor}"]`);
+        if (!campo) return;
+        campo.closest('label').hidden = sim;
+        if (sim && campo.checked) { campo.checked = false; }
+      };
+      esconder('tempo', '100', tipo === 'plano');
+      esconder('uso', 'impresso', tipo === 'jogo');
+      esconder('extra', 'leitura', turma === 'infantil');
       $('#criar').hidden = !CRIAR_AQUI.url;
       // O arquivo que vai anexado na conversa não chega ao Criar aqui
       $('#criar').disabled = done < 4 || criando || anexo.naConversa;
@@ -1891,7 +1912,7 @@
     if (['objetivo', 'sabe', 'mais'].some((nome) => form.elements[nome].value.trim()) || ['uso', 'tempo', 'perguntar', 'extra'].some((nome) => new FormData(form).get(nome))) $('#completo').open = true;
     // No celular, o console com o Copiar fica depois das perguntas: uma barra no pé da tela traz o Copiar e as peças prontas
     Copiar.barraFixa({ observar: document.querySelector('#console .actions'), copiar: copyButton, contador: $('#count') });
-    $('#reset').addEventListener('click', () => { anexo.vez++; anexo.lendo = false; form.reset(); $('#material').value = ''; mostrarAnexo(''); Lembrar.guardar('maquina', {}); Lembrar.guardar('maquina-jeito', ''); update(); form.querySelector('[name="etapa"]').focus(); });
+    $('#reset').addEventListener('click', () => { $('#completo').open = false; $('#teste').hidden = true; anexo.vez++; anexo.lendo = false; form.reset(); $('#material').value = ''; mostrarAnexo(''); Lembrar.guardar('maquina', {}); Lembrar.guardar('maquina-jeito', ''); update(); form.querySelector('[name="etapa"]').focus(); });
     form.addEventListener('input', update);
     form.addEventListener('change', update);
     form.addEventListener('submit', (event) => event.preventDefault());
