@@ -17,6 +17,8 @@
 //     links: [['Jogar', '/recursos-pedagogicos/criancas/pasta-do-jogo/', 'jogar']] },
 // Sem dado de aluno, sem detalhe técnico: só o que muda para o professor.
 window.NOVIDADES = [
+  { data: '2026-11-20', titulo: 'Raio-X direto da Biblioteca', texto: 'Na Biblioteca de prompts, cada prompt de partida e cada um de Meus prompts tem o botão Fazer o Raio-X: um toque e ele aparece já analisado, sem copiar e colar. O Raio-X também avisa o que ainda está entre colchetes para trocar pela sua turma.', icone: 'lupa', cor: 'blue',
+    links: [['Abrir a Biblioteca', '/recursos-pedagogicos/professores/oficina-prompts/biblioteca.html', 'conhecer'], ['Fazer o Raio-X', '/recursos-pedagogicos/professores/oficina-prompts/raio-x.html', 'secundaria']] },
   { data: '2026-11-18', titulo: 'Conferir a resposta da IA', texto: 'O Raio-X confere o pedido; agora dá para conferir o que voltou. Cole a resposta do ChatGPT e veja contas erradas, gabarito sempre na mesma letra, a certa sempre a mais comprida, código da BNCC para conferir, emojis e código de jogo cortado. Você sai com o pedido de conserto pronto. Nada é enviado.', icone: 'certo', cor: 'mint',
     links: [['Conferir uma resposta', '/recursos-pedagogicos/professores/oficina-prompts/conferir.html', 'conhecer']] },
   { data: '2026-11-18', titulo: 'Raio-X do prompt', texto: 'Cole um prompt seu e veja na hora se ele tem Papel, Tarefa, Contexto e Formato, se escapou nome de estudante e o que costuma dar errado com a IA. Você sai com o prompt melhorado, pronto para copiar. Nada é enviado: tudo acontece no seu aparelho.', icone: 'lupa', cor: 'purple',
