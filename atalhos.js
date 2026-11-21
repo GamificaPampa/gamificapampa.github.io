@@ -52,6 +52,12 @@ const ATALHOS = {
   jogos: ['', '', 'https://gamificapampa.github.io/turma/'],
   novidades: ['Do projeto', 'Novidades do site', 'https://gamificapampa.github.io/novidades/'],
   acoes: ['Do projeto', 'Ações nas escolas, com relatos e fotos', 'https://gamificapampa.github.io/acoes/'],
+  // Matérias com mais de um jogo: o menu da turma já abre filtrado
+  artes: ['', '', 'https://gamificapampa.github.io/turma/?materia=artes'],
+  matematica: ['', '', 'https://gamificapampa.github.io/turma/?materia=matematica'],
+  ciencias: ['', '', 'https://gamificapampa.github.io/turma/?materia=ciencias'],
+  portugues: ['', '', 'https://gamificapampa.github.io/turma/?materia=lingua-portuguesa'],
+  programacao: ['', '', 'https://gamificapampa.github.io/turma/?materia=programacao'],
 };
 
 // Outros nomes que levam ao mesmo atalho: o nome inteiro do jogo e o jeito como as pessoas falam
@@ -64,10 +70,10 @@ const APELIDOS = {
   'caminho-da-escola': 'caminho', 'balanca-do-bit': 'balanca', 'detetive-da-noticia': 'detetive',
   'reta-do-bit': 'reta', funcao: 'reta', 'laboratorio-de-equacoes': 'laboratorio', balanceamento: 'laboratorio',
   'genetica-do-bit': 'genetica', mendel: 'genetica',
-  'atelie-das-cores': 'cores', artes: 'cores', 'circuito-do-bit': 'circuito',
+  'atelie-das-cores': 'cores', 'circuito-do-bit': 'circuito',
   'galeria-do-bit': 'arte', 'artes-visuais': 'arte', 'cozinha-das-misturas': 'misturas', 'mapa-do-bit': 'geografia', biomas: 'geografia', 'detetive-da-historia': 'historia',
   'educacao-fisica': 'circuito', 'ingles-com-o-bit': 'ingles', english: 'ingles',
-  ciclo: 'ciclo-da-agua', agua: 'ciclo-da-agua', 'robo-pega-a-estrela': 'robo', estrela: 'robo',
+  'lingua-portuguesa': 'portugues', ciclo: 'ciclo-da-agua', agua: 'ciclo-da-agua', 'robo-pega-a-estrela': 'robo', estrela: 'robo',
   construtor: 'prompt', 'construtor-de-prompts': 'prompt', 'maquina-de-prompts': 'maquina',
   cacabugs: 'caca-bugs', missao: 'missao-dev', 'programacao-em-dupla': 'dupla',
   novidade: 'novidades', novo: 'novidades',
@@ -81,5 +87,7 @@ function atalhoDe(caminho) {
   try { texto = decodeURIComponent(caminho); } catch {}
   const nome = texto.toLowerCase().replace(/\/index\.html$/, '').replace(/^\/+|\/+$/g, '')
     .normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[\s_]+/g, '-');
-  return ATALHOS[nome] ? nome : APELIDOS[nome] && ATALHOS[APELIDOS[nome]] ? APELIDOS[nome] : '';
+  // O nome da pasta de um jogo (/lampada-do-bit) também leva ao jogo
+  const daPasta = ((window.JOGOS || []).find((jogo) => jogo.pasta === nome) || {}).atalho;
+  return ATALHOS[nome] ? nome : APELIDOS[nome] && ATALHOS[APELIDOS[nome]] ? APELIDOS[nome] : daPasta && ATALHOS[daPasta] ? daPasta : '';
 }

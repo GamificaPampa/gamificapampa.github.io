@@ -246,6 +246,11 @@
   let filtro = { materia: '', idade: '' };
   try { filtro = { ...filtro, ...JSON.parse(localStorage.getItem(chave)) }; } catch {}
   if (filtro.materia && !materias.includes(filtro.materia)) filtro.materia = '';
+  // Link por matéria (/artes leva a /turma/?materia=artes): vale só nesta visita, sem trocar o que ficou guardado
+  const semAcento = (texto) => texto.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase().replace(/\s+/g, '-');
+  const pedida = new URLSearchParams(location.search).get('materia');
+  const daPedida = pedida && materias.find((m) => semAcento(m) === semAcento(pedida));
+  if (daPedida) filtro = { materia: daPedida, idade: '' };
 
   const botoes = (lugar, tipo, opcoes) => {
     lugar.replaceChildren(...[['Todas', ''], ...opcoes].map(([rotulo, valor]) => {
