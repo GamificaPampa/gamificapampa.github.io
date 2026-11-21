@@ -64,6 +64,7 @@ const APELIDOS = {
   'reta-do-bit': 'reta', funcao: 'reta', 'laboratorio-de-equacoes': 'laboratorio', balanceamento: 'laboratorio',
   'genetica-do-bit': 'genetica', mendel: 'genetica',
   'atelie-das-cores': 'cores', artes: 'cores', 'circuito-do-bit': 'circuito',
+  'galeria-do-bit': 'arte', 'artes-visuais': 'arte', 'cozinha-das-misturas': 'misturas', 'mapa-do-bit': 'geografia', biomas: 'geografia', 'detetive-da-historia': 'historia',
   'educacao-fisica': 'circuito', 'ingles-com-o-bit': 'ingles', english: 'ingles',
   ciclo: 'ciclo-da-agua', agua: 'ciclo-da-agua', 'robo-pega-a-estrela': 'robo', estrela: 'robo',
   construtor: 'prompt', 'construtor-de-prompts': 'prompt', 'maquina-de-prompts': 'maquina',
