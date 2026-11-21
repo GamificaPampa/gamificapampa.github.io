@@ -437,6 +437,7 @@
           <a class="btn btn--small" href="https://chatgpt.com/" target="_blank" rel="noopener">Abrir o ChatGPT</a>
           <a class="btn btn--small" href="https://gemini.google.com/app" target="_blank" rel="noopener">Abrir o Gemini</a>
           <button class="btn btn--small" type="button" id="guardar" disabled><svg width="18" height="18" aria-hidden="true"><use href="#i-estrela"/></svg>Guardar em Meus prompts</button>
+          <button class="btn btn--small" type="button" id="raio-x" disabled><svg width="18" height="18" aria-hidden="true"><use href="#i-lupa"/></svg>Fazer o Raio-X</button>
           <button class="btn btn--small" type="button" id="reset"><svg width="18" height="18" aria-hidden="true"><use href="#i-reset"/></svg>Começar de novo</button>
         </div>
         <div class="quality" id="quality" hidden>
@@ -1462,6 +1463,7 @@
       const comMaterial = (corpo) => material ? `${corpo}\n\nMaterial:\n\"\"\"\n${material}\n\"\"\"` : corpo;
       current = done === 4 ? { text: comMaterial(base), guardavel: material ? `${base}\n\nMaterial:\n[cole aqui o material]` : base, label, jogo: isGame, theme, tipo: kind ? (Object.keys(kinds).find((id) => kinds[id] === kind) || 'proprio') : '', etapa: etapaEscolhida, materia: subject ? subject.name : '' } : { text: '', label: '' };
       $('#guardar').disabled = done < 4;
+      $('#raio-x').disabled = done < 4;
       $('#material-nota').hidden = !material && !anexo.naConversa;
       $('#material-nota').textContent = material ? `Mais o material ${anexo.nome ? 'do arquivo' : 'colado'} (${material.length} letras), no fim do prompt.` : anexo.naConversa ? 'Lembre de anexar o arquivo no ChatGPT junto com o prompt.' : '';
       if (!material && !anexo.naConversa && !anexo.lendo && anexo.nome) mostrarAnexo('');
@@ -1699,6 +1701,14 @@
       lista.unshift({ id: `c-${Date.now().toString(36)}${Math.random().toString(36).slice(2, 6)}`, origem: 'construtor', nome: current.label, mensagens, tipo: ['proprio'].includes(current.tipo) ? 'atividade' : current.tipo, etapa: ['infantil', 'iniciais', 'finais', 'medio', 'eja'].includes(current.etapa) ? current.etapa : '', materia: current.materia, data: new Date().toISOString() });
       flash($('#guardar'), gravarMeus(lista) ? 'Guardado!' : 'Não deu para guardar');
       renderRecent();
+    });
+    // Fazer o Raio-X: o prompt que o Copiar copia vai pelo sessionStorage, numa chave só para isso, e nunca pelo
+    // endereço, que fica no histórico e sai no Referer. O Raio-X lê e apaga a chave assim que abre
+    $('#raio-x').addEventListener('click', () => {
+      if (!current.text) return;
+      try { sessionStorage.setItem('gp-raio-x:prompt', JSON.stringify({ texto: current.text, origem: 'maquina' })); }
+      catch { flash($('#raio-x'), 'Não deu: copie e cole no Raio-X'); return; }
+      location.href = '/recursos-pedagogicos/professores/oficina-prompts/raio-x.html';
     });
     $('#quality-copy').addEventListener('click', async () => {
       const button = $('#quality-copy');
