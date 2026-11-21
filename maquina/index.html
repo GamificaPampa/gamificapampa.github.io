@@ -905,7 +905,7 @@
       [/[\w.+-]+@[\w-]+\.[\w.]+/, 'um e-mail'],
       [/\bmatr[ií]cula\b/i, 'uma matrícula'],
     ];
-    const CAMPOS_VIGIADOS = [['tema', 'Tema'], ['objetivo', 'Objetivo'], ['sabe', 'O que a turma já sabe'], ['algo-mais', 'Algo mais'], ['material', 'Material'], ['turma-outra', 'Outra turma']];
+    const CAMPOS_VIGIADOS = [['tema', 'Tema'], ['objetivo', 'Objetivo'], ['sabe', 'O que a turma já sabe'], ['algo-mais', 'Algo mais'], ['material', 'Material'], ['turma-outra', 'Outra turma'], ['materia-outra', 'Outra matéria'], ['tipo-outro', 'Outro tipo']];
     const temDadoDeAluno = (texto) => PRIVACIDADE.some(([padrao]) => padrao.test(texto));
     const dadoDeAluno = (ignorar = []) => [
       ...CAMPOS_VIGIADOS.filter(([id]) => !ignorar.includes(id)).flatMap(([id, nome]) => {
@@ -980,7 +980,7 @@
       $('#anexo-aviso').hidden = !aviso;
       $('#anexo-aviso').textContent = aviso;
     };
-    const NA_CONVERSA = 'No ChatGPT, toque no + e anexe o arquivo junto com o prompt.';
+    const NA_CONVERSA = 'No ChatGPT, toque no + da caixa de mensagem, escolha Adicionar fotos e arquivos e anexe o arquivo junto com o prompt.';
     const MOTIVOS = {
       foto: 'A foto não vira texto aqui, mas o ChatGPT lê.',
       escaneado: 'Este PDF parece escaneado: não tem texto para ler aqui, mas o ChatGPT lê.',
@@ -1362,7 +1362,7 @@
     // Cheering when the four pieces are in place, the first time they are.
     const celebrate = () => {
       $('#bit').src = '/identidade-visual/mascote/bit-comemorando.svg';
-      bubble.textContent = 'Prompt pronto! Copie e cole no ChatGPT. O material vem num bloco de código: baixe pela seta do bloco e abra no navegador. Se ele recusar, peça de novo ou abra uma conversa nova. Se a resposta não vier do seu jeito, peça ajustes na mesma conversa.';
+      bubble.textContent = 'Prompt pronto! Copie e cole no ChatGPT. O material vem num bloco de código: abra a Prévia, toque na seta de baixar e abra no navegador. Se ele recusar, peça de novo ou abra uma conversa nova. Se a resposta não vier do seu jeito, peça ajustes na mesma conversa.';
       replay(consoleBox, 'is-ready');
       if (!reducedMotion) replay($('#bit'), 'anima-saltar');
     };
@@ -1782,9 +1782,9 @@
     // Pedir ajuste: os pedidos prontos do Peça mais (no jogo, os mais comuns) e uma caixa para escrever
     const PEDIDOS_DO_JOGO = [
       { nome: 'Botões maiores', texto: 'Deixe os botões e as letras maiores, para jogar no projetor e no celular.' },
-      { nome: 'Mais uma fase', texto: 'Acrescente mais uma fase, um pouco mais difícil que a última.' },
+      { nome: 'Mais uma fase', texto: 'Acrescente mais uma fase, um pouco mais difícil que a última, mas sem passar do que a turma desse ano estuda.' },
       { nome: 'Mais fácil', texto: 'Deixe o jogo mais fácil, com dicas antes de cada pergunta.' },
-      { nome: 'Explicar o erro', texto: 'Quando a criança errar, explique melhor por que a resposta escolhida está errada.' },
+      { nome: 'Explicar o erro', texto: 'Quando alguém errar, explique melhor por que a resposta escolhida está errada.' },
     ];
     const mostrarAjuste = (pronto) => {
       const caixa = $('#ajuste');
@@ -1912,9 +1912,22 @@
     $('#teste-fechar').addEventListener('click', () => { $('#teste').hidden = true; });
     // O site lembra a última turma, matéria, tipo, tema e ajustes neste aparelho; Começar de novo esquece
     desenharMinhas();
-    // Os campos que o quero-quero vigia e onde mais aparece dado de aluno (material, o que a turma já sabe, algo mais e
-    // a outra turma) não ficam guardados no aparelho. A outra turma sem dado de aluno já vira botão nas opções guardadas
+    // Onde mais aparece dado de aluno (material, o que a turma já sabe, algo mais e a outra turma) nunca fica guardado
+    // no aparelho. A outra turma sem dado de aluno já vira botão nas opções guardadas
+    // Tema, objetivo, Outra matéria e Outro tipo ficam lembrados, mas nunca com dado de aluno: com o quero-quero
+    // acusando, o texto sai do aparelho (antes de voltar aos campos e a cada tecla, depois do Lembrar anotar)
+    const LIVRES = ['tema', 'objetivo', 'materia-outra', 'tipo-outro'];
+    const tirarDadoDeAluno = () => {
+      const salvo = Lembrar.ler('maquina', {});
+      if (!salvo || typeof salvo !== 'object' || Array.isArray(salvo)) return;
+      const sujos = LIVRES.filter((id) => typeof salvo[id] === 'string' && temDadoDeAluno(salvo[id]));
+      if (!sujos.length) return;
+      sujos.forEach((id) => { salvo[id] = ''; });
+      Lembrar.guardar('maquina', salvo);
+    };
+    tirarDadoDeAluno();
     Lembrar.campos('maquina', [...form.elements].filter((campo) => !['material', 'sabe', 'algo-mais', 'turma-outra'].includes(campo.id) && campo.type !== 'file'));
+    LIVRES.forEach((id) => { const campo = document.getElementById(id); if (campo) { campo.addEventListener('input', tirarDadoDeAluno); campo.addEventListener('change', tirarDadoDeAluno); } });
     // A "Outra turma" volta sem o texto (ele não fica guardado): vale o botão da última turma escrita, ou nada marcado
     if (new FormData(form).get('etapa') === 'outra' && !$('#turma-outra').value.trim()) {
       const ultima = (lerMinhas().etapa || [])[0];
