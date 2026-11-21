@@ -1920,11 +1920,26 @@
       const ultima = (lerMinhas().etapa || [])[0];
       if (ultima) marcar('etapa', `minha:${ultima}`); else desmarcar('etapa');
     }
+    // A opção própria criada nesta visita nasce depois do Lembrar.campos, que só guarda os botões do começo: escolhida
+    // ela, ficava guardado "nada marcado". A opção própria marcada (turma, matéria e tipo) fica guardada à parte e volta aqui
+    const minhasMarcadas = Lembrar.ler('maquina-minhas-marcadas', {});
+    for (const nome of Object.keys(CAMPOS_PROPRIOS)) {
+      const valor = minhasMarcadas && typeof minhasMarcadas === 'object' ? minhasMarcadas[nome] : '';
+      if (valor && !new FormData(form).get(nome)) marcar(nome, valor);
+    }
+    form.addEventListener('change', (evento) => {
+      const nome = evento.target.name;
+      if (!(nome in CAMPOS_PROPRIOS) || evento.target.type !== 'radio') return;
+      const lido = Lembrar.ler('maquina-minhas-marcadas', {});
+      const marcadas = lido && typeof lido === 'object' ? lido : {};
+      marcadas[nome] = String(evento.target.value).startsWith('minha:') ? evento.target.value : '';
+      Lembrar.guardar('maquina-minhas-marcadas', marcadas);
+    });
     // Quem já preencheu o passo 6 numa visita anterior encontra ele aberto
     if (['objetivo', 'sabe', 'mais'].some((nome) => form.elements[nome].value.trim()) || ['uso', 'tempo', 'perguntar', 'extra'].some((nome) => new FormData(form).get(nome))) $('#completo').open = true;
     // No celular, o console com o Copiar fica depois das perguntas: uma barra no pé da tela traz o Copiar e as peças prontas
     Copiar.barraFixa({ observar: document.querySelector('#console .actions'), copiar: copyButton, contador: $('#count') });
-    $('#reset').addEventListener('click', () => { $('#completo').open = false; $('#teste').hidden = true; anexo.vez++; anexo.lendo = false; form.reset(); $('#material').value = ''; mostrarAnexo(''); Lembrar.guardar('maquina', {}); Lembrar.guardar('maquina-jeito', ''); update(); form.querySelector('[name="etapa"]').focus(); });
+    $('#reset').addEventListener('click', () => { $('#completo').open = false; $('#teste').hidden = true; anexo.vez++; anexo.lendo = false; form.reset(); $('#material').value = ''; mostrarAnexo(''); Lembrar.guardar('maquina', {}); Lembrar.guardar('maquina-jeito', ''); Lembrar.guardar('maquina-minhas-marcadas', {}); update(); form.querySelector('[name="etapa"]').focus(); });
     form.addEventListener('input', update);
     form.addEventListener('change', update);
     form.addEventListener('submit', (event) => event.preventDefault());
