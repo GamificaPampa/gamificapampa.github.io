@@ -46,6 +46,16 @@
     .novo__links .icone, .fim .icone { width: 22px; height: 22px; }
     .vazio { padding: 18px 20px; font-weight: 600; }
 
+    /* Filtro por assunto: o assunto sai dos links de cada novidade (jogo, máquina, oficina...) */
+    .filtros { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-bottom: 28px; padding: 10px 14px; background: rgb(255 255 255 / .75); border: 4px solid var(--ink); border-radius: 22px; }
+    .filtros__rotulo { margin-right: 4px; font-weight: 700; }
+    .chip { min-height: 44px; padding: 4px 16px; background: var(--white); color: var(--ink); border: 3px solid var(--ink); border-radius: 999px; font: 600 16px/1 var(--font); cursor: pointer; box-shadow: 0 4px 0 var(--ink); transition: transform .1s ease; }
+    .chip:hover { transform: translateY(2px); box-shadow: 0 2px 0 var(--ink); }
+    .chip[aria-pressed="true"] { background: var(--yellow); }
+    .chip small { margin-left: 6px; font-size: 14px; opacity: .75; }
+    [hidden] { display: none !important; }
+    @media (prefers-reduced-motion: reduce) { .chip { transition: none; } }
+
     .fim { display: flex; flex-wrap: wrap; gap: 14px; padding-bottom: clamp(140px, 18vw, 220px); }
     .foot { position: relative; padding: 0 16px 28px; font-weight: 600; text-align: center; }
   </style>
@@ -69,6 +79,8 @@
       </div>
     </section>
 
+    <div class="filtros" id="filtros" role="group" aria-label="Mostrar só um assunto" hidden></div>
+    <p class="vazio card" id="sem-nada" hidden>Nada deste assunto ainda. Toque em Tudo para ver as outras novidades.</p>
     <div id="meses">
       <noscript><p class="card vazio">Esta página precisa do JavaScript ligado para mostrar a lista. Os materiais ficam em <a href="/recursos-pedagogicos/">Recursos</a>.</p></noscript>
     </div>
@@ -140,6 +152,53 @@ try { localStorage.setItem('gp-lembrar:novidade-vista', NOVIDADES.map((n) => n.d
     }
     secao.append(titulo, lista);
     lugar.append(secao);
+  }
+
+  // Filtro por assunto. Cada novidade entra nos assuntos dos seus links; a escolha fica no endereço (?assunto=jogos),
+  // para o formador mandar o link já filtrado
+  const ASSUNTOS = [
+    ['jogos', 'Jogos', (u) => /\/recursos-pedagogicos\/criancas\/|\/turma\/|\/maquina\/modelos\//.test(u)],
+    ['maquina', 'Máquina de prompts', (u) => /^\/maquina\/(?!modelos)/.test(u)],
+    ['oficina', 'Oficina de Prompts', (u) => /\/oficina-prompts\//.test(u)],
+    ['materiais', 'Aulas e materiais', (u) => /\/recursos-pedagogicos\/professores\/(?!oficina-prompts)/.test(u)],
+    ['publicar', 'Publicar jogos', (u) => /\/publicador\//.test(u)],
+    ['acoes', 'Ações nas escolas', (u) => /\/acoes\/|\/projetos\//.test(u)],
+  ];
+  const itens = [...lugar.querySelectorAll('.novo')];
+  itens.forEach((item, i) => {
+    const enderecos = (ordenadas[i].links || []).map(([, endereco]) => new URL(endereco, location.origin).pathname);
+    item.dataset.assuntos = ASSUNTOS.filter(([, , pega]) => enderecos.some(pega)).map(([id]) => id).join(' ');
+  });
+  const caixa = document.getElementById('filtros');
+  const semNada = document.getElementById('sem-nada');
+  const contar = (id) => itens.filter((item) => item.dataset.assuntos.split(' ').includes(id)).length;
+  const opcoes = [['tudo', 'Tudo', itens.length], ...ASSUNTOS.map(([id, nome]) => [id, nome, contar(id)]).filter(([, , n]) => n > 0)];
+  if (opcoes.length > 2) {
+    caixa.hidden = false;
+    caixa.append(criar('span', 'filtros__rotulo', 'Assunto:'));
+    const botoes = opcoes.map(([id, nome, n]) => {
+      const botao = criar('button', 'chip', nome);
+      botao.type = 'button';
+      botao.dataset.assunto = id;
+      botao.append(criar('small', '', String(n)));
+      botao.setAttribute('aria-label', `${nome}, ${n} ${n === 1 ? 'novidade' : 'novidades'}`);
+      botao.addEventListener('click', () => mostrar(id, true));
+      return botao;
+    });
+    caixa.append(...botoes);
+    const mostrar = (id, guardar) => {
+      if (!opcoes.some(([o]) => o === id)) id = 'tudo';
+      botoes.forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.assunto === id)));
+      itens.forEach((item) => { item.hidden = id !== 'tudo' && !item.dataset.assuntos.split(' ').includes(id); });
+      lugar.querySelectorAll('.mes').forEach((mes) => { mes.hidden = ![...mes.querySelectorAll('.novo')].some((item) => !item.hidden); });
+      semNada.hidden = itens.some((item) => !item.hidden);
+      if (guardar) {
+        const url = new URL(location.href);
+        if (id === 'tudo') url.searchParams.delete('assunto'); else url.searchParams.set('assunto', id);
+        history.replaceState(null, '', url);
+      }
+    };
+    mostrar(new URLSearchParams(location.search).get('assunto') || 'tudo', false);
   }
 })();
 </script>
