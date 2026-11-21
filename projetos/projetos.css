@@ -39,8 +39,6 @@ main.wrap { display: grid; gap: clamp(28px, 4vw, 44px); padding-bottom: clamp(14
 .etapas small, .cronograma b { color: var(--soft); font-weight: 700; font-size: 13px; letter-spacing: .05em; text-transform: uppercase; }
 .etapas b { font-size: 21px; line-height: 1.15; }
 .etapas span { color: var(--soft); font-size: 16px; }
-.proxima { display: flex; align-items: center; gap: 12px; padding: 12px 18px; background: rgb(255 255 255 / .6); border: 3px dashed var(--ink); border-radius: 999px; font-weight: 600; }
-.proxima .icone { width: 28px; height: 28px; }
 
 /* A página de cada projeto: a ficha inteira, como no Cadastro de Projeto Institucional da UNIPAMPA */
 .ficha { padding: 0; overflow: hidden; }
