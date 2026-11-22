@@ -40,6 +40,7 @@ const ATALHOS = {
   'raio-x': ['Oficina de Prompts', 'Raio-X do prompt', OFICINA + 'raio-x.html'],
   quiz: ['Oficina de Prompts', 'Quiz na hora', OFICINA + 'quiz.html'],
   conferir: ['Oficina de Prompts', 'Conferir a resposta da IA', OFICINA + 'conferir.html'],
+  passaporte: ['Oficina de Prompts', 'Meu passaporte da Oficina', RP + 'professores/passaporte/'],
   adaptar: ['Oficina de Prompts', 'Adaptador de atividades', OFICINA + 'adaptar.html'],
   baralho: ['Oficina de Prompts', 'Baralho de prompts para imprimir', OFICINA + 'baralho.html'],
   gems: ['Oficina de Prompts', 'Assistentes do Bit', OFICINA + 'gems.html'],

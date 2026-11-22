@@ -17,6 +17,8 @@
 //     links: [['Jogar', '/recursos-pedagogicos/criancas/pasta-do-jogo/', 'jogar']] },
 // Sem dado de aluno, sem detalhe técnico: só o que muda para o professor.
 window.NOVIDADES = [
+  { data: '2026-11-22', titulo: 'Meu passaporte da Oficina', texto: 'Cada ferramenta da Oficina que você abre ganha um carimbo de Visto, com a data: Jogo do Prompt, Máquina, Raio-X, Conferir, Quiz na hora e mais. O passaporte mostra o que já usou e sugere o que conhecer agora. Fica só no seu aparelho.', icone: 'trofeu', cor: 'pink',
+    links: [['Ver meu passaporte', '/recursos-pedagogicos/professores/passaporte/', 'conhecer']] },
   { data: '2026-11-20', titulo: 'Quiz na hora', texto: 'Peça as perguntas ao ChatGPT com o pedido pronto, cole a resposta e o site monta o jogo: fases, estrelas, explicação no erro e Treinar os erros. A IA só escreve as perguntas, então o jogo não trava nem sai cortado. Teste na página, baixe e publique para a turma.', icone: 'quiz', cor: 'yellow',
     links: [['Montar um quiz', '/recursos-pedagogicos/professores/oficina-prompts/quiz.html', 'conhecer']] },
   { data: '2026-11-20', titulo: 'Raio-X direto da Biblioteca e da Máquina', texto: 'Na Biblioteca de prompts, cada prompt de partida e cada um de Meus prompts tem o botão Fazer o Raio-X, e a Máquina de prompts também: um toque e o prompt aparece já analisado, sem copiar e colar. O Raio-X também avisa o que ainda está entre colchetes para trocar pela sua turma.', icone: 'lupa', cor: 'blue',
