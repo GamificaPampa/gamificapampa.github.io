@@ -41,6 +41,7 @@ const ATALHOS = {
   'raio-x': ['Oficina de Prompts', 'Raio-X do prompt', OFICINA + 'raio-x.html'],
   quiz: ['Oficina de Prompts', 'Quiz na hora', OFICINA + 'quiz.html'],
   conferir: ['Oficina de Prompts', 'Conferir a resposta da IA', OFICINA + 'conferir.html'],
+  publicar: ['Oficina de Prompts', 'Publicar meu jogo, com link e QR Code', 'https://gamificapampa.github.io/publicador/'],
   passaporte: ['Oficina de Prompts', 'Meu passaporte da Oficina', RP + 'professores/passaporte/'],
   adaptar: ['Oficina de Prompts', 'Adaptador de atividades', OFICINA + 'adaptar.html'],
   baralho: ['Oficina de Prompts', 'Baralho de prompts para imprimir', OFICINA + 'baralho.html'],
@@ -65,6 +66,7 @@ const ATALHOS = {
 // Outros nomes que levam ao mesmo atalho: o nome inteiro do jogo e o jeito como as pessoas falam
 const APELIDOS = {
   'detetive-da-ia': 'detetive-ia', ia: 'aula-ia', 'aula-sobre-ia': 'aula-ia', adaptador: 'adaptar', inclusao: 'adaptar', cartas: 'baralho', 'ia-em-casa': 'familias', 'familia': 'familias',
+  'publicar-jogo': 'publicar', 'publicar-meu-jogo': 'publicar', publicacao: 'publicar',
   'kit-de-sala': 'sala', cronometro: 'sala', grupos: 'sala', sorteio: 'sala',
   impressao: 'imprimir', papeis: 'imprimir', pdf: 'imprimir',
   'bichos-do-pampa': 'bichos', infantil: 'bichos', 'educacao-infantil': 'bichos',
