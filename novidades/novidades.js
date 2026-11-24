@@ -17,6 +17,8 @@
 //     links: [['Jogar', '/recursos-pedagogicos/criancas/pasta-do-jogo/', 'jogar']] },
 // Sem dado de aluno, sem detalhe técnico: só o que muda para o professor.
 window.NOVIDADES = [
+  { data: '2026-11-24', titulo: 'Cartaz da Oficina e conquistas no passaporte', texto: 'Uma folha A4 com os QR Codes de nove ferramentas da Oficina, para colar na sala dos professores. E o Meu passaporte ganhou conquistas: copiar um prompt na Máquina, passar um prompt pelo Raio-X e publicar um jogo.', icone: 'qr', cor: 'orange',
+    links: [['Imprimir o cartaz', '/recursos-pedagogicos/professores/oficina-prompts/cartaz.html', 'baixar'], ['Ver meu passaporte', '/recursos-pedagogicos/professores/passaporte/', 'conhecer']] },
   { data: '2026-11-22', titulo: 'Kit de sala para o projetor', texto: 'Cronômetro com tempos prontos e aviso no fim, grupos sorteados pelo número da chamada, sorteio de quem responde sem repetir e a placa do combinado: pode conversar, falem baixo ou silêncio. Nada de nome de estudante entra na página.', icone: 'relogio', cor: 'mint',
     links: [['Abrir o kit', '/recursos-pedagogicos/professores/kit-de-sala/', 'conhecer']] },
   { data: '2026-11-22', titulo: 'Meu passaporte da Oficina', texto: 'Cada ferramenta da Oficina que você abre ganha um carimbo de Visto, com a data: Jogo do Prompt, Máquina, Raio-X, Conferir, Quiz na hora e mais. O passaporte mostra o que já usou e sugere o que conhecer agora. Fica só no seu aparelho.', icone: 'trofeu', cor: 'pink',

@@ -218,6 +218,7 @@ const BUSCA_EXTRA = {
   'Medalhas do Bit': 'premiar imprimir recompensa',
   'Certificado de Programador(a) Mirim': 'diploma',
   'Kit de sala': 'cronômetro timer relógio tempo grupos sorteio sortear número chamada silêncio barulho combinado projetor',
+  'Cartaz da Oficina': 'imprimir qr códigos mural sala dos professores folha a4 divulgar',
   'Meu passaporte': 'carimbo visto progresso ferramentas usei conquistas',
   'Tudo para imprimir': 'pdf papel folhas impressão impressora a4 roteiro atividades',
   'Jogos para a turma': 'projetor celular qr crianças',

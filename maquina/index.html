@@ -1688,7 +1688,10 @@
     } catch {}
 
     copyButton.addEventListener('click', async () => {
-      flash(copyButton, await copyText(current.text) ? 'Prompt copiado!' : 'Não deu para copiar');
+      const copiou = await copyText(current.text);
+      flash(copyButton, copiou ? 'Prompt copiado!' : 'Não deu para copiar');
+      // A conquista do Passaporte da Oficina (passaporte.js, que a barra carrega)
+      if (copiou) window.Passaporte?.marcar('copiou-prompt');
     });
     // Guardar em Meus prompts: o prompt (e a segunda mensagem, no jogo), sem o material colado, que pode ter dado de aluno
     $('#guardar').addEventListener('click', () => {

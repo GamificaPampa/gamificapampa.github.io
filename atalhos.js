@@ -42,6 +42,7 @@ const ATALHOS = {
   quiz: ['Oficina de Prompts', 'Quiz na hora', OFICINA + 'quiz.html'],
   conferir: ['Oficina de Prompts', 'Conferir a resposta da IA', OFICINA + 'conferir.html'],
   publicar: ['Oficina de Prompts', 'Publicar meu jogo, com link e QR Code', 'https://gamificapampa.github.io/publicador/'],
+  cartaz: ['Oficina de Prompts', 'Cartaz da Oficina com os QR, para imprimir', OFICINA + 'cartaz.html'],
   passaporte: ['Oficina de Prompts', 'Meu passaporte da Oficina', RP + 'professores/passaporte/'],
   adaptar: ['Oficina de Prompts', 'Adaptador de atividades', OFICINA + 'adaptar.html'],
   baralho: ['Oficina de Prompts', 'Baralho de prompts para imprimir', OFICINA + 'baralho.html'],
